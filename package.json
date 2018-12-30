@@ -1,0 +1,32 @@
+{
+  "name": "presto-scraper",
+  "version": "1.0.0",
+  "description": "Scrape data from presto account to report some usage statistics",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "presto",
+    "scraper",
+    "data",
+    "analytics"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imccausl/presto-scraper.git"
+  },
+  "author": "Ian McCausland",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "prettier": "^1.15.3"
+  },
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
