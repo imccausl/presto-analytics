@@ -3,6 +3,7 @@ require('dotenv').config({ path: '../.env' });
 const { promisify } = require('util');
 const req = require('request');
 const jsdom = require('jsdom');
+const parse = require('csv-parse');
 const API = require('./api_endpoints');
 
 const cookieJar = new jsdom.CookieJar();
@@ -68,7 +69,14 @@ async function getUsageReport(year) {
       console.log(response.statusCode, `[3] Getting CSV of data for ${searchYear}...`);
 
       request.get(`${API.baseUrl}${API.csvEndpoint}`, (error, response, body) => {
-        console.log(body);
+        parse(body, { columns: true }, (err, output) => {
+          if (err) {
+            console.error(`Error: ${err}`);
+            return;
+          }
+
+          console.log(output, output.length);
+        });
       });
     }
   );
@@ -78,7 +86,6 @@ async function login(username, password) {
   const token = await getCSRF();
 
   console.log('[1] Logging in...');
-  console.log(token);
   request(
     `${API.baseUrl}${API.loginEndpoint}`,
     {
