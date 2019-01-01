@@ -4,7 +4,7 @@
   "description": "Scrape data from presto account to report some usage statistics",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -e js -x node --inspect src/server/app.js"
   },
   "keywords": [
     "presto",
@@ -24,6 +24,7 @@
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "nodemon": "^1.18.9",
     "prettier": "^1.15.3"
   },
   "dependencies": {
