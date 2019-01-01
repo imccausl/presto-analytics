@@ -5,18 +5,16 @@ const req = require('request');
 const jsdom = require('jsdom');
 const parse = require('csv-parse');
 const API = require('./api_endpoints');
-const { isSuccessfulLogin, getCSRF, login } = require('./auth');
-
-const cookieJar = new jsdom.CookieJar();
+const { getCSRF } = require('./auth');
+// const cookieJar = new jsdom.CookieJar();
 const { JSDOM } = jsdom;
 
 const jar = req.jar();
 const request = promisify(req.defaults({ jar, proxy: 'http://127.0.0.1:8080' }));
 
-// Get the CSRF Token
-
 async function getBasicAccountInfo() {
-  const accountResponse = await request(`${API.baseUrl}${API.dashboard}`);
+  const url = `${API.baseUrl}${API.dashboard}`;
+  const accountResponse = await request(url);
   const { window } = new JSDOM(accountResponse.body);
 
   const balance = window.document.querySelector('.dashboard__quantity').textContent;
@@ -27,14 +25,32 @@ async function getBasicAccountInfo() {
   return { balance, cardNumber };
 }
 
-async function getUsageReport(year) {
-  const token = await getCSRF(`${API.baseUrl}${API.usageReport}`, 'TransitUsageReport');
-  const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
-  const PAGE_SIZE = 1000;
+async function getCSV(requestInstance) {
+  try {
+    const url = `${API.baseUrl}${API.csvEndpoint}`;
+    const resp = await requestInstance.get(url);
 
-  request(
-    `${API.baseUrl}${API.usageEndpoint}`,
-    {
+    return parse(resp.body, { columns: true }, (err, output) => {
+      if (err) {
+        console.error(`Error: ${err}`);
+        return { error: err };
+      }
+
+      return output;
+    });
+  } catch (error) {
+    return { error };
+  }
+}
+
+async function getUsageReport(requestInstance, year) {
+  try {
+    const token = await getCSRF(`${API.baseUrl}${API.usageReport}`, 'TransitUsageReport');
+    const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
+    const PAGE_SIZE = 1000;
+    const url = `${API.baseUrl}${API.usageEndpoint}`;
+
+    await requestInstance(url, {
       method: 'POST',
       json: {
         PageSize: PAGE_SIZE.toString(),
@@ -52,27 +68,16 @@ async function getUsageReport(year) {
         Accept: '*/*',
         Connection: 'keep-alive'
       }
-    },
-    (error, response, body) => {
-      console.log(response.statusCode, `[3] Getting CSV of data for ${searchYear}...`);
+    });
 
-      request.get(`${API.baseUrl}${API.csvEndpoint}`, (error, response, body) => {
-        parse(body, { columns: true }, (err, output) => {
-          if (err) {
-            console.error(`Error: ${err}`);
-            return;
-          }
-
-          console.log(output, output.length);
-        });
-      });
-    }
-  );
+    return await getCSV(requestInstance);
+  } catch (error) {
+    return { error };
+  }
 }
 
-async function test() {
-  const resp = await login(request, process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
-  console.log(resp);
-}
-
-test();
+module.exports = {
+  getCSV,
+  getUsageReport,
+  getBasicAccountInfo
+};

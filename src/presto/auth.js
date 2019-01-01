@@ -68,9 +68,27 @@ async function login(requestInstance, username, password) {
   };
 }
 
+async function isLoggedIn(responseInstance) {
+  const url = `${API.baseUrl}${API.dashboard}`;
+
+  try {
+    const resp = await responseInstance(url);
+
+    if (resp.statusCode !== 200) {
+      return false;
+    }
+
+    const dom = new JSDOM(resp.body);
+    return dom.window.document.querySelectorAll('.signInSignOut').length > 0;
+  } catch (err) {
+    return false;
+  }
+}
+
 module.exports = {
   isSuccessfulLogin,
   getCSRF,
   login,
+  isLoggedIn,
   INVALID_LOGIN
 };
