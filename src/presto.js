@@ -14,7 +14,7 @@ const request = promisify(req.defaults({ jar, proxy: 'http://127.0.0.1:8080' }))
 // Get the CSRF Token
 async function getCSRF(endpoint, parentId) {
   const parentIdInput = parentId || 'signwithaccount';
-  const searchEndpoint = endpoint || `${API.baseURL}${API.homepage}`;
+  const searchEndpoint = endpoint || `${API.baseUrl}${API.homepage}`;
 
   try {
     const { body } = await request(searchEndpoint);
@@ -76,10 +76,11 @@ async function getUsageReport(year) {
 
 async function login(username, password) {
   const token = await getCSRF();
+
   console.log('[1] Logging in...');
   console.log(token);
   request(
-    `${API.baseUrl}${API.homepage}`,
+    `${API.baseUrl}${API.loginEndpoint}`,
     {
       method: 'POST',
       json: {
@@ -102,10 +103,14 @@ async function login(username, password) {
       }
     },
     (error, response, body) => {
-      console.log(response.statusCode);
+      if (!error) {
+        console.log(response.statusCode);
 
-      getBasicAccountInfo();
-      getUsageReport();
+        getBasicAccountInfo();
+        getUsageReport();
+      } else {
+        console.error(`ERROR: ${error}`);
+      }
     }
   );
 }
