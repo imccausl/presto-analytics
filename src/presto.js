@@ -3,15 +3,10 @@ require('dotenv').config({ path: '../.env' });
 const { promisify } = require('util');
 const req = require('request');
 const jsdom = require('jsdom');
+const API = require('./api_endpoints');
 
 const cookieJar = new jsdom.CookieJar();
 const { JSDOM } = jsdom;
-
-const LOGIN_ENDPOINT = 'https://www.prestocard.ca/api/sitecore/AFMSAuthentication/SignInWithAccount';
-const SITE_START = 'https://www.prestocard.ca/en/';
-const ACTIVITY_START = 'https://www.prestocard.ca/en/dashboard/transit-usage-report';
-const ACTIVITY_ENDPOINT = 'https://www.prestocard.ca/api/sitecore/Paginator/TransitUsageReportFilteredIndex';
-const ACTIVITY_CSV = 'https://www.prestocard.ca/api/sitecore/Paginator/TransitUsageExportCSV';
 
 const jar = req.jar();
 const request = promisify(req.defaults({ jar, proxy: 'http://127.0.0.1:8080' }));
@@ -19,7 +14,7 @@ const request = promisify(req.defaults({ jar, proxy: 'http://127.0.0.1:8080' }))
 // Get the CSRF Token
 async function getCSRF(endpoint, parentId) {
   const parentIdInput = parentId || 'signwithaccount';
-  const searchEndpoint = endpoint || SITE_START;
+  const searchEndpoint = endpoint || `${API.baseURL}${API.homepage}`;
 
   try {
     const { body } = await request(searchEndpoint);
@@ -33,7 +28,7 @@ async function getCSRF(endpoint, parentId) {
 }
 
 async function getBasicAccountInfo() {
-  request('https://www.prestocard.ca/dashboard', (error, response, body) => {
+  request(`${API.baseUrl}${API.dashboard}`, (error, response, body) => {
     const { window } = new JSDOM(body);
 
     const balance = window.document.querySelector('.dashboard__quantity').textContent;
@@ -44,12 +39,12 @@ async function getBasicAccountInfo() {
 }
 
 async function getUsageReport(year) {
-  const token = await getCSRF(ACTIVITY_START, 'TransitUsageReport');
+  const token = await getCSRF(`${API.baseUrl}${API.usageReport}`, 'TransitUsageReport');
   const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
   const PAGE_SIZE = 1000;
 
   request(
-    ACTIVITY_ENDPOINT,
+    `${API.baseUrl}${API.usageEndpoint}`,
     {
       method: 'POST',
       json: {
@@ -72,7 +67,7 @@ async function getUsageReport(year) {
     (error, response, body) => {
       console.log(response.statusCode, `[3] Getting CSV of data for ${searchYear}...`);
 
-      request.get(ACTIVITY_CSV, (error, response, body) => {
+      request.get(`${API.baseUrl}${API.csvEndpoint}`, (error, response, body) => {
         console.log(body);
       });
     }
@@ -84,7 +79,7 @@ async function login(username, password) {
   console.log('[1] Logging in...');
   console.log(token);
   request(
-    LOGIN_ENDPOINT,
+    `${API.baseUrl}${API.homepage}`,
     {
       method: 'POST',
       json: {
