@@ -1,5 +1,4 @@
 const jsdom = require('jsdom');
-const parse = require('csv-parse');
 const API = require('./api_endpoints');
 const { getCSRF } = require('./auth');
 
@@ -15,14 +14,29 @@ async function getBasicAccountInfo(requestInstance) {
   return { balance, cardNumber };
 }
 
-function parseCSV(data) {
-  return parse(data, { columns: true }, (err, output) => {
-    if (err) {
-      return { error: err };
-    }
+function parseActivities(serverResponse) {
+  const dom = new JSDOM(serverResponse.body);
+  const data = dom.window.document.querySelectorAll('#paginator-content table#tblTUR tbody tr');
+  const transactions = [];
 
-    return output;
+  data.forEach(node => {
+    const transactionInfo = node.querySelectorAll('td');
+    const items = [];
+
+    transactionInfo.forEach(item => {
+      items.push(item.textContent.trim());
+    });
+
+    transactions.push({
+      date: items[0],
+      agency: items[1],
+      location: items[2],
+      type: items[3],
+      amount: items[4]
+    });
   });
+
+  return transactions;
 }
 
 async function getUsageReport(requestInstance, year) {
@@ -31,37 +45,28 @@ async function getUsageReport(requestInstance, year) {
     const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
     const PAGE_SIZE = 1000;
 
-    return await requestInstance(
-      {
-        uri: API.usageEndpoint,
-        method: 'POST',
-        json: {
-          PageSize: PAGE_SIZE.toString(),
-          TransactionCateogryID: '1',
-          Year: searchYear,
-          currentModel: ''
-        },
-        headers: {
-          __RequestVerificationToken: token,
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Content-Type': 'application/json; charset=utf-8',
-          Referrer: 'https://www.prestocard.ca/en/dashboard/transit-usage-report',
-          'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
-          'X-Requested-With': 'XMLHttpRequest',
-          Accept: '*/*',
-          Connection: 'keep-alive'
-        }
+    const resp = await requestInstance({
+      uri: API.usageEndpoint,
+      method: 'POST',
+      json: {
+        PageSize: PAGE_SIZE.toString(),
+        TransactionCateogryID: '1',
+        Year: searchYear,
+        currentModel: ''
       },
-      (error, response) => {
-        if (error) {
-          return { error };
-        }
-
-        const csv = parseCSV(response.body);
-
-        return csv;
+      headers: {
+        __RequestVerificationToken: token,
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Content-Type': 'application/json; charset=utf-8',
+        Referrer: 'https://www.prestocard.ca/en/dashboard/transit-usage-report',
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+        'X-Requested-With': 'XMLHttpRequest',
+        Accept: '*/*',
+        Connection: 'keep-alive'
       }
-    );
+    });
+
+    return parseActivities(resp);
   } catch (error) {
     return { error };
   }
