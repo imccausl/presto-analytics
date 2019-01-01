@@ -68,7 +68,6 @@ async function getUsageReport(requestInstance, year) {
 }
 
 module.exports = {
-  getCSV,
   getUsageReport,
   getBasicAccountInfo
 };
