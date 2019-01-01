@@ -25,8 +25,6 @@ async function getCSRF(requestInstance, endpoint = API.homepage, parentId = 'sig
 async function login(requestInstance, username, password) {
   const token = await getCSRF(requestInstance);
 
-  console.log('[1] Logging in...');
-
   if (typeof token === 'object') {
     return {
       success: false,

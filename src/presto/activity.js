@@ -12,8 +12,6 @@ async function getBasicAccountInfo(requestInstance) {
   const balance = window.document.querySelector('.dashboard__quantity').textContent;
   const cardNumber = window.document.querySelector('#cardNumber').textContent;
 
-  console.log(`Card Number: ${cardNumber} Current Balance: ${balance}`);
-
   return { balance, cardNumber };
 }
 
@@ -23,7 +21,6 @@ async function getCSV(requestInstance) {
 
     return parse(resp.body, { columns: true }, (err, output) => {
       if (err) {
-        console.error(`Error: ${err}`);
         return { error: err };
       }
 
