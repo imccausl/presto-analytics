@@ -1,7 +1,3 @@
-require('dotenv').config({ path: '../.env' });
-
-const { promisify } = require('util');
-const req = require('request');
 const jsdom = require('jsdom');
 const parse = require('csv-parse');
 const API = require('./api_endpoints');
@@ -9,12 +5,8 @@ const { getCSRF } = require('./auth');
 // const cookieJar = new jsdom.CookieJar();
 const { JSDOM } = jsdom;
 
-const jar = req.jar();
-const request = promisify(req.defaults({ jar, proxy: 'http://127.0.0.1:8080' }));
-
-async function getBasicAccountInfo() {
-  const url = `${API.baseUrl}${API.dashboard}`;
-  const accountResponse = await request(url);
+async function getBasicAccountInfo(requestInstance) {
+  const accountResponse = await requestInstance({ uri: API.dashboard });
   const { window } = new JSDOM(accountResponse.body);
 
   const balance = window.document.querySelector('.dashboard__quantity').textContent;
@@ -27,8 +19,7 @@ async function getBasicAccountInfo() {
 
 async function getCSV(requestInstance) {
   try {
-    const url = `${API.baseUrl}${API.csvEndpoint}`;
-    const resp = await requestInstance.get(url);
+    const resp = await requestInstance.get({ uri: API.csvEndpoint });
 
     return parse(resp.body, { columns: true }, (err, output) => {
       if (err) {
@@ -45,12 +36,12 @@ async function getCSV(requestInstance) {
 
 async function getUsageReport(requestInstance, year) {
   try {
-    const token = await getCSRF(`${API.baseUrl}${API.usageReport}`, 'TransitUsageReport');
+    const token = await getCSRF(API.usageReport, 'TransitUsageReport');
     const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
     const PAGE_SIZE = 1000;
-    const url = `${API.baseUrl}${API.usageEndpoint}`;
 
-    await requestInstance(url, {
+    await requestInstance({
+      uri: API.usageEndpoint,
       method: 'POST',
       json: {
         PageSize: PAGE_SIZE.toString(),

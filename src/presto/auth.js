@@ -10,9 +10,9 @@ function isSuccessfulLogin(requestBody) {
   return Object.prototype.hasOwnProperty.call(requestBody, 'Result') && requestBody.Result === 'success';
 }
 
-async function getCSRF(requestInstance, endpoint = `${API.baseUrl}${API.homepage}`, parentId = 'signwithaccount') {
+async function getCSRF(requestInstance, endpoint = API.homepage, parentId = 'signwithaccount') {
   try {
-    const { body } = await requestInstance(endpoint);
+    const { body } = await requestInstance({ uri: endpoint });
     const dom = new JSDOM(body, { cookieJar });
     const token = dom.window.document.querySelector(`#${parentId} input[name='__RequestVerificationToken']`).value;
 
@@ -24,7 +24,6 @@ async function getCSRF(requestInstance, endpoint = `${API.baseUrl}${API.homepage
 
 async function login(requestInstance, username, password) {
   const token = await getCSRF(requestInstance);
-  const url = `${API.baseUrl}${API.loginEndpoint}`;
 
   console.log('[1] Logging in...');
 
@@ -35,7 +34,8 @@ async function login(requestInstance, username, password) {
     };
   }
 
-  const loginResponse = await requestInstance(url, {
+  const loginResponse = await requestInstance({
+    uri: API.loginEndpoint,
     method: 'POST',
     json: {
       anonymousOrderACard: false,
@@ -69,10 +69,8 @@ async function login(requestInstance, username, password) {
 }
 
 async function isLoggedIn(responseInstance) {
-  const url = `${API.baseUrl}${API.dashboard}`;
-
   try {
-    const resp = await responseInstance(url);
+    const resp = await responseInstance({ uri: API.dashboard });
 
     if (resp.statusCode !== 200) {
       return false;
