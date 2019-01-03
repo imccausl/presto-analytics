@@ -44,13 +44,18 @@ async function getUsageReport(requestInstance, year) {
     const token = await getCSRF(requestInstance, API.usageReport, 'TransitUsageReport');
     const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
     const PAGE_SIZE = 1000;
+    const TransactionCategory = {
+      ALL: '0',
+      TRIPS: '1',
+      TRANSIT_PASS: '2'
+    };
 
     const resp = await requestInstance({
       uri: API.usageEndpoint,
       method: 'POST',
       json: {
         PageSize: PAGE_SIZE.toString(),
-        TransactionCateogryID: '1',
+        TransactionCateogryID: TransactionCategory.TRIPS,
         Year: searchYear,
         currentModel: ''
       },
