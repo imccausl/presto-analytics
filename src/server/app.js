@@ -12,6 +12,12 @@ const http = Server(app);
 
 const PORT = process.env.SERVER_PORT || 3000;
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api/v1', router);
+
+// Routes for app:
+
+// Routes for grabbing presto data:
 router.post('/presto/login', async (req, res) => {
   const prestoCredentials = req.body;
 
@@ -41,9 +47,6 @@ router.post('/presto/usage/:year', async (req, res) => {
     res.send({ error });
   }
 });
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/v1', router);
 
 app.get('/', (req, res) => {
   res.send('PrestoAnalytics server running...');
