@@ -14,7 +14,7 @@ services:
       - ./:/code/presto-analytics
   postgres:
     image: postgres:11.1-alpine
-    environment: 
+    environment:
       POSTGRES_DB: analytics
     ports:
       - '5432:5432'
