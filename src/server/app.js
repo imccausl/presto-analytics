@@ -33,10 +33,10 @@ const PORT = process.env.SERVER_PORT || 3333;
 //     console.log('Error:', err);
 //   });
 
-// sync/create the Transations table
+// sync/create the Transactions table
 Transaction.sync();
 
-// Express Middlewaretesttest
+// Express Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/v1', router);
 
@@ -65,7 +65,7 @@ router.post('/presto/login', async (req, res) => {
 router.get('/presto/usage/:year', async (req, res) => {
   try {
     const usage = await getUsageReport(req.params.year);
-    const testUser = await User.findOne({ where: { firstName: 'test' } });
+    // const testUser = await User.findOne({ where: { firstName: 'test' } });
 
     console.log(`Getting usage report for ${req.params.year}...`);
     res.send(usage);
