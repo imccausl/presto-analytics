@@ -41,6 +41,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/v1', router);
 
 // Routes for app:
+router.get('/transactions/:id/:year/:month', async (req, res) => {
+  const searchDateMin = `${req.params.year}-${req.params.month}-01`;
+  const searchDateMax = `${req.params.year}-${parseInt(req.params.month, 10) + 1}-01`;
+
+  const transactions = await Transaction.findAll({
+    where: {
+      userId: req.params.id,
+      date: {
+        [Sequelize.Op.gte]: new Date(searchDateMin),
+        [Sequelize.Op.lt]: new Date(searchDateMax)
+      }
+    },
+    order: sequelize.literal('date ASC')
+  });
+
+  const totalAmount = transactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
+  const totalTrips = transactions.length;
+
+  res.json({ transactions, totalTrips, totalAmount });
+});
 
 // Routes for grabbing presto data:
 router.post('/presto/login', async (req, res) => {
