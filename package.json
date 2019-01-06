@@ -1,8 +1,8 @@
 {
-  "name": "presto-scraper",
+  "name": "presto-analytics",
   "version": "1.0.0",
   "description": "Scrape data from presto account to report some usage statistics",
-  "main": "src/app.js",
+  "main": "src/server/app.js",
   "scripts": {
     "dev": "nodemon -e js -x node --inspect src/server/app.js"
   },
