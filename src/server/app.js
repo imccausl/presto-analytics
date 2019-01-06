@@ -4,6 +4,7 @@ const express = require('express');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
+const bcrypt = require('bcryptjs');
 
 const { login, isLoggedIn, getBasicAccountInfo, getUsageReport } = require('../presto');
 const dbConfig = require('./db/config');
@@ -18,23 +19,12 @@ const Transaction = require('./db/models/transaction')(sequelize, Sequelize, Use
 
 const PORT = process.env.SERVER_PORT || 3333;
 
-// for now just create a single test user over and over
-// when the app starts
-// User.sync({ force: true })
-//   .then(() =>
-//     User.create({
-//       firstName: 'Test',
-//       lastName: 'User',
-//       password: '',
-//       email: 'test@user.com'
-//     })
-//   )
-//   .catch(err => {
-//     console.log('Error:', err);
-//   });
+sequelize
+  .sync({ force: true })
+  .then(() => console.log('Database and tables created!'))
+  .catch(err => console.log('Error:', err));
 
-// sync/create the Transactions table
-Transaction.sync();
+User.hasMany(Transaction, { foreignKey: 'userId', sourceKey: 'id' });
 
 // Express Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,7 +53,33 @@ router.get('/transactions/:id/:year/:month', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {});
-router.post('/signup', async (req, res) => {});
+router.post('/signup', async (req, res) => {
+  const { body } = req;
+  const { firstName, lastName } = body;
+  console.log(req.body);
+  body.email = body.email.toLowerCase();
+
+  try {
+    const password = await bcrypt.hash(body.password, 10);
+
+    try {
+      const user = await User.create({
+        firstName,
+        lastName,
+        email: body.email,
+        password,
+        permission: ['USER']
+      });
+
+      res.json({ status: 'success', message: `User ${firstName} ${lastName} created.` });
+    } catch (err) {
+      res.json({ status: 'error', error: err });
+    }
+  } catch (err) {
+    res.json({ status: 'error', error: err });
+    console.log(err);
+  }
+});
 
 // Routes for grabbing presto data:
 router.post('/presto/login', async (req, res) => {
