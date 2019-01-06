@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes, UserModel) =>
-  sequelize.define('prestoUsage', {
+  sequelize.define('transaction', {
     userId: {
       type: DataTypes.INTEGER,
       references: {

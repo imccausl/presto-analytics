@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) =>
-  sequelize.define('prestoUsage', {
+  sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
