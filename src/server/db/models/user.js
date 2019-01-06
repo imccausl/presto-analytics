@@ -1,7 +1,9 @@
-module.exports = (sequelize, DataTypes) =>
+const bcrypt = require('bcryptjs');
+
+module.exports = (sequelize, DataTypes) => {
   // const permissions = DataTypes.ENUM('ADMIN', 'USER');
 
-  sequelize.define('user', {
+  const User = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -28,3 +30,17 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.ARRAY(DataTypes.TEXT)
     }
   });
+
+  User.beforeCreate(async user => {
+    try {
+      const hashedPass = await bcrypt.hash(user.password, 10);
+      user.password = hashedPass; // eslint-disable-line
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  User.validPassword = async password => bcrypt.compare(password, this.password);
+
+  return User;
+};

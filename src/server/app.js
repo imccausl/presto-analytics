@@ -4,7 +4,6 @@ const express = require('express');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
-const bcrypt = require('bcryptjs');
 
 const { login, isLoggedIn, getBasicAccountInfo, getUsageReport } = require('../presto');
 const dbConfig = require('./db/config');
@@ -31,13 +30,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/v1', router);
 
 // Routes for app:
-router.get('/transactions/:id/:year/:month', async (req, res) => {
+router.get('/transactions/:year/:month', async (req, res) => {
   const searchDateMin = `${req.params.year}-${req.params.month}-01`;
-  const searchDateMax = `${req.params.year}-${parseInt(req.params.month, 10) + 1}-01`;
+  const searchDateMax =
+    req.params.month === '12' ? `${parseInt(req.params.year, 10) + 1}-01-01` : `${req.params.year}-${parseInt(req.params.month, 10) + 1}-01`;
 
   const transactions = await Transaction.findAll({
     where: {
-      userId: req.params.id,
+      userId: 1,
       date: {
         [Sequelize.Op.gte]: new Date(searchDateMin),
         [Sequelize.Op.lt]: new Date(searchDateMax)
@@ -55,29 +55,22 @@ router.get('/transactions/:id/:year/:month', async (req, res) => {
 router.post('/login', async (req, res) => {});
 router.post('/signup', async (req, res) => {
   const { body } = req;
-  const { firstName, lastName } = body;
-  console.log(req.body);
+  const { firstName, lastName, password } = body;
+
   body.email = body.email.toLowerCase();
 
   try {
-    const password = await bcrypt.hash(body.password, 10);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email: body.email,
+      password,
+      permission: ['USER']
+    });
 
-    try {
-      const user = await User.create({
-        firstName,
-        lastName,
-        email: body.email,
-        password,
-        permission: ['USER']
-      });
-
-      res.json({ status: 'success', message: `User ${firstName} ${lastName} created.` });
-    } catch (err) {
-      res.json({ status: 'error', error: err });
-    }
+    res.json({ status: 'success', message: `User ${firstName} ${lastName} created.`, data: user });
   } catch (err) {
     res.json({ status: 'error', error: err });
-    console.log(err);
   }
 });
 
