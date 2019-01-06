@@ -59,8 +59,11 @@ router.get('/transactions/:id/:year/:month', async (req, res) => {
   const totalAmount = transactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
   const totalTrips = transactions.length;
 
-  res.json({ transactions, totalTrips, totalAmount });
+  res.json({ status: 'success', data: { transactions, totalTrips, totalAmount } });
 });
+
+router.post('/login', async (req, res) => {});
+router.post('/signup', async (req, res) => {});
 
 // Routes for grabbing presto data:
 router.post('/presto/login', async (req, res) => {
