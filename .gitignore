@@ -3,3 +3,4 @@ server/node_modules
 .vscode/
 .env
 server/src/test.js
+client/.next
