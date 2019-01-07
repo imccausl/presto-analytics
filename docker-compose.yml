@@ -1,15 +1,15 @@
-version: '3'
+version: "3"
 
 services:
-  app:
+  backend:
     env_file: .env
-    build: ./
+    build: ./server
     image: presto-analytics:dev
     depends_on:
       - postgres
     ports:
-      - '3333:3333'
-      - '9229:9229'
+      - "3333:3333"
+      - "9229:9229"
     volumes:
       - ./:/app
   postgres:
@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_DB: analytics
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - db-volume:/var/lib/postgresql
 
