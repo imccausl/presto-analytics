@@ -35,12 +35,16 @@ module.exports = (sequelize, DataTypes) => {
     try {
       const hashedPass = await bcrypt.hash(user.password, 10);
       user.password = hashedPass; // eslint-disable-line
+      return user;
     } catch (err) {
       console.log(err);
+      return err;
     }
   });
 
-  User.validPassword = async password => bcrypt.compare(password, this.password);
+  User.prototype.validatePassword = async function validatePassword(password) {
+    return bcrypt.compare(password, this.password);
+  };
 
   return User;
 };
