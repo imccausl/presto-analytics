@@ -14,7 +14,7 @@ const app = express();
 const http = Server(app);
 
 // set up db interface
-const sequelize = new Sequelize('analytics', 'postgres', 'postgres', dbConfig);
+const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
 
 // db models
 const User = require('./db/models/user')(sequelize, Sequelize);
@@ -27,10 +27,10 @@ const transactionRoutes = require('./routes/transactions')(Transaction, sequeliz
 
 const PORT = process.env.SERVER_PORT || 3333;
 
-// sequelize
-//   .sync({ force: true })
-//   .then(() => console.log('Database and tables created!'))
-//   .catch(err => console.log('Error:', err));
+sequelize
+  .sync()
+  .then(() => console.log('Database and tables created!'))
+  .catch(err => console.log('Error:', err));
 
 User.hasMany(Transaction, { foreignKey: 'userId', sourceKey: 'id' });
 
