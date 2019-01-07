@@ -4,14 +4,30 @@ services:
   backend:
     env_file: .env
     build: ./server
-    image: presto-analytics:dev
+    image: pa-backend:dev
     depends_on:
       - postgres
+    expose:
+      - ${SERVER_PORT}
     ports:
-      - "3333:3333"
+      - ${SERVER_PORT}:${SERVER_PORT}
       - "9229:9229"
     volumes:
-      - ./:/app
+      - ./server:/opt/backend
+
+  app:
+    env_file: .env
+    build: ./client
+    image: pa-frontend:dev
+    expose:
+      - ${CLIENT_PORT}
+    ports:
+      - ${CLIENT_PORT}:${CLIENT_PORT}
+    volumes:
+      - ./client:/opt/app
+    links:
+      - backend
+
   postgres:
     env_file: .env
     image: postgres:11.1-alpine
