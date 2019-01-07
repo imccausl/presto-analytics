@@ -10,7 +10,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
     const transactions = await Transaction.findAll({
       where: {
-        userId: 1,
+        userId: req.userId || 1, // temporary || for testing until the client is up and running
         date: {
           [Sequelize.Op.gte]: new Date(searchDateMin),
           [Sequelize.Op.lt]: new Date(searchDateMax)
