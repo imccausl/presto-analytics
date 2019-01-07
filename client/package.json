@@ -4,7 +4,7 @@
   "description": "The front end of the presto-analytics app",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3003",
     "build": "next build",
     "start": "next start"
   },
