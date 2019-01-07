@@ -59,7 +59,7 @@ app.use(async (req, res, next) => {
       where: {
         id: req.userId
       },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'permissions']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'permission']
     });
 
     req.user = user;
