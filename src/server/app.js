@@ -52,7 +52,30 @@ router.get('/transactions/:year/:month', async (req, res) => {
   res.json({ status: 'success', data: { transactions, totalTrips, totalAmount } });
 });
 
-router.post('/login', async (req, res) => {});
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      where: {
+        email
+      }
+    });
+
+    if (!user) {
+      throw new Error("User doesn't exist");
+    }
+    const isPasswordValid = await user.validatePassword(password);
+
+    if (!isPasswordValid) {
+      throw new Error('Invalid password');
+    }
+
+    res.json({ status: 'success', data: user });
+  } catch (err) {
+    res.json({ status: 'failed', error: err });
+  }
+});
 router.post('/signup', async (req, res) => {
   const { body } = req;
   const { firstName, lastName, password } = body;
