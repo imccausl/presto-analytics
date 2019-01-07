@@ -1,0 +1,22 @@
+{
+  "name": "presto-analytics-app",
+  "version": "1.0.0",
+  "description": "The front end of the presto-analytics app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "presto",
+    "analytics",
+    "react",
+    "transit",
+    "cost"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imccausl/presto-analytics.git"
+  },
+  "author": "Ian McCausland",
+  "license": "MIT"
+}
