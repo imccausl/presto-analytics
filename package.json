@@ -2,9 +2,9 @@
   "name": "presto-analytics",
   "version": "1.0.0",
   "description": "Scrape data from presto account to report some usage statistics",
-  "main": "src/server/app.js",
+  "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon -e js -x node --inspect src/server/app.js"
+    "dev": "nodemon -e js -x node --inspect src/app.js"
   },
   "keywords": [
     "presto",
