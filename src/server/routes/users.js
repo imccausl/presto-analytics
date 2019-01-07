@@ -1,4 +1,7 @@
+require('dotenv').config({ path: '../../.env' });
+
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const routes = User => {
   const router = express.Router();
@@ -21,6 +24,13 @@ const routes = User => {
       if (!isPasswordValid) {
         throw new Error('Invalid password');
       }
+
+      // create JWT token for logged in user
+      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 356
+      });
 
       res.json({ status: 'success', data: user });
     } catch (err) {

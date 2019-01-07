@@ -1,6 +1,8 @@
 require('dotenv').config();
 
+const cookieParser = require('cookie-parser');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
@@ -25,15 +27,48 @@ const transactionRoutes = require('./routes/transactions')(Transaction, sequeliz
 
 const PORT = process.env.SERVER_PORT || 3333;
 
-sequelize
-  .sync({ force: true })
-  .then(() => console.log('Database and tables created!'))
-  .catch(err => console.log('Error:', err));
+// sequelize
+//   .sync({ force: true })
+//   .then(() => console.log('Database and tables created!'))
+//   .catch(err => console.log('Error:', err));
 
 User.hasMany(Transaction, { foreignKey: 'userId', sourceKey: 'id' });
 
-// Express Middleware
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// decode the userId on incoming requests
+// if the jwt exists
+app.use((req, res, next) => {
+  const token = req.cookies;
+
+  if (token) {
+    const { userId } = jwt.verify(token, process.env.APP_SECRET);
+    req.userId = userId;
+  }
+
+  next();
+});
+// populate the user on each request if UserId exists
+app.use(async (req, res, next) => {
+  if (!req.userId) return next();
+
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.userId
+      },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'permissions']
+    });
+
+    req.user = user;
+    return next();
+  } catch (err) {
+    console.log(err);
+    return next();
+  }
+});
 
 // routes
 app.use('/api/v1', userRoutes);
