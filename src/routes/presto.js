@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { login, getBasicAccountInfo, getUsageReport } = require('../../presto');
+const { login, getBasicAccountInfo, getUsageReport } = require('../../lib/presto');
 
 const routes = Transaction => {
   const router = express.Router();

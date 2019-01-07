@@ -7,7 +7,7 @@ const { Server } = require('http');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
 
-const dbConfig = require('../db/config');
+const dbConfig = require('./db/config');
 
 // set up express server
 const app = express();
@@ -17,13 +17,13 @@ const http = Server(app);
 const sequelize = new Sequelize('analytics', 'postgres', 'postgres', dbConfig);
 
 // db models
-const User = require('../db/models/user')(sequelize, Sequelize);
-const Transaction = require('../db/models/transaction')(sequelize, Sequelize, User);
+const User = require('./db/models/user')(sequelize, Sequelize);
+const Transaction = require('./db/models/transaction')(sequelize, Sequelize, User);
 
 // routes
-const userRoutes = require('../routes/users')(User);
-const prestoRoutes = require('../routes/presto')(Transaction);
-const transactionRoutes = require('../routes/transactions')(Transaction, sequelize, Sequelize);
+const userRoutes = require('./routes/users')(User);
+const prestoRoutes = require('./routes/presto')(Transaction);
+const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 
 const PORT = process.env.SERVER_PORT || 3333;
 
