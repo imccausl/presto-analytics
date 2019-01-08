@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Server } = require('http');
@@ -26,6 +27,10 @@ const prestoRoutes = require('./routes/presto')(Transaction);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 
 const PORT = process.env.SERVER_PORT || 3333;
+const corsOptions = {
+  origin: 'http://localhost:3003',
+  credentials: true
+};
 
 sequelize
   .sync()
@@ -35,6 +40,8 @@ sequelize
 User.hasMany(Transaction, { foreignKey: 'userId', sourceKey: 'id' });
 
 // Middleware
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
