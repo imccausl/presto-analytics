@@ -24,7 +24,8 @@
   "dependencies": {
     "next": "^7.0.2",
     "react": "^16.7.0",
-    "react-dom": "^16.7.0"
+    "react-dom": "^16.7.0",
+    "react-fetch-component": "^7.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
