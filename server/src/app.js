@@ -63,6 +63,7 @@ app.use(async (req, res, next) => {
     });
 
     req.user = user;
+    console.log(`User ${user} logged in!`);
     return next();
   } catch (err) {
     console.log(err);
