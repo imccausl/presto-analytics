@@ -1,5 +1,3 @@
-import 'semantic-ui-css/semantic.min.css';
-
 import {
   Input, Icon, Button, Card,
 } from 'semantic-ui-react';
@@ -43,7 +41,13 @@ export default class Login extends React.Component {
                   placeholder="Email"
                 >
                   <Icon name="at" />
-                  <input disabled={loading} type="text" name="email" onChange={this.saveToState} />
+                  <input
+                    disabled={loading}
+                    type="text"
+                    name="email"
+                    onChange={this.saveToState}
+                    value={email}
+                  />
                 </Input>
                 <Input fluid iconPosition="left" placeholder="Password">
                   <Icon name="key" />
@@ -52,6 +56,7 @@ export default class Login extends React.Component {
                     type="password"
                     name="password"
                     onChange={this.saveToState}
+                    value={password}
                   />
                 </Input>
               </Card.Content>
