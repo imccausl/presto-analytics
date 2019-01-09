@@ -22,10 +22,11 @@ export default class Login extends Component {
 
   render() {
     const { email, password } = this.state;
+    console.log(password.length);
     return (
       <Fetch manual url={`${API.root}${API.login}`} options={API.send({ email, password })}>
         {({ fetch, loading, error }) => {
-          console.log(error);
+
           return (
             <Card centered raised style={{ width: '400px' }}>
               <Card.Content>
@@ -65,7 +66,7 @@ export default class Login extends Component {
                   labelPosition="right"
                   icon="chevron circle right"
                   content="Login"
-                  disabled={loading}
+                  disabled={loading || (!email.length || !password.length)}
                   loading={loading}
                   onClick={() => {
                     fetch();
