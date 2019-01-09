@@ -4,3 +4,5 @@ server/node_modules
 .env
 server/src/test.js
 client/.next
+client/package-lock.json
+server/package-lock.json
