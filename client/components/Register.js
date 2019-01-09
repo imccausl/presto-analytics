@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import {
   Input, Icon, Button, Card,
 } from 'semantic-ui-react';
@@ -5,7 +6,7 @@ import Fetch from 'react-fetch-component';
 
 import API from '../util/api';
 
-export default class Register extends React.Component {
+export default class Register extends Component {
   constructor() {
     super();
 
@@ -38,10 +39,16 @@ export default class Register extends React.Component {
           passwordAgain,
         })}
       >
-        {({
-          fetch, loading, data, error,
-        }) => {
-          console.log(error);
+        {({ fetch, loading, error }) => {
+          if (error) {
+            return (
+              <div>
+                ERROR:
+                {error.message}
+              </div>
+            );
+          }
+
           return (
             <Card centered raised style={{ width: '400px' }}>
               <Card.Content>

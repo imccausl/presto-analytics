@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import {
   Input, Icon, Button, Card,
 } from 'semantic-ui-react';
@@ -5,7 +6,7 @@ import Fetch from 'react-fetch-component';
 
 import API from '../util/api';
 
-export default class Login extends React.Component {
+export default class Login extends Component {
   constructor() {
     super();
 
@@ -23,9 +24,7 @@ export default class Login extends React.Component {
     const { email, password } = this.state;
     return (
       <Fetch manual url={`${API.root}${API.login}`} options={API.send({ email, password })}>
-        {({
-          fetch, loading, data, error,
-        }) => {
+        {({ fetch, loading, error }) => {
           console.log(error);
           return (
             <Card centered raised style={{ width: '400px' }}>
