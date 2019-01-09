@@ -38,13 +38,17 @@ const routes = User => {
     }
   });
 
-  router.post('/signup', async (req, res) => {
+  router.post('/signup', async (req, res, next) => {
     const { body } = req;
-    const { firstName, lastName, password } = body;
-
-    body.email = body.email.toLowerCase();
+    const { firstName, lastName, password, passwordAgain } = body;
 
     try {
+      if (password !== passwordAgain) {
+        throw new Error('Passwords do not match!');
+      }
+
+      body.email = body.email.toLowerCase();
+
       const user = await User.create({
         firstName,
         lastName,
@@ -55,7 +59,7 @@ const routes = User => {
 
       res.json({ status: 'success', message: `User ${firstName} ${lastName} created.`, data: user });
     } catch (err) {
-      res.json({ status: 'error', error: err });
+      next(err);
     }
   });
 
