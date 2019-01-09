@@ -133,7 +133,15 @@ export default class Register extends Component {
                   labelPosition="right"
                   icon="chevron circle right"
                   content="Sign Up"
-                  disabled={loading}
+                  disabled={
+                    loading
+                    || (!firstName
+                      || !lastName
+                      || !email
+                      || !password
+                      || !passwordAgain
+                      || password !== passwordAgain)
+                  }
                   loading={loading}
                   onClick={() => {
                     fetch();
