@@ -57,6 +57,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 // populate the user on each request if UserId exists
 app.use(async (req, res, next) => {
   if (!req.userId) return next();
@@ -82,6 +83,15 @@ app.use(async (req, res, next) => {
 app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
+
+// handle errors as json
+app.use((err, req, res) => {
+  console.error(err.stack);
+  res.send({
+    error: 'error',
+    message: err.message
+  });
+});
 
 app.get('/', (req, res) => {
   res.send('PrestoAnalytics server running...');
