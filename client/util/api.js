@@ -37,7 +37,7 @@ const API = {
       searchMonth = year;
     }
 
-    return `/${searchYear}${searchMonth}`;
+    return `/transactions/${searchYear}/${searchMonth}`;
   },
 
   prestoUsage: year => `/presto/usage/${year}`,
