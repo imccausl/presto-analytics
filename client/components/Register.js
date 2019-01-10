@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+import NProgress from 'nprogress';
 import {
   Input, Icon, Button, Card,
 } from 'semantic-ui-react';
@@ -39,8 +41,15 @@ export default class Register extends Component {
           passwordAgain,
         })}
       >
-        {({ fetch, loading, error }) => {
+        {({
+          fetch, loading, data, error,
+        }) => {
+          if (data) {
+            NProgress.done();
+          }
+
           if (error) {
+            NProgress.done();
             return (
               <div>
                 ERROR:
@@ -144,7 +153,9 @@ export default class Register extends Component {
                   }
                   loading={loading}
                   onClick={() => {
+                    NProgress.start();
                     fetch();
+
                     this.setState({
                       firstName: '',
                       lastName: '',

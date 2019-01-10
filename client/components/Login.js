@@ -26,6 +26,10 @@ export default class Login extends Component {
     return (
       <Fetch manual url={`${API.root}${API.login}`} options={API.send({ email, password })}>
         {({ fetch, loading, error }) => {
+          if (error) {
+            console.log(error);
+            return <div>{error.message}</div>;
+          }
 
           return (
             <Card centered raised style={{ width: '400px' }}>
