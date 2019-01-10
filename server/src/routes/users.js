@@ -6,6 +6,27 @@ const jwt = require('jsonwebtoken');
 const routes = User => {
   const router = express.Router();
 
+  router.get('/me', async (req, res, next) => {
+    try {
+      if (!req.userId) {
+        throw new Error('No user logged in');
+      }
+
+      const user = await User.findOne({
+        where: {
+          id: req.userId
+        },
+        attributes: ['id', 'firstName', 'lastName', 'email', 'permission']
+      });
+
+      console.log(`User ${user} logged in!`);
+      res.json({ status: 'success', data: user });
+    } catch (err) {
+      console.error(err.stack);
+      return next(err);
+    }
+  });
+
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
