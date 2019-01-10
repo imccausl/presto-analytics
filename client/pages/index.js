@@ -1,4 +1,5 @@
-import NProgress from 'nprogress';
+import Router from 'next/router';
+
 import AuthUser from '../components/AuthUser';
 
 export default () => (
@@ -6,7 +7,11 @@ export default () => (
     <AuthUser>
       {({ data, error, loading }) => {
         if (!loading) {
-          console.log(data);
+          if (data) {
+            Router.push('/dashboard');
+          }
+
+          if (error) Router.push('/login');
         }
       }}
     </AuthUser>
