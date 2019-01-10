@@ -1,14 +1,31 @@
 const API = {
   root: 'http://localhost:3333/api/v1',
-  send: (body, method = 'POST') => ({
-    method,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  }),
+  send: (body, method = 'POST') => {
+    let reqMethod = method;
 
+    if (typeof body === 'string') {
+      reqMethod = body;
+    }
+
+    const sendData = {
+      reqMethod,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (reqMethod.toLowerCase() !== 'get') {
+      sendData.body = JSON.stringify(body);
+    }
+
+    return sendData;
+  },
+
+  currentUser: {
+    method: 'GET',
+    endpoint: '/me',
+  },
   login: '/login',
   register: '/signup',
   monthlyTransactions: (year, month) => {
