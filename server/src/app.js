@@ -58,27 +58,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// populate the user on each request if UserId exists
-app.use(async (req, res, next) => {
-  if (!req.userId) return next();
-
-  try {
-    const user = await User.findOne({
-      where: {
-        id: req.userId
-      },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'permission']
-    });
-
-    req.user = user;
-    console.log(`User ${user} logged in!`);
-    return next();
-  } catch (err) {
-    console.log(err);
-    return next();
-  }
-});
-
 // routes
 app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
