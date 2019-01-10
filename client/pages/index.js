@@ -1,7 +1,14 @@
-import HeaderBar from '../components/styled/HeaderBar';
+import NProgress from 'nprogress';
+import AuthUser from '../components/AuthUser';
 
 export default () => (
   <>
-    <HeaderBar />
+    <AuthUser>
+      {({ data, error, loading }) => {
+        if (!loading) {
+          console.log(data);
+        }
+      }}
+    </AuthUser>
   </>
 );
