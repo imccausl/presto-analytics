@@ -8,7 +8,7 @@ const API = {
     }
 
     const sendData = {
-      reqMethod,
+      method: reqMethod,
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ const API = {
       searchMonth = year;
     }
 
-    return `/${searchYear}{searchMonth}`;
+    return `/${searchYear}${searchMonth}`;
   },
 
   prestoUsage: year => `/presto/usage/${year}`,
