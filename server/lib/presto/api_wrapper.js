@@ -1,5 +1,5 @@
 const { login, isLoggedIn } = require('./auth');
-const { getBasicAccountInfo, getUsageReport } = require('./activity');
+const { getBasicAccountInfo, getUsageReport, getActivityByMonth, getActivityByDateRange } = require('./activity');
 
 module.exports = requestInstance => ({
   // auth.js functions
@@ -8,5 +8,7 @@ module.exports = requestInstance => ({
 
   // activity.js functions
   getBasicAccountInfo: () => getBasicAccountInfo(requestInstance),
-  getUsageReport: year => getUsageReport(requestInstance, year)
+  getUsageReport: year => getUsageReport(requestInstance, year),
+  // getActivityByMonth: (year, month) => getActivityByMonth(requestInstance, year, month),
+  getActivityByDateRange: (from, to) => getActivityByDateRange(requestInstance, from, to)
 });
