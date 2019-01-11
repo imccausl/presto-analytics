@@ -26,6 +26,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
+    balance: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '0.00'
+    },
+    cardNumber: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     permission: {
       type: DataTypes.ARRAY(DataTypes.TEXT)
     }
