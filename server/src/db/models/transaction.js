@@ -19,7 +19,16 @@ module.exports = (sequelize, DataTypes, UserModel) =>
     type: {
       type: DataTypes.STRING
     },
+    serviceClass: {
+      type: DataTypes.STRING
+    },
+    discount: {
+      type: DataTypes.STRING
+    },
     amount: {
+      type: DataTypes.STRING
+    },
+    balance: {
       type: DataTypes.STRING
     }
   });
