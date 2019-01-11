@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { login, getBasicAccountInfo, getUsageReport } = require('../../lib/presto');
+const { login, getBasicAccountInfo, getActivityByDateRange } = require('../../lib/presto');
 
 const routes = Transaction => {
   const router = express.Router();
@@ -24,22 +24,26 @@ const routes = Transaction => {
     }
   });
 
-  router.get('/usage/:year', async (req, res) => {
+  router.post('/usage', async (req, res) => {
     try {
-      const usage = await getUsageReport(req.params.year);
+      const { from, to } = req.body;
+      const usage = await getActivityByDateRange(from, new Date().toLocaleDateString());
       // const testUser = await User.findOne({ where: { firstName: 'test' } });
 
-      console.log(`Getting usage report for ${req.params.year}...`);
+      console.log(`Getting activity from ${from} to ${to || new Date().toLocaleDateString()}...`);
       res.send(usage);
       console.log(`Saving usage to db...`);
       usage.forEach(async transaction => {
         await Transaction.create({
-          userId: 1,
+          userId: req.userId,
           date: new Date(transaction.date),
           agency: transaction.agency,
           location: transaction.location,
           type: transaction.type,
-          amount: transaction.amount.replace(/[($)]/g, '')
+          serviceClass: transaction.serviceClass,
+          discount: transaction.discount,
+          amount: transaction.amount,
+          balance: transaction.balance
         });
       });
     } catch (error) {
