@@ -1,6 +1,7 @@
 import AuthUser from './AuthUser';
 import Summary from './dashboard/Summary';
 import MonthlyStats from './dashboard/MonthlyStats';
+import Transactions from './dashboard/Transactions';
 
 export default () => (
   <AuthUser>
@@ -12,7 +13,7 @@ export default () => (
       if (!loading) {
         return (
           <>
-            <MonthlyStats />
+            <MonthlyStats month="11" year="2018" />
             <Summary user={data.data} />
           </>
         );
