@@ -40,7 +40,7 @@ const API = {
     return `/transactions/${searchYear}/${searchMonth}`;
   },
 
-  prestoUsage: year => `/presto/usage/${year}`,
+  prestoUsage: '/presto/usage',
 };
 
 export default API;
