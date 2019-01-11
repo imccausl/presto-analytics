@@ -65,11 +65,15 @@ app.use('/api/v1/transactions', transactionRoutes);
 
 // handle errors as json
 app.use((err, req, res) => {
-  console.error(err.stack);
-  res.send({
-    error: 'error',
-    message: err.message
-  });
+  try {
+    console.error(err.stack);
+    res.send({
+      error: 'error',
+      message: err.message
+    });
+  } catch (error) {
+    console.error(error.stack);
+  }
 });
 
 app.get('/', (req, res) => {
