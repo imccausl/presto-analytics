@@ -1,3 +1,6 @@
+import { Dimmer, Loader } from 'semantic-ui-react';
+import styled from 'styled-components';
+
 import AuthUser from './AuthUser';
 import Summary from './dashboard/Summary';
 import MonthlyStats from './dashboard/MonthlyStats';
@@ -19,7 +22,11 @@ export default () => (
         );
       }
 
-      return <div>Loading...</div>;
+      return (
+        <Dimmer active>
+          <Loader />
+        </Dimmer>
+      );
     }}
   </AuthUser>
 );
