@@ -22,7 +22,7 @@ const User = require('./db/models/user')(sequelize, Sequelize);
 const Transaction = require('./db/models/transaction')(sequelize, Sequelize, User);
 
 // routes
-const userRoutes = require('./routes/users')(User);
+const userRoutes = require('./routes/users')(User, Transaction, sequelize, Sequelize);
 const prestoRoutes = require('./routes/presto')(Transaction);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 
