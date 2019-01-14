@@ -1,66 +1,103 @@
+import moment from 'moment';
+import { Segment } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
 import {
-  Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  Legend,
+  Tooltip,
 } from 'recharts';
-
 import API from '../../util/api';
 
 export default (props) => {
-  const { month, year } = props;
+  const { transactions } = props;
+
+  const byDate = {};
+  const currYear = new Date(transactions[0].date).getFullYear();
+  const currMonth = new Date(transactions[0].date).getMonth() + 1;
+  const lastDay = new Date(transactions[0].date).getDate();
+
+  for (let i = 1; i <= lastDay; i += 1) {
+    const dateString = `${i < 10 ? `0${i}` : i}/${
+      currMonth < 10 ? `0${currMonth}` : currMonth
+    }/${currYear}`;
+
+    byDate[dateString] = { amount: 0, trips: 0 };
+  }
+
+  transactions.forEach((item) => {
+    const date = new Date(item.date).toLocaleDateString();
+    const amount = parseFloat(item.amount);
+
+    byDate[date].amount += amount;
+    byDate[date].trips += 1;
+  });
+
+  const breakdown = Object.keys(byDate).map((key) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currDate = moment(key, 'DD/MM/YYYY');
+
+    return {
+      date: currDate.format('D'),
+      dayOfWeek: days[currDate.day()],
+      amount: byDate[key].amount,
+      trips: byDate[key].trips,
+    };
+  });
+  console.log(breakdown);
 
   return (
-    <Fetch url={`${API.root}${API.monthlyTransactions(year, month)}`} options={API.send('GET')}>
-      {({ data, error, loading }) => {
-        console.log(data);
-        if (!loading && !error) {
-          const byDate = {};
+    <ResponsiveContainer height={200}>
+      <LineChart
+        margin={{
+          top: 20,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+        data={breakdown}
+      >
+        <CartesianGrid stroke="#EBEBEB" vertical={false} />
 
-          data.data.transactions.forEach((item) => {
-            const date = new Date(item.date).toDateString();
-            const amount = parseFloat(item.amount);
-
-            if (!byDate[date]) {
-              byDate[date] = { amount, trips: 1 };
-            } else {
-              byDate[date].amount += amount;
-              byDate[date].trips += 1;
-            }
-          });
-
-          const transactions = Object.keys(byDate).map((key) => {
-            const days = ['S', 'M', 'T', 'W', 'TH', 'F', 'SA'];
-            const currDate = new Date(key);
-
-            return {
-              date: currDate.getDate(),
-              amount: byDate[key].amount,
-              trips: byDate[key].trips,
-            };
-          });
-          console.log(transactions);
-
-          return (
-            <>
-              <div>
-Total: $
-                {data.data.totalAmount || data.data.totalTrips * 3}
-              </div>
-              <div>
-                Trips:
-                {data.data.totalTrips}
-              </div>
-              <LineChart width={800} height={200} data={transactions}>
-                <Line type="monotone" dataKey="trips" stroke="#8884d8" />
-                <Line type="monotone" dataKey="amount" stroke="#ff5500" />
-                <CartesianGrid stroke="#f5f5f5" />
-                <YAxis dataKey="amount" />
-                <XAxis dataKey="date" scaleToFit />
-                <Tooltip />
-              </LineChart>
-            </>
-          );
-        }
-      }}
-    </Fetch>
+        <Line
+          dataKey="trips"
+          type="monotone"
+          stroke="#3333cc"
+          strokeWidth={5}
+          dot={{
+            stroke: 'white',
+            strokeWidth: 3,
+            fill: '#3333cc',
+            r: 7,
+          }}
+        />
+        <Line
+          dataKey="amount"
+          type="monotone"
+          stroke="#333399"
+          strokeWidth={5}
+          dot={{
+            stroke: 'white',
+            strokeWidth: 3,
+            fill: '#333399',
+            r: 7,
+          }}
+        />
+        <YAxis
+          tickMargin={20}
+          dataKey="amount"
+          tickLine={false}
+          axisLine={false}
+          stroke="#C4C4C4"
+        />
+        <XAxis dataKey="date" tickLine={false} axisLine={false} stroke="#C4C4C4" />
+        <Tooltip />
+        <Legend />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };
