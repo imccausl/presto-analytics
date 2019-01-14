@@ -24,13 +24,29 @@ const routes = Transaction => {
     }
   });
 
-  router.post('/usage', async (req, res) => {
+  router.post('/usage', async (req, res, next) => {
     try {
-      const { from, to } = req.body;
-      const usage = await getActivityByDateRange(from, new Date().toLocaleDateString());
+      let { from, to } = req.body;
+      const lastTransactionDate = await Transaction.max('date', {
+        where: {
+          userId: req.userId
+        }
+      });
+
+      console.log('lastTransactionDate:', !!lastTransactionDate, lastTransactionDate.toLocaleDateString());
+
+      if (lastTransactionDate) {
+        from = new Date(lastTransactionDate).toLocaleDateString();
+      }
+
+      if (!to) {
+        to = new Date().toLocaleDateString();
+      }
+
+      const usage = await getActivityByDateRange(from, to);
       // const testUser = await User.findOne({ where: { firstName: 'test' } });
 
-      console.log(`Getting activity from ${from} to ${to || new Date().toLocaleDateString()}...`);
+      console.log(`Getting activity from ${from} to ${to}...`);
       res.send(usage);
       console.log(`Saving usage to db...`);
       usage.forEach(async transaction => {
@@ -47,7 +63,7 @@ const routes = Transaction => {
         });
       });
     } catch (error) {
-      res.send({ error });
+      next(error);
     }
   });
 
