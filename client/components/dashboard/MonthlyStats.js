@@ -17,6 +17,7 @@ export default (props) => {
   const { transactions } = props;
 
   const byDate = {};
+  const domain = [0, 0];
   const currYear = new Date(transactions[0].date).getFullYear();
   const currMonth = new Date(transactions[0].date).getMonth() + 1;
   const lastDay = new Date(transactions[0].date).getDate();
@@ -41,6 +42,8 @@ export default (props) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const currDate = moment(key, 'DD/MM/YYYY');
 
+    domain[1] = domain[1] < byDate[key].trips ? byDate[key].trips : domain[1];
+    domain[1] = domain[1] < byDate[key].amount ? byDate[key].amount : domain[1];
     return {
       date: currDate.format('D'),
       dayOfWeek: days[currDate.day()],
@@ -48,7 +51,7 @@ export default (props) => {
       trips: byDate[key].trips,
     };
   });
-  console.log(breakdown);
+  console.log(domain);
 
   return (
     <ResponsiveContainer height={200}>
@@ -88,6 +91,9 @@ export default (props) => {
           }}
         />
         <YAxis
+          allowDecimals={false}
+          type="number"
+          domain={domain}
           tickMargin={20}
           dataKey="amount"
           tickLine={false}
