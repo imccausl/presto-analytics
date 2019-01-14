@@ -5,10 +5,15 @@ const jwt = require('jsonwebtoken');
 
 const { login, getBasicAccountInfo } = require('../../lib/presto');
 
-const routes = User => {
+const routes = (User, Transaction, sequelize, Sequelize) => {
   const router = express.Router();
 
   router.get('/me', async (req, res, next) => {
+    const thisYear = new Date().getFullYear();
+    const thisMonth = new Date().getMonth() + 1;
+    const searchDateMin = `${thisYear}-${thisMonth}-01`;
+    const searchDateMax = thisMonth === '12' ? `${parseInt(thisYear, 10) + 1}-01-01` : `${thisYear}-${parseInt(thisMonth, 10) + 1}-01`;
+
     let accountInfo = {};
 
     try {
@@ -22,6 +27,21 @@ const routes = User => {
         },
         attributes: ['id', 'firstName', 'lastName', 'email', 'cardNumber', 'balance', 'permission']
       });
+
+      const currTransactions = await Transaction.findAll({
+        where: {
+          userId: req.userId,
+          type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
+          date: {
+            [Sequelize.Op.gte]: new Date(searchDateMin),
+            [Sequelize.Op.lt]: new Date(searchDateMax)
+          }
+        },
+        order: sequelize.literal('date DESC')
+      });
+
+      const totalAmount = currTransactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
+      const totalTrips = currTransactions.length;
 
       if (!user.cardNumber) {
         console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
@@ -38,7 +58,7 @@ const routes = User => {
       }
 
       console.log(`User ${user.firstName} logged in!`);
-      res.json({ status: 'success', data: user });
+      res.json({ status: 'success', data: { user, currentMonth: { currTransactions, totalAmount, totalTrips } } });
     } catch (err) {
       console.error(err.stack);
       return next(err);
