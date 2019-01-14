@@ -73,7 +73,7 @@ const Container = styled.div`
     }
 
     .main-cards {
-      column-count: 2;
+      column-count: 3;
       column-gap: 20px;
       margin: 20px;
       z-index: 10;
@@ -198,15 +198,16 @@ export default class Dashboard extends Component {
                             <div className="main-overview">
                               <MonthlyStats transactions={payload.data.data.transactions} />
                             </div>
+
                             <div className="main-cards">
-                              <div className="card">
-                                <Statistic label="Taps" value={payload.data.data.totalTrips} />
-                              </div>
                               <div className="card">
                                 <Statistic
                                   label="Spent"
                                   value={`$${payload.data.data.totalAmount}`}
                                 />
+                              </div>
+                              <div className="card">
+                                <Statistic label="Taps" value={payload.data.data.totalTrips} />
                               </div>
                             </div>
                           </div>
@@ -250,7 +251,7 @@ export default class Dashboard extends Component {
                         console.log(selectedYear, selectedMonth);
                         this.setState({
                           month: selectedMonth - 1,
-                          year: selectedYear,
+                          year: selectedYear || thisYear,
                           open: false,
                         });
                       }}
