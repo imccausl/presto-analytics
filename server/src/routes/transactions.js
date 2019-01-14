@@ -12,13 +12,13 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or('Fare Payment', 'Transit Pass Payment'),
+          type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
           date: {
             [Sequelize.Op.gte]: new Date(searchDateMin),
             [Sequelize.Op.lt]: new Date(searchDateMax)
           }
         },
-        order: sequelize.literal('date ASC')
+        order: sequelize.literal('date DESC')
       });
 
       const totalAmount = transactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
