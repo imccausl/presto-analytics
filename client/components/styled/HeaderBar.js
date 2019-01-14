@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Bar = styled.div`
   width: 100%;
@@ -6,4 +6,4 @@ const Bar = styled.div`
   background: #4e54c8;
 `;
 
-export default () => <Bar />;
+export default props => <Bar>{props.children}</Bar>;
