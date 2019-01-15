@@ -1,9 +1,10 @@
-import styled, { ThemeProvider, injectGlobal } from 'styled-components';
-import PropTypes from 'prop-types';
+import { Dropdown, Icon } from "semantic-ui-react";
+import styled, { ThemeProvider, injectGlobal } from "styled-components";
+import PropTypes from "prop-types";
 
-import Meta from './Meta';
-import HeaderBar from './styled/HeaderBar';
-import SideBar from './SideBar';
+import Meta from "./Meta";
+import HeaderBar from "./styled/HeaderBar";
+import SideBar from "./SideBar";
 
 const Content = styled.div`
   position: relative;
@@ -11,25 +12,57 @@ const Content = styled.div`
   z-index: 10;
 `;
 
-const Container = styled.div`
+const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  justify-content: stretch;
+  justify-content: ${props => props.justify || "stretch"};
+  padding: ${props => props.padding || "0"};
 `;
-const Page = (props) => {
+
+const trigger = (
+  <span>
+    <Icon name="user" /> Hello, Ian
+  </span>
+);
+
+const options = [
+  {
+    key: "user",
+    text: (
+      <span>
+        Signed in as <strong>Ian McCausland</strong>
+      </span>
+    )
+  },
+  { key: "Refresh", text: "Refresh Data" }
+];
+
+const Page = props => {
   const { children } = props;
 
   return (
     <>
       <Meta />
-      <Container>
+      <FlexRow>
         <SideBar />
         <Content>
-          <HeaderBar />
-          <div style={{ position: 'relative', zIndex: '10', marginTop: '-460px' }}>{children}</div>
+          <HeaderBar>
+            <FlexRow
+              justify="flex-end"
+              padding="5px 20px"
+              style={{ color: "white" }}
+            >
+              <Dropdown trigger={trigger} options={options} direction="left" />
+            </FlexRow>
+          </HeaderBar>
+          <div
+            style={{ position: "relative", zIndex: "10", marginTop: "-460px" }}
+          >
+            {children}
+          </div>
         </Content>
-      </Container>
+      </FlexRow>
     </>
   );
 };
