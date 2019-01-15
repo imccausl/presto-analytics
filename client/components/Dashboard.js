@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import AuthUser from './AuthUser';
 import Statistic from './dashboard/Statistic';
 import MonthlyStats from './dashboard/MonthlyStats';
+
 import Trips from './dashboard/Trips';
 
 import API from '../util/api';
@@ -79,15 +80,15 @@ const Container = styled.div`
       flex-direction: column;
       background: white;
       padding: 20px;
-      margin: 20px;
+      margin: 0 20px;
       border-radius: 0.5em;
       box-shadow: 0px 5px 20px -5px rgba(0, 0, 0, 0.45);
     }
 
     .main-cards {
-      column-count: 3;
+      column-count: 4;
       column-gap: 20px;
-      margin: 20px;
+      margin: 0 20px;
       z-index: 10;
     }
 
@@ -110,6 +111,26 @@ const panes = [
   { menuItem: 'Last Month' },
   { menuItem: { icon: 'calendar alternate outline' } },
 ];
+
+function getFareTypeCount(data) {
+  const sortedData = {};
+
+  data.forEach((item) => {
+    if (!sortedData[item.type]) {
+      sortedData[item.type] = 1;
+    } else {
+      sortedData[item.type] += 1;
+    }
+  });
+
+  const chartData = Object.keys(sortedData).map(key => ({
+    name: sortedData[key] === 1 ? key : `${key}s`,
+    value: sortedData[key],
+  }));
+
+  console.log(chartData);
+  return chartData
+}
 
 export default class Dashboard extends Component {
   state = {
@@ -224,6 +245,13 @@ export default class Dashboard extends Component {
                               <div className="card">
                                 <Statistic label="Taps" value={payload.data.data.totalTrips} />
                               </div>
+                              {
+                                getFareTypeCount(payload.data.data.transactions).map(item => (
+                                  <div className="card">
+                                    <Statistic label={item.name} value={item.value} />
+                                  </div>
+                                ))
+                              }
                             </div>
                           </div>
                         );
@@ -236,6 +264,7 @@ export default class Dashboard extends Component {
                       <Menu secondary vertical>
                         <Menu.Item name="Home" icon="home" active />
                         <Menu.Item name="Budget" icon="usd" />
+                        <Menu.Item name="Reload History" icon="credit card" />
                         <Menu.Item name="Trip History" icon="history" />
                         <Menu.Item name="All Transactions" icon="list" />
                       </Menu>
