@@ -1,4 +1,5 @@
 const express = require('express');
+const moment = require('moment');
 
 const { login, getBasicAccountInfo, getActivityByDateRange } = require('../../lib/presto');
 
@@ -27,6 +28,8 @@ const routes = Transaction => {
   router.post('/usage', async (req, res, next) => {
     try {
       let { from, to } = req.body;
+      let filteredUsage = [];
+
       const lastTransactionDate = await Transaction.max('date', {
         where: {
           userId: req.userId
@@ -36,20 +39,25 @@ const routes = Transaction => {
       console.log('lastTransactionDate:', !!lastTransactionDate, lastTransactionDate.toLocaleDateString());
 
       if (lastTransactionDate) {
-        from = new Date(lastTransactionDate).toLocaleDateString();
+        from = moment(lastTransactionDate).format('MM/DD/YYYY');
       }
 
       if (!to) {
-        to = new Date().toLocaleDateString();
+        to = moment().format('MM/DD/YYYY');
       }
 
       const usage = await getActivityByDateRange(from, to);
+      filteredUsage = usage;
       // const testUser = await User.findOne({ where: { firstName: 'test' } });
+      if (lastTransactionDate) {
+        filteredUsage = usage.filter(item => item.date !== lastTransactionDate);
+        console.log('filteredUsage:', filteredUsage);
+      }
 
       console.log(`Getting activity from ${from} to ${to}...`);
       res.send(usage);
       console.log(`Saving usage to db...`);
-      usage.forEach(async transaction => {
+      filteredUsage.forEach(async transaction => {
         await Transaction.create({
           userId: req.userId,
           date: new Date(transaction.date),
