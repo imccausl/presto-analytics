@@ -1,6 +1,6 @@
-import moment from "moment";
-import { Segment } from "semantic-ui-react";
-import Fetch from "react-fetch-component";
+import moment from 'moment';
+import { Segment } from 'semantic-ui-react';
+import Fetch from 'react-fetch-component';
 import {
   ResponsiveContainer,
   CartesianGrid,
@@ -9,11 +9,11 @@ import {
   XAxis,
   YAxis,
   Legend,
-  Tooltip
-} from "recharts";
-import API from "../../util/api";
+  Tooltip,
+} from 'recharts';
+import API from '../../util/api';
 
-export default props => {
+export default (props) => {
   const { transactions } = props;
 
   const byDate = {};
@@ -30,33 +30,25 @@ export default props => {
     byDate[dateString] = { amount: 0, trips: 0 };
   }
 
-  transactions.forEach(item => {
-    const date = moment(item.date).format("DD/MM/YYYY");
+  transactions.forEach((item) => {
+    const date = moment(item.date).format('DD/MM/YYYY');
     const amount = parseFloat(item.amount);
-    console.log("date string:", date);
+    console.log('date string:', date);
     byDate[date].amount += amount;
     byDate[date].trips += 1;
   });
 
-  const breakdown = Object.keys(byDate).map(key => {
-    const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday"
-    ];
-    const currDate = moment(key, "DD/MM/YYYY");
+  const breakdown = Object.keys(byDate).map((key) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currDate = moment(key, 'DD/MM/YYYY');
 
     domain[1] = domain[1] < byDate[key].trips ? byDate[key].trips : domain[1];
     domain[1] = domain[1] < byDate[key].amount ? byDate[key].amount : domain[1];
     return {
-      date: currDate.format("D"),
+      date: currDate.format('D'),
       dayOfWeek: days[currDate.day()],
       amount: byDate[key].amount,
-      trips: byDate[key].trips
+      trips: byDate[key].trips,
     };
   });
   console.log(domain);
@@ -68,7 +60,7 @@ export default props => {
           top: 20,
           right: 30,
           left: 0,
-          bottom: 0
+          bottom: 0,
         }}
         data={breakdown}
       >
@@ -80,10 +72,10 @@ export default props => {
           stroke="#3333cc"
           strokeWidth={5}
           dot={{
-            stroke: "white",
+            stroke: 'white',
             strokeWidth: 3,
-            fill: "#3333cc",
-            r: 7
+            fill: '#3333cc',
+            r: 7,
           }}
         />
         <Line
@@ -92,10 +84,10 @@ export default props => {
           stroke="#333399"
           strokeWidth={5}
           dot={{
-            stroke: "white",
+            stroke: 'white',
             strokeWidth: 3,
-            fill: "#333399",
-            r: 7
+            fill: '#333399',
+            r: 7,
           }}
         />
         <YAxis
@@ -108,12 +100,7 @@ export default props => {
           axisLine={false}
           stroke="#C4C4C4"
         />
-        <XAxis
-          dataKey="date"
-          tickLine={false}
-          axisLine={false}
-          stroke="#C4C4C4"
-        />
+        <XAxis dataKey="date" tickMargin={15} tickLine={false} axisLine={false} stroke="#C4C4C4" />
         <Tooltip />
         <Legend />
       </LineChart>
