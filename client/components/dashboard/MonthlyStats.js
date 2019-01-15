@@ -1,6 +1,5 @@
 import moment from 'moment';
 import { Segment } from 'semantic-ui-react';
-import Fetch from 'react-fetch-component';
 import {
   ResponsiveContainer,
   CartesianGrid,
@@ -11,7 +10,6 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
-import API from '../../util/api';
 
 export default (props) => {
   const { transactions } = props;
