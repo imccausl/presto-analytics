@@ -35,6 +35,7 @@ const options = [
       </span>
     )
   },
+  { key: "Details", text: "Account Details" },
   { key: "Refresh", text: "Refresh Data" }
 ];
 
