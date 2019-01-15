@@ -2,7 +2,7 @@ import { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 import {
-  Dimmer, Loader, Tab, Icon, Modal, Button,
+  Dimmer, Loader, Tab, Icon, Modal, Button, Menu,
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -25,6 +25,17 @@ const Container = styled.div`
     'sidenav main'
     'sidenav footer';
   height: 100vh;
+
+  .sidenav {
+    grid-area: sidenav;
+
+    .sidenav-container {
+      display: flex;
+      justify-content: stretch;
+      flex-direction: column;
+      padding: 20px;
+    }
+  }
 
   .main {
     grid-area: main;
@@ -215,6 +226,17 @@ export default class Dashboard extends Component {
                       }}
                     </Fetch>
                   </main>
+
+                  <nav className="sidenav">
+                    <div className="sidenav-container">
+                      <Menu secondary vertical>
+                        <Menu.Item name="Home" icon="home" active />
+                        <Menu.Item name="Budget" icon="usd" />
+                        <Menu.Item name="Trip History" icon="history" />
+                        <Menu.Item name="All Transactions" icon="list" />
+                      </Menu>
+                    </div>
+                  </nav>
                 </Container>
 
                 <Modal size="tiny" open={open} onClose={this.close}>
