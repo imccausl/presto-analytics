@@ -3,15 +3,13 @@ import { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 import {
-  Dimmer, Loader, Tab, Icon, Modal, Button, Menu,
+  Dimmer, Loader, Tab, Modal, Button,
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import AuthUser from './AuthUser';
 import Statistic from './dashboard/Statistic';
 import MonthlyStats from './dashboard/MonthlyStats';
-
-import Trips from './dashboard/Trips';
 
 import API from '../util/api';
 
@@ -21,23 +19,12 @@ const Container = styled.div`
   display: grid;
   box-sizing: border-box;
 
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: 1fr 50px;
   grid-template-areas:
-    'sidenav main'
-    'sidenav footer';
+    'main'
+    'footer';
   height: 100vh;
-
-  .sidenav {
-    grid-area: sidenav;
-
-    .sidenav-container {
-      display: flex;
-      justify-content: stretch;
-      flex-direction: column;
-      padding: 20px;
-    }
-  }
 
   .main {
     grid-area: main;
@@ -48,16 +35,11 @@ const Container = styled.div`
       display: flex;
       justify-content: flex-start;
       padding: 20px;
-      background: linear-gradient(to bottom, #4e54c8, #8f94fb);
-      height: 400px;
       color: white;
-      z-index: 1;
     }
 
     .main-overview-container {
-      z-index: 10;
       border-radius: 0.5em;
-      margin-top: -300px;
       margin-left: 30px;
       margin-right: 15px;
       border: 1px solid lightgrey;
@@ -89,7 +71,6 @@ const Container = styled.div`
       column-count: 4;
       column-gap: 20px;
       margin: 0 20px;
-      z-index: 10;
     }
 
     .card {
@@ -129,7 +110,7 @@ function getFareTypeCount(data) {
   }));
 
   console.log(chartData);
-  return chartData
+  return chartData;
 }
 
 export default class Dashboard extends Component {
@@ -189,9 +170,18 @@ export default class Dashboard extends Component {
                   <main className="main">
                     <div className="main-header">
                       <Statistic label="Card Balance" value={user.balance} />
-                      <Statistic label="Last Charge" value={`$${currentMonth.currTransactions[0].amount}`} />
-                      <Statistic label="Last Update" value={moment(currentMonth.currTransactions[0].date).fromNow()} />
-                      <Statistic label={currentMonth.currTransactions[0].location} value={currentMonth.currTransactions[0].type} />
+                      <Statistic
+                        label="Last Charge"
+                        value={`$${currentMonth.currTransactions[0].amount}`}
+                      />
+                      <Statistic
+                        label="Last Update"
+                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                      />
+                      <Statistic
+                        label={currentMonth.currTransactions[0].location}
+                        value={currentMonth.currTransactions[0].type}
+                      />
                     </div>
                     <Fetch
                       url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
@@ -245,31 +235,17 @@ export default class Dashboard extends Component {
                               <div className="card">
                                 <Statistic label="Taps" value={payload.data.data.totalTrips} />
                               </div>
-                              {
-                                getFareTypeCount(payload.data.data.transactions).map(item => (
-                                  <div className="card">
-                                    <Statistic label={item.name} value={item.value} />
-                                  </div>
-                                ))
-                              }
+                              {getFareTypeCount(payload.data.data.transactions).map(item => (
+                                <div className="card">
+                                  <Statistic label={item.name} value={item.value} />
+                                </div>
+                              ))}
                             </div>
                           </div>
                         );
                       }}
                     </Fetch>
                   </main>
-
-                  <nav className="sidenav">
-                    <div className="sidenav-container">
-                      <Menu secondary vertical>
-                        <Menu.Item name="Home" icon="home" active />
-                        <Menu.Item name="Budget" icon="usd" />
-                        <Menu.Item name="Reload History" icon="credit card" />
-                        <Menu.Item name="Trip History" icon="history" />
-                        <Menu.Item name="All Transactions" icon="list" />
-                      </Menu>
-                    </div>
-                  </nav>
                 </Container>
 
                 <Modal size="tiny" open={open} onClose={this.close}>

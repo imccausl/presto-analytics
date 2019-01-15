@@ -5,10 +5,8 @@ import React from 'react';
 import App, { Container } from 'next/app';
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import { ThemeProvider } from 'styled-components';
 
-import HeaderBar from '../components/styled/HeaderBar';
-import Meta from '../components/Meta';
+import Page from '../components/Page';
 
 Router.onRouteChangeStart = () => {
   NProgress.start();
@@ -21,7 +19,6 @@ Router.onRouteChangeError = () => {
   NProgress.done();
 };
 
-const theme = {};
 export default class MyApp extends App {
   static async getInitialProps({ Component, router, ctx }) {
     let pageProps = {};
@@ -37,15 +34,11 @@ export default class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <>
-        <Meta />
-        <ThemeProvider theme={theme}>
-          <Container>
-            <HeaderBar />
-            <Component {...pageProps} />
-          </Container>
-        </ThemeProvider>
-      </>
+      <Container>
+        <Page>
+          <Component {...pageProps} />
+        </Page>
+      </Container>
     );
   }
 }
