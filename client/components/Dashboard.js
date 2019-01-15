@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
@@ -167,6 +168,9 @@ export default class Dashboard extends Component {
                   <main className="main">
                     <div className="main-header">
                       <Statistic label="Card Balance" value={user.balance} />
+                      <Statistic label="Last Charge" value={`$${currentMonth.currTransactions[0].amount}`} />
+                      <Statistic label="Last Update" value={moment(currentMonth.currTransactions[0].date).fromNow()} />
+                      <Statistic label={currentMonth.currTransactions[0].location} value={currentMonth.currTransactions[0].type} />
                     </div>
                     <Fetch
                       url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
