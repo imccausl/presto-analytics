@@ -1,4 +1,13 @@
 const express = require('express');
+const moment = require('moment');
+
+const { getMonthName } = require('../../lib/util/date');
+
+const types = {
+  TRANSIT_FARE: 'Fare Payment',
+  TRANSIT_PASS: 'Transit Pass Payment',
+  TRANSFER: 'Transfer'
+};
 
 const routes = (Transaction, sequelize, Sequelize) => {
   const router = express.Router();
@@ -12,7 +21,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
+          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER),
           date: {
             [Sequelize.Op.gte]: new Date(searchDateMin),
             [Sequelize.Op.lt]: new Date(searchDateMax)
@@ -31,6 +40,48 @@ const routes = (Transaction, sequelize, Sequelize) => {
     }
   });
 
+  router.get('/all', async (req, res, next) => {
+    const serializedTransactions = {};
+
+    try {
+      const transactions = await Transaction.findAll({
+        where: {
+          userId: req.userId,
+          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER)
+        },
+        attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
+        order: sequelize.literal('date DESC')
+      });
+
+      transactions.forEach(item => {
+        const year = moment(item.date).format('YYYY');
+        const month = getMonthName(moment(item.date).month());
+
+        if (serializedTransactions[year]) {
+          if (serializedTransactions[year][month]) {
+            serializedTransactions[year][month].transactions.push(item);
+            serializedTransactions[year][month].amount += parseFloat(item.amount);
+          } else {
+            serializedTransactions[year][month] = {
+              transactions: [item],
+              amount: parseFloat(item.amount)
+            };
+          }
+        } else {
+          serializedTransactions[year] = {
+            [month]: {
+              transactions: [item],
+              amount: parseFloat(item.amount)
+            }
+          };
+        }
+      });
+
+      res.json(serializedTransactions);
+    } catch (err) {
+      next(err);
+    }
+  });
   return router;
 };
 
