@@ -77,7 +77,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
         }
       });
 
-      res.json(serializedTransactions);
+      res.json({ status: 'success', data: serializedTransactions });
     } catch (err) {
       next(err);
     }
