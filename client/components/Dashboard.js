@@ -3,17 +3,18 @@ import { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 import {
-  Dimmer, Loader, Tab, Modal, Button,
+  Dimmer, Loader, Tab, Modal, Button, Segment
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import AuthUser from './AuthUser';
-import Statistic from './dashboard/Statistic';
+import Statistic from './styled/Statistic';
 import MonthlyStats from './dashboard/MonthlyStats';
 
 import API from '../util/api';
 
 import Transactions from './dashboard/Transactions';
+import MonthlyListing from './dashboard/MonthlyListing';
 
 const Container = styled.div`
   display: grid;
@@ -241,6 +242,7 @@ export default class Dashboard extends Component {
                                 </div>
                               ))}
                             </div>
+                            <MonthlyListing />
                           </div>
                         );
                       }}
