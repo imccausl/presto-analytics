@@ -13,7 +13,7 @@ const Container = styled.div`
   z-index: 1;
   width: 100%;
   height: 500px;
-  background: linear-gradient(to bottom, #4e54c8, #8f94fb);
+  background: linear-gradient(to bottom, #4e54c8, #6f94ff);
 `;
 
 export default props => (
