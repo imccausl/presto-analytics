@@ -28,6 +28,7 @@ const API = {
   },
   login: '/login',
   register: '/signup',
+
   monthlyTransactions: (year, month) => {
     let searchMonth = month;
     let searchYear = year;
@@ -38,6 +39,10 @@ const API = {
     }
 
     return `/transactions/${searchYear}/${searchMonth}`;
+  },
+  allTransactions: {
+    method: 'GET',
+    endpoint: '/transactions/all',
   },
 
   prestoUsage: '/presto/usage',
