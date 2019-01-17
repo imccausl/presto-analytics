@@ -54,6 +54,8 @@ const routes = (Transaction, sequelize, Sequelize) => {
         order: sequelize.literal('date DESC')
       });
 
+      // serialize the shit out of this data:
+      // may be able to do this in a more sql-y way at some point?
       transactions.forEach(item => {
         const itemDate = new Date(item.date);
         const monthNum = moment(itemDate).format('M');
@@ -78,6 +80,8 @@ const routes = (Transaction, sequelize, Sequelize) => {
           month = getMonthName(moment(addMonth).month());
         }
 
+        // god this is a mess. I apologize to my future self
+        // that learns more about sequelize.
         if (serializedTransactions[year]) {
           if (serializedTransactions[year][month]) {
             if (item.type !== types.TRANSIT_PASS_LOAD) {
@@ -109,6 +113,32 @@ const routes = (Transaction, sequelize, Sequelize) => {
       next(err);
     }
   });
+
+  router.get('/ytd', async (req, res, next) => {
+    try {
+      const today = new Date();
+      const lastYear = moment(today).subtract(1, 'years');
+
+      const ytd = await Transaction.findAll({
+        where: {
+          userId: req.userId,
+          type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
+          serviceClass: 'Regular',
+          date: {
+            [Sequelize.Op.gte]: lastYear,
+            [Sequelize.Op.lt]: today
+          }
+        },
+        attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],
+        group: ['type']
+      });
+
+      res.json({ status: 'success', data: ytd });
+    } catch (error) {
+      next({ status: 'error', error });
+    }
+  });
+
   return router;
 };
 
