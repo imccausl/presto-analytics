@@ -28,23 +28,25 @@ Hello, Ian
   </span>
 );
 
-const options = [
-  {
-    key: 'user',
-    text: (
-      <span>
-        Signed in as
-        {' '}
-        <strong>Ian McCausland</strong>
-      </span>
-    ),
-  },
-  { key: 'Details', text: 'Account Details' },
-  { key: 'Refresh', text: 'Refresh Data' },
-];
+
 
 const Page = (props) => {
   const { children } = props;
+
+  const options = [
+    {
+      key: 'user',
+      text: (
+        <span>
+          Signed in as
+          {' '}
+          <strong>Ian McCausland</strong>
+        </span>
+      ),
+    },
+    { key: 'Details', text: 'Account Details' },
+    { key: 'Refresh', text: 'Refresh Data' },
+  ];
 
   return (
     <>
