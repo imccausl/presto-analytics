@@ -145,7 +145,7 @@ export default class Dashboard extends Component {
 
           if (!loading) {
             const {
-              data: { user, currentMonth },
+              data: { user, currentMonth, ytd },
             } = data;
             const months = [
               'January',
@@ -176,12 +176,12 @@ export default class Dashboard extends Component {
                         value={`$${currentMonth.currTransactions[0].amount}`}
                       />
                       <Statistic
-                        label="Last Update"
-                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                        label="Year To Date"
+                        value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
                       />
                       <Statistic
-                        label={currentMonth.currTransactions[0].location}
-                        value={currentMonth.currTransactions[0].type}
+                        label="Last Update"
+                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
                       />
                     </div>
                     <Fetch
@@ -242,7 +242,6 @@ export default class Dashboard extends Component {
                                 </div>
                               ))}
                             </div>
-                            <MonthlyListing />
                           </div>
                         );
                       }}
