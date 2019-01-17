@@ -2,8 +2,10 @@ require('dotenv').config({ path: '../../../.env' });
 
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 const { login, getBasicAccountInfo } = require('../../lib/presto');
+const types = require('../../lib/util/types');
 
 const routes = (User, Transaction, sequelize, Sequelize) => {
   const router = express.Router();
@@ -43,6 +45,23 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
       const totalAmount = currTransactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
       const totalTrips = currTransactions.length;
 
+      const today = new Date();
+      const lastYear = moment(today).subtract(1, 'years');
+
+      const ytd = await Transaction.findAll({
+        where: {
+          userId: req.userId,
+          type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
+          serviceClass: 'Regular',
+          date: {
+            [Sequelize.Op.gte]: lastYear,
+            [Sequelize.Op.lt]: today
+          }
+        },
+        attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],
+        group: ['type']
+      });
+
       if (!user.cardNumber) {
         console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
         const loginStatus = await login(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
@@ -58,10 +77,9 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
       }
 
       console.log(`User ${user.firstName} logged in!`);
-      res.json({ status: 'success', data: { user, currentMonth: { currTransactions, totalAmount, totalTrips } } });
+      res.json({ status: 'success', data: { user, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
     } catch (err) {
-      console.error(err.stack);
-      return next(err);
+      return next({ status: 'error', error: err });
     }
   });
 
