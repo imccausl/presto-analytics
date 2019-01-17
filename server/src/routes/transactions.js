@@ -55,8 +55,28 @@ const routes = (Transaction, sequelize, Sequelize) => {
       });
 
       transactions.forEach(item => {
-        const year = moment(item.date).format('YYYY');
-        const month = getMonthName(moment(item.date).month());
+        const itemDate = new Date(item.date);
+        const monthNum = moment(itemDate).format('M');
+        const transitPassPurchasePeriod =
+          moment(itemDate)
+            .endOf('month')
+            .diff(itemDate, 'days') <= 8;
+
+        let year = moment(itemDate).format('YYYY');
+        let month = getMonthName(moment(itemDate).month());
+
+        // if a transit pass was purchaseed 8 days before the end of the month,
+        // move it to the next month because it was for that month that it was
+        // purchased.
+
+        if (item.type === types.TRANSIT_PASS_LOAD && transitPassPurchasePeriod) {
+          const addMonth = moment(itemDate, 'M').add(1, 'months');
+          if (monthNum === 12) {
+            year += 1;
+          }
+
+          month = getMonthName(moment(addMonth).month());
+        }
 
         if (serializedTransactions[year]) {
           if (serializedTransactions[year][month]) {

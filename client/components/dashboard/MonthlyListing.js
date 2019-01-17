@@ -39,7 +39,10 @@ export default (props) => {
                   </Label>
                   <FlexRow justify="space-between">
                     <FlexRow align="center" justify="flex-start">
-                      <Statistic label="Spent" value={`$${monthData.amount}`} />
+                      <Statistic
+                        label="Spent"
+                        value={`$${monthData.amount + monthData.transitPassAmount}`}
+                      />
                       <Statistic label="Taps" value={monthData.transactions.length} />
                     </FlexRow>
                     <MonthlyTapGraph data={monthData} />
