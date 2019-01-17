@@ -44,6 +44,10 @@ const API = {
     method: 'GET',
     endpoint: '/transactions/all',
   },
+  yearToDate: {
+    method: 'GET',
+    endpoint: '/transactions/ytd',
+  },
 
   prestoUsage: '/presto/usage',
 };
