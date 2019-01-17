@@ -4,6 +4,7 @@ const moment = require('moment');
 const { getMonthName } = require('../../lib/util/date');
 
 const types = {
+  TRANSIT_PASS_LOAD: 'Load Transit Pass',
   TRANSIT_FARE: 'Fare Payment',
   TRANSIT_PASS: 'Transit Pass Payment',
   TRANSFER: 'Transfer'
@@ -47,7 +48,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER)
+          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD)
         },
         attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
         order: sequelize.literal('date DESC')
@@ -59,19 +60,25 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
         if (serializedTransactions[year]) {
           if (serializedTransactions[year][month]) {
-            serializedTransactions[year][month].transactions.push(item);
-            serializedTransactions[year][month].amount += parseFloat(item.amount);
+            if (item.type !== types.TRANSIT_PASS_LOAD) {
+              serializedTransactions[year][month].transactions.push(item);
+              serializedTransactions[year][month].amount += parseFloat(item.amount);
+            } else {
+              serializedTransactions[year][month].transitPassAmount += parseFloat(item.amount);
+            }
           } else {
             serializedTransactions[year][month] = {
-              transactions: [item],
-              amount: parseFloat(item.amount)
+              transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
+              amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
+              transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
             };
           }
         } else {
           serializedTransactions[year] = {
             [month]: {
-              transactions: [item],
-              amount: parseFloat(item.amount)
+              transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
+              amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
+              transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
             }
           };
         }
