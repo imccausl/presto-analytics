@@ -26,41 +26,43 @@ const FlexRow = styled.div`
   padding: ${props => props.padding || '0'};
 `;
 
-const trigger = (
-  <span>
-    <Icon name="user" />
-    {' '}
-Hello, Ian
-  </span>
-);
-
 const Page = (props) => {
   const { children } = props;
-
-  const options = [
-    {
-      key: 'user',
-      text: (
-        <span>
-          Signed in as
-          {' '}
-          <strong>Ian McCausland</strong>
-        </span>
-      ),
-    },
-    { key: 'Details', text: 'Account Details' },
-    { key: 'Refresh', text: 'Refresh Data' },
-  ];
 
   return (
     <AuthUser>
       {({ data, error, loading }) => {
         console.log(data);
+
         if (error) {
           return <div>{error.message}</div>;
         }
 
         if (!loading) {
+          const {
+            data: { user },
+          } = data;
+          const options = [
+            {
+              key: 'user',
+              text: (
+                <span>
+                  Signed in as
+                  {' '}
+                  <strong>{`${user.firstName} ${user.lastName}`}</strong>
+                </span>
+              ),
+            },
+            { key: 'Details', text: 'Account Details' },
+            { key: 'Refresh', text: 'Refresh Data' },
+          ];
+          const trigger = (
+            <span>
+              <Icon name="user" />
+              {`Hello, ${user.firstName}`}
+            </span>
+          );
+
           return (
             <>
               <Meta />
