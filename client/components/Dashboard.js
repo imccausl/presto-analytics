@@ -10,10 +10,12 @@ import styled from 'styled-components';
 import AuthUser from './AuthUser';
 import Statistic from './styled/Statistic';
 import MonthlyStats from './dashboard/MonthlyStats';
+import TapLocations from './dashboard/TapLocations';
 
 import API from '../util/api';
 
 import Transactions from './dashboard/Transactions';
+import Trips from './dashboard/Trips';
 import MonthlyListing from './dashboard/MonthlyListing';
 import { UserContext } from './Page';
 
@@ -190,6 +192,8 @@ export default class Dashboard extends Component {
                         if (payload.loading) {
                           return <Loader />;
                         }
+
+
                         console.log(payload.data.data.transactions);
                         return (
                           <div className="main-overview-container">
@@ -240,6 +244,7 @@ export default class Dashboard extends Component {
                                 </div>
                               ))}
                             </div>
+                            <Trips trips={payload.data.data.transactions} />
                           </div>
                         );
                       }}
