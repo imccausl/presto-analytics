@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 import {
@@ -15,6 +15,7 @@ import API from '../util/api';
 
 import Transactions from './dashboard/Transactions';
 import MonthlyListing from './dashboard/MonthlyListing';
+import { UserContext } from './Page';
 
 const Container = styled.div`
   display: grid;
@@ -115,13 +116,15 @@ function getFareTypeCount(data) {
 }
 
 export default class Dashboard extends Component {
+  static contextType = UserContext;
+
   state = {
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
     activeIndex: 0,
     open: false,
-    selectedMonth: '',
-    selectedYear: '',
+    selectedMonth: new Date().getMonth(),
+    selectedYear: new Date().getFullYear(),
   };
 
   close = () => this.setState({ open: false });
@@ -131,41 +134,36 @@ export default class Dashboard extends Component {
     this.setState({ [name]: value });
   };
 
+
   render() {
     const {
       year, month, open, selectedYear, selectedMonth, activeIndex,
     } = this.state;
 
+    console.log(this.context);
+
+    const {
+      data: { data: { user, currentMonth, ytd } },
+    } = this.context;
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    const thisMonth = new Date().getMonth();
+    const thisYear = new Date().getFullYear();
+
     return (
-      <AuthUser>
-        {({ data, error, loading }) => {
-          if (error) {
-            return <div>{error.message}</div>;
-          }
-
-          if (!loading) {
-            const {
-              data: { user, currentMonth, ytd },
-            } = data;
-            const months = [
-              'January',
-              'February',
-              'March',
-              'April',
-              'May',
-              'June',
-              'July',
-              'August',
-              'September',
-              'October',
-              'November',
-              'December',
-            ];
-
-            const thisMonth = new Date().getMonth();
-            const thisYear = new Date().getFullYear();
-
-            return (
               <>
                 <Container>
                   <main className="main">
@@ -292,15 +290,5 @@ export default class Dashboard extends Component {
                 </Modal>
               </>
             );
-          }
-
-          return (
-            <Dimmer active>
-              <Loader />
-            </Dimmer>
-          );
-        }}
-      </AuthUser>
-    );
-  }
-}
+        }
+    }
