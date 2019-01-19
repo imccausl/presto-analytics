@@ -1,19 +1,12 @@
 import Fetch from 'react-fetch-component';
-import { Segment, Label } from 'semantic-ui-react';
+import { Segment, Label, Loader } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import API from '../../util/api';
 
+import { FlexRow } from '../Page';
 import MonthlyTapGraph from './MonthlyTapGraph';
 import Statistic from '../styled/Statistic';
-
-const FlexRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: ${props => props.align || 'stretch'};
-  justify-content: ${props => props.justify || 'stretch'};
-  padding: ${props => props.padding || '0'};
-`;
 
 export default (props) => {
   const { year } = props;
@@ -24,6 +17,10 @@ export default (props) => {
       options={API.send(API.allTransactions.method)}
     >
       {({ loading, data, error }) => {
+        if (loading) {
+          return <Loader active />;
+        }
+
         if (!loading && data) {
           const year = '2018';
 

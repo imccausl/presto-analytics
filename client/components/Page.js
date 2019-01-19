@@ -21,10 +21,19 @@ const Content = styled.div`
   z-index: 10;
 `;
 
+const Container = styled.div`
+  display: blodk;
+
+  height: 100vh;
+  margin-top: 10px;
+  color: black;
+`;
+
 const FlexRow = styled.div`
   display: flex;
+  width: ${props => props.width || '100%'};
   flex-direction: row;
-  align-items: stretch;
+  align-items: ${props => props.align || 'stretch'};
   justify-content: ${props => props.justify || 'stretch'};
   padding: ${props => props.padding || '0'};
 `;
@@ -78,7 +87,13 @@ const Page = (props) => {
                     </FlexRow>
                   </HeaderBar>
 
-                  <div style={{ position: 'relative', zIndex: '10', marginTop: '-460px' }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      zIndex: '10',
+                      marginTop: '-460px',
+                    }}
+                  >
                     <FlexRow>
                       <Statistic label="Card Balance" value={user.balance} />
                       <Statistic
@@ -95,7 +110,9 @@ const Page = (props) => {
                       />
                     </FlexRow>
 
-                    <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                    <Container>
+                      <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                    </Container>
                   </div>
                 </Content>
               </FlexRow>
@@ -114,4 +131,4 @@ const Page = (props) => {
 };
 
 export default Page;
-export { UserContext };
+export { UserContext, FlexRow };
