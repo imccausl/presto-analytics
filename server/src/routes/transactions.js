@@ -112,7 +112,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
     const lastMonth = moment().subtract(1, 'months');
     const yearBefore = moment().subtract(1, 'years');
 
-    console.log(lastMonth.format('MM/YYYY'), yearBefore.format('MM/YYYY'));
+    res.json({ lastMonth: lastMonth.format('MM/YYYY'), yearBefore: yearBefore.format('MM/YYYY') });
   });
 
   router.get('/ytd', async (req, res, next) => {
