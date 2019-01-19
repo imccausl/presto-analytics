@@ -76,9 +76,12 @@ const Page = (props) => {
                 </span>
               ),
             },
-            { key: 'Details', text: 'Account Details' },
+            { key: 'Details', text: 'Account Settings' },
             { key: 'Refresh', text: 'Refresh Data' },
+            { key: 'divider', text: <Dropdown.Divider /> },
+            { key: 'Logout', text: 'Log out' },
           ];
+
           const trigger = (
             <span>
               <Icon name="user" />
@@ -95,7 +98,13 @@ const Page = (props) => {
                   <Content>
                     <HeaderBar>
                       <FlexRow justify="flex-end" padding="5px 20px" style={{ color: 'white' }}>
-                        <Dropdown trigger={trigger} options={options} direction="left" />
+                        <Dropdown
+                          trigger={trigger}
+                          options={options}
+                          pointing="top left"
+                          direction="left"
+                          icon={null}
+                        />
                       </FlexRow>
                     </HeaderBar>
 
