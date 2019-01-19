@@ -110,10 +110,10 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
   router.get('/yearly', async (req, res, next) => {
     try {
-      const lastMonth = moment().subtract(1, 'months');
+      const today = moment();
       const yearBefore = moment().subtract(1, 'years');
 
-      res.json({ lastMonth: lastMonth.format('MM/YYYY'), yearBefore: yearBefore.format('MM/YYYY') });
+      res.json({ lastMonth: today.format('MM/YYYY'), yearBefore: yearBefore.format('MM/YYYY') });
     } catch (error) {
       next({ status: 'error', error });
     }
