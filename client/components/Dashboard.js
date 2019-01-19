@@ -232,15 +232,16 @@ export default class Dashboard extends Component {
                               <div className="card">
                                 <Statistic
                                   label="Spent"
+                                  labelColor="#5558c8"
                                   value={`$${payload.data.data.totalAmount}`}
                                 />
                               </div>
                               <div className="card">
-                                <Statistic label="Taps" value={payload.data.data.totalTrips} />
+                                <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />
                               </div>
                               {getFareTypeCount(payload.data.data.transactions).map(item => (
                                 <div className="card">
-                                  <Statistic label={item.name} value={item.value} />
+                                  <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
                                 </div>
                               ))}
                             </div>

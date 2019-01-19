@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Label = styled.h3`
   font-size: 1.1em;
   text-transform: capitalize;
-  color: #9ec0ff;
+  color: ${props => props.labelColor || '#9ec0ff'};
   margin: 0;
 `;
 
@@ -26,12 +26,12 @@ const Footer = styled.h3`
 `;
 
 export default (props) => {
-  const { label, value } = props;
+  const { label, value, labelColor } = props;
 
   return (
     <Container>
       <Content>{value}</Content>
-      <Label>{label}</Label>
+      <Label labelColor={labelColor}>{label}</Label>
     </Container>
   );
 };
