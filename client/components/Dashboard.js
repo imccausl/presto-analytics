@@ -11,6 +11,7 @@ import AuthUser from './AuthUser';
 import Statistic from './styled/Statistic';
 import MonthlyStats from './dashboard/MonthlyStats';
 import TapLocations from './dashboard/TapLocations';
+import { FlexRow } from './Page'
 
 import API from '../util/api';
 
@@ -19,21 +20,8 @@ import Trips from './dashboard/Trips';
 import MonthlyListing from './dashboard/MonthlyListing';
 import { UserContext } from './Page';
 
-const Container = styled.div`
-  display: grid;
-  box-sizing: border-box;
-
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 50px;
-  grid-template-areas:
-    'main'
-    'footer';
-  height: 100vh;
-
+const Main = styled.div`
   .main {
-    grid-area: main;
-    /* background-color: #8fd4d9; */
-
     .main-header {
       top: 0;
       display: flex;
@@ -71,23 +59,7 @@ const Container = styled.div`
       box-shadow: 0px 5px 20px -5px rgba(0, 0, 0, 0.45);
     }
 
-    .main-cards {
-      column-count: 4;
-      column-gap: 20px;
-      margin: 0 20px;
-    }
-
-    .card {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      margin-bottom: 20px;
-      -webkit-column-break-inside: avoid;
-      padding: 24px;
-      box-sizing: border-box;
-
-      border-radius: 0.5em;
-    }
+   
   }
 `;
 
@@ -167,7 +139,7 @@ export default class Dashboard extends Component {
 
     return (
               <>
-                <Container>
+                <Main>
                   <main className="main">
 
                     <Fetch
@@ -176,11 +148,9 @@ export default class Dashboard extends Component {
                     >
                       {(payload) => {
                         if (payload.loading) {
-                          return <Loader />;
+                          return <Loader active />;
                         }
 
-
-                        console.log(payload.data.data.transactions);
                         return (
                           <div className="main-overview-container">
                             <div className="main-overview-header">
@@ -213,31 +183,29 @@ export default class Dashboard extends Component {
                             <div className="main-overview">
                               <MonthlyStats transactions={payload.data.data.transactions} />
                             </div>
+                                
+                                  <div style={{ width: '75%', margin: '0 auto', padding: '10px 0'}}>
+                                  <FlexRow justify="space-between">
+                                  
+                                    <Statistic
+                                      label="Spent"
+                                      labelColor="#5558c8"
+                                      value={`$${payload.data.data.totalAmount}`}
+                                    />
+                                    <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />
+                                    {getFareTypeCount(payload.data.data.transactions).map(item => (
+                                        <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
+                                    ))}
+                                  </FlexRow>
+                                  </div>
 
-                            <div className="main-cards">
-                              <div className="card">
-                                <Statistic
-                                  label="Spent"
-                                  labelColor="#5558c8"
-                                  value={`$${payload.data.data.totalAmount}`}
-                                />
-                              </div>
-                              <div className="card">
-                                <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />
-                              </div>
-                              {getFareTypeCount(payload.data.data.transactions).map(item => (
-                                <div className="card">
-                                  <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
-                                </div>
-                              ))}
-                            </div>
                             <Trips trips={payload.data.data.transactions} />
                           </div>
                         );
                       }}
                     </Fetch>
                   </main>
-                </Container>
+                </Main>
 
                 <Modal size="tiny" open={open} onClose={this.close}>
                   <Modal.Header>Choose Another Date</Modal.Header>
