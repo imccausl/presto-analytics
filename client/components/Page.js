@@ -11,6 +11,7 @@ import Meta from './Meta';
 import HeaderBar from './styled/HeaderBar';
 import SideBar from './SideBar';
 import Statistic from './styled/Statistic';
+import PageContainer from './styled/Container';
 
 const UserContext = React.createContext();
 
@@ -18,11 +19,11 @@ const Content = styled.div`
   position: relative;
   width: 100%;
   color: white;
-  z-index: 10;
+  z-index: 1;
 `;
 
 const Container = styled.div`
-  display: blodk;
+  display: block;
 
   height: 100vh;
   margin-top: 10px;
@@ -31,6 +32,7 @@ const Container = styled.div`
 
 const FlexRow = styled.div`
   display: flex;
+  position: relative;
   width: ${props => props.width || '100%'};
   flex-direction: row;
   align-items: ${props => props.align || 'stretch'};
@@ -80,41 +82,44 @@ const Page = (props) => {
               <Meta />
               <FlexRow>
                 <SideBar />
-                <Content>
-                  <HeaderBar>
-                    <FlexRow justify="flex-end" padding="5px 20px" style={{ color: 'white' }}>
-                      <Dropdown trigger={trigger} options={options} direction="left" />
-                    </FlexRow>
-                  </HeaderBar>
+                <PageContainer>
+                  <Content>
+                    <HeaderBar>
+                      <FlexRow justify="flex-end" padding="5px 20px" style={{ color: 'white' }}>
+                        <Dropdown trigger={trigger} options={options} direction="left" />
+                      </FlexRow>
+                    </HeaderBar>
 
-                  <div
-                    style={{
-                      position: 'relative',
-                      zIndex: '10',
-                      marginTop: '-460px',
-                    }}
-                  >
-                    <FlexRow>
-                      <Statistic label="Card Balance" value={user.balance} />
-                      <Statistic
-                        label="Last Charge"
-                        value={`$${currentMonth.currTransactions[0].amount}`}
-                      />
-                      <Statistic
-                        label="Year To Date"
-                        value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
-                      />
-                      <Statistic
-                        label="Last Update"
-                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
-                      />
-                    </FlexRow>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        zIndex: '1',
+                        top: '20px',
+                        width: '100%',
+                      }}
+                    >
+                      <FlexRow>
+                        <Statistic label="Card Balance" value={user.balance} />
+                        <Statistic
+                          label="Last Charge"
+                          value={`$${currentMonth.currTransactions[0].amount}`}
+                        />
+                        <Statistic
+                          label="Year To Date"
+                          value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
+                        />
+                        <Statistic
+                          label="Last Update"
+                          value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                        />
+                      </FlexRow>
 
-                    <Container>
-                      <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
-                    </Container>
-                  </div>
-                </Content>
+                      <Container>
+                        <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                      </Container>
+                    </div>
+                  </Content>
+                </PageContainer>
               </FlexRow>
             </>
           );

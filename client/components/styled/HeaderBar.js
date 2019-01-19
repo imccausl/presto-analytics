@@ -6,18 +6,7 @@ const Bar = styled.div`
   left: 0;
   width: 100%;
   height: 40px;
+  z-index: 11;
 `;
 
-const Container = styled.div`
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 500px;
-  background: linear-gradient(to bottom, #5558c8, #3370ff);
-`;
-
-export default props => (
-  <Container>
-    <Bar>{props.children}</Bar>
-  </Container>
-);
+export default props => <Bar>{props.children}</Bar>;
