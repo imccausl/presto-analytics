@@ -44,12 +44,12 @@ export default (props) => {
         <Line
           dataKey="amount"
           type="monotone"
-          stroke="#333399"
+          stroke="#5558c8"
           strokeWidth={5}
           dot={{
             stroke: 'white',
             strokeWidth: 3,
-            fill: '#333399',
+            fill: '#5558c8',
             r: 7,
           }}
         />
