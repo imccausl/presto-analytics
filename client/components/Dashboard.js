@@ -32,13 +32,7 @@ const Main = styled.div`
       color: white;
     }
 
-    .main-overview-container {
-      border-radius: 0.5em;
-      margin-left: 30px;
-      margin-right: 15px;
-      border: 1px solid lightgrey;
-      background: white;
-    }
+    
 
     .main-overview-header {
       display: flex;
@@ -138,7 +132,7 @@ export default class Dashboard extends Component {
                         }
 
                         return (
-                          <div className="main-overview-container">
+                          <>
                             <div className="main-overview-header">
                               <h2 style={{ marginBottom: '0'}}>OVERVIEW</h2>
                               <div>
@@ -185,7 +179,7 @@ export default class Dashboard extends Component {
                                   </div>
 
                             <Trips trips={payload.data.data.transactions} />
-                          </div>
+                          </>
                         );
                       }}
                     </Fetch>

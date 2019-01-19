@@ -1,4 +1,5 @@
 import Router from 'next/router';
+import { Loader } from 'semantic-ui-react';
 
 import AuthUser from '../components/AuthUser';
 import MonthlyListing from '../components/dashboard/MonthlyListing';
@@ -13,6 +14,8 @@ export default () => (
           }
 
           if (error) Router.push('/login');
+
+          if (loading) return <Loader active />;
         }
       }}
     </AuthUser>

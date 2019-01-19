@@ -30,6 +30,15 @@ const Container = styled.div`
   color: black;
 `;
 
+const Main = styled.main`
+  border-radius: 0.5em;
+  margin-left: 30px;
+  min-height: 400px;
+  margin-right: 15px;
+  border: 1px solid lightgrey;
+  background: white;
+`;
+
 const FlexRow = styled.div`
   display: flex;
   position: relative;
@@ -94,7 +103,7 @@ const Page = (props) => {
                       style={{
                         position: 'absolute',
                         zIndex: '1',
-                        top: '20px',
+                        marginTop: '5px',
                         width: '100%',
                       }}
                     >
@@ -115,7 +124,9 @@ const Page = (props) => {
                       </FlexRow>
 
                       <Container>
-                        <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                        <Main>
+                          <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                        </Main>
                       </Container>
                     </div>
                   </Content>
