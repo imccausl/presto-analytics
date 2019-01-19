@@ -20,6 +20,8 @@ import Trips from './dashboard/Trips';
 import MonthlyListing from './dashboard/MonthlyListing';
 import { UserContext } from './Page';
 
+import { getMonthNameFromNum } from '../util/date';
+
 const Main = styled.div`
   .main {
     .main-header {
@@ -114,26 +116,10 @@ export default class Dashboard extends Component {
       year, month, open, selectedYear, selectedMonth, activeIndex,
     } = this.state;
 
-    console.log(this.context);
-
     const {
-      data: { data: { user, currentMonth, ytd } },
+      data: { data: { user } },
     } = this.context;
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
+    
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
 
@@ -154,7 +140,7 @@ export default class Dashboard extends Component {
                         return (
                           <div className="main-overview-container">
                             <div className="main-overview-header">
-                              <h2>{`${months[month]} ${year}`}</h2>
+                              <h2 style={{ marginBottom: '0'}}>OVERVIEW</h2>
                               <div>
                                 <Tab
                                   menu={{ secondary: true }}
@@ -181,7 +167,7 @@ export default class Dashboard extends Component {
                               </div>
                             </div>
                             <div className="main-overview">
-                              <MonthlyStats transactions={payload.data.data.transactions} />
+                              <MonthlyStats month={getMonthNameFromNum(month)} year={year} data={payload.data.data} />
                             </div>
                                 
 
@@ -190,11 +176,7 @@ export default class Dashboard extends Component {
                                   <div style={{ width: '75%', margin: '0 auto', padding: '10px 0'}}>
                                   <FlexRow justify="space-between">
                                   
-                                    <Statistic
-                                      label="Spent"
-                                      labelColor="#5558c8"
-                                      value={`$${payload.data.data.totalAmount}`}
-                                    />
+                                    
                                     <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />
                                     {getFareTypeCount(payload.data.data.transactions).map(item => (
                                         <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
