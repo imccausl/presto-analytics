@@ -169,7 +169,6 @@ export default class Dashboard extends Component {
               <>
                 <Container>
                   <main className="main">
-                    
 
                     <Fetch
                       url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
