@@ -108,6 +108,13 @@ const routes = (Transaction, sequelize, Sequelize) => {
     }
   });
 
+  router.get('/yearly', async (req, res, next) => {
+    const lastMonth = moment().subtract(1, 'months');
+    const yearBefore = moment().subtract(1, 'years');
+
+    console.log(lastMonth.format('MM/YYYY'), yearBefore.format('MM/YYYY'));
+  });
+
   router.get('/ytd', async (req, res, next) => {
     try {
       const today = new Date();
