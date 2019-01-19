@@ -56,7 +56,7 @@ const Main = styled.div`
       padding: 20px;
       margin: 0 20px;
       border-radius: 0.5em;
-      box-shadow: 0px 5px 20px -5px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
     }
 
    
@@ -184,6 +184,9 @@ export default class Dashboard extends Component {
                               <MonthlyStats transactions={payload.data.data.transactions} />
                             </div>
                                 
+
+
+                            
                                   <div style={{ width: '75%', margin: '0 auto', padding: '10px 0'}}>
                                   <FlexRow justify="space-between">
                                   
