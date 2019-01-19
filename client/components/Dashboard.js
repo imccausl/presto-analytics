@@ -169,21 +169,8 @@ export default class Dashboard extends Component {
               <>
                 <Container>
                   <main className="main">
-                    <div className="main-header">
-                      <Statistic label="Card Balance" value={user.balance} />
-                      <Statistic
-                        label="Last Charge"
-                        value={`$${currentMonth.currTransactions[0].amount}`}
-                      />
-                      <Statistic
-                        label="Year To Date"
-                        value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
-                      />
-                      <Statistic
-                        label="Last Update"
-                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
-                      />
-                    </div>
+                    
+
                     <Fetch
                       url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
                       options={API.send('GET')}

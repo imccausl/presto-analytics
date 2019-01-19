@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import {
   Dropdown, Icon, Dimmer, Loader,
@@ -9,12 +10,14 @@ import AuthUser from './AuthUser';
 import Meta from './Meta';
 import HeaderBar from './styled/HeaderBar';
 import SideBar from './SideBar';
+import Statistic from './styled/Statistic';
 
 const UserContext = React.createContext();
 
 const Content = styled.div`
   position: relative;
   width: 100%;
+  color: white;
   z-index: 10;
 `;
 
@@ -40,7 +43,7 @@ const Page = (props) => {
 
         if (!loading) {
           const {
-            data: { user },
+            data: { user, currentMonth, ytd },
           } = data;
           const options = [
             {
@@ -76,6 +79,22 @@ const Page = (props) => {
                   </HeaderBar>
 
                   <div style={{ position: 'relative', zIndex: '10', marginTop: '-460px' }}>
+                    <FlexRow>
+                      <Statistic label="Card Balance" value={user.balance} />
+                      <Statistic
+                        label="Last Charge"
+                        value={`$${currentMonth.currTransactions[0].amount}`}
+                      />
+                      <Statistic
+                        label="Year To Date"
+                        value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
+                      />
+                      <Statistic
+                        label="Last Update"
+                        value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                      />
+                    </FlexRow>
+
                     <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
                   </div>
                 </Content>
