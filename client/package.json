@@ -26,6 +26,7 @@
     "babel-plugin-styled-components": "^1.10.0",
     "file-loader": "^3.0.1",
     "moment": "^2.23.0",
+    "moment-timezone": "^0.5.23",
     "next": "^7.0.2",
     "nprogress": "^0.2.0",
     "prop-types": "^15.6.2",
