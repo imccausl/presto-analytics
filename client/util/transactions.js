@@ -5,7 +5,9 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
   const domain = [0, 0];
   const currYear = new Date(transactions[0].date).getFullYear();
   const currMonth = new Date(transactions[0].date).getMonth() + 1;
-  const lastDay = moment(transactions[0].date).date();
+  const lastDay = moment(transactions[0].date)
+    .utcOffset(0)
+    .date();
 
   for (let i = 1; i <= lastDay; i += 1) {
     const dateString = `${i < 10 ? `0${i}` : i}/${
@@ -16,7 +18,7 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
 
   transactions.forEach((item) => {
     const date = moment(item.date)
-      .local()
+      .utcOffset(0)
       .format('DD/MM/YYYY');
 
     const amount = parseFloat(item.amount);
