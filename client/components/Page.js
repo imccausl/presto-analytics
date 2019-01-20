@@ -45,6 +45,7 @@ const Main = styled.main`
 const FlexRow = styled.div`
   display: flex;
   position: relative;
+  flex-wrap: nowrap;
   width: ${props => props.width || '100%'};
   flex-direction: row;
   align-items: ${props => props.align || 'stretch'};
