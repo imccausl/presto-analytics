@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 import {
-  Dimmer, Loader, Tab, Modal, Button, Segment
+  Dimmer, Loader, Tab, Modal, Button, Segment, Header
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -127,15 +127,14 @@ export default class Dashboard extends Component {
                       options={API.send('GET')}
                     >
                       {(payload) => {
-                        if (payload.loading) {
-                          return <Loader active />;
-                        }
-                        console.log(payload.data.data)
+                        
 
                         return (
                           <>
-                            <div className="main-overview-header">
-                              <h2 style={{ color: '#9092A5', marginBottom: '0'}}>OVERVIEW</h2>
+                            <Header as="div" attached="top" block>
+                            
+                            <FlexRow justify="space-between" align="center">
+                              <h3 style={{ color: '#5558c8', marginBottom: '0'}}>Monthly Overview</h3>
                               <div>
                                 <Tab
                                   menu={{ secondary: true }}
@@ -160,26 +159,28 @@ export default class Dashboard extends Component {
                                   }}
                                 />
                               </div>
-                            </div>
-                            <div className="main-overview">
-                              <MonthlyStats month={getMonthNameFromNum(month)} year={year} data={payload.data.data} />
-                            </div>
+                            </FlexRow>
+                            </Header>
+
+                           <Segment style={{ minHeight: '250px' }} attached loading={payload.loading}>
+                          
+                              { !payload.loading && <MonthlyStats month={getMonthNameFromNum(month)} year={year} data={payload.data.data} />}
+                           </Segment>
+                                <Header as='div' attached='bottom' style={{ minHeight: '80px'}}>
                                 
-
-
-                            
-                                  <div style={{ width: '75%', margin: '0 auto', padding: '10px 0'}}>
-                                  <FlexRow justify="space-between">
+                                <FlexRow justify="space-around">
+                              
+                                {!payload.loading && <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />}
+                                
+                                {(payload.loading) ? '' : getFareTypeCount(payload.data.data.transactions).map(item => (
+                                      <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
+                                  ))}
+                                
                                   
-                                    
-                                    <Statistic label="Taps" labelColor="#5558c8" value={payload.data.data.totalTrips} />
-                                    {getFareTypeCount(payload.data.data.transactions).map(item => (
-                                        <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
-                                    ))}
-                                  </FlexRow>
-                                  </div>
+                              </FlexRow>
+                                </Header>
 
-                            <Trips trips={payload.data.data.transactions} />
+                                
                           </>
                         );
                       }}

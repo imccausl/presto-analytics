@@ -33,10 +33,10 @@ export default (props) => {
             color: '#11BB81',
           }}
         >
-          {`${month.toUpperCase()} ${year}`}
+          {`${month} ${year}`}
         </h3>
         <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
-          {`$${totalAmount} SPENT`}
+          {`$${totalAmount} Total`}
         </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>

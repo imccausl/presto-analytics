@@ -32,13 +32,14 @@ const Container = styled.div`
 `;
 
 const Main = styled.main`
-  border-radius: 0.5em;
+  border-radius: 0.7em;
   margin-left: 30px;
   min-height: 400px;
   margin-right: 15px;
-  border: 1px solid lightgrey;
+  /* border: 1px solid lightgrey; */
   background: white;
   box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  padding: 10px;
 `;
 
 const FlexRow = styled.div`
