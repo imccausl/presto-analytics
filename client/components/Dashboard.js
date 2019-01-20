@@ -134,7 +134,7 @@ export default class Dashboard extends Component {
                         return (
                           <>
                             <div className="main-overview-header">
-                              <h2 style={{ marginBottom: '0'}}>OVERVIEW</h2>
+                              <h2 style={{ color: '#9092A5', marginBottom: '0'}}>OVERVIEW</h2>
                               <div>
                                 <Tab
                                   menu={{ secondary: true }}
