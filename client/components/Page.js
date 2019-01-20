@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import React, { Component } from 'react';
 import {
   Dropdown, Icon, Dimmer, Loader, Button, Menu,
 } from 'semantic-ui-react';
@@ -7,11 +7,12 @@ import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
 
 import AuthUser from './AuthUser';
-import Meta from './Meta';
 import HeaderBar from './styled/HeaderBar';
+import Meta from './Meta';
 import SideBar from './SideBar';
-import Statistic from './styled/Statistic';
 import PageContainer from './styled/Container';
+import Statistic from './styled/Statistic';
+import Transactions from './dashboard/Transactions';
 
 const UserContext = React.createContext();
 
@@ -49,112 +50,130 @@ const FlexRow = styled.div`
   padding: ${props => props.padding || '0'};
 `;
 
-const Page = (props) => {
-  const { children } = props;
+export default class Page extends Component {
+  state = { menuValue: '' };
 
-  return (
-    <AuthUser>
-      {({ data, error, loading }) => {
-        console.log(data);
+  handleMenuSelect = (e, { name, value }) => {
+    console.log(name, value);
+  };
 
-        if (error) {
-          return <div>{error.message}</div>;
-        }
+  render() {
+    const { children } = this.props;
+    const { menuValue } = this.state;
 
-        if (!loading) {
-          const {
-            data: { user, currentMonth, ytd },
-          } = data;
-          const options = [
-            {
-              key: 'user',
-              text: (
-                <span>
-                  Signed in as
-                  {' '}
-                  <strong>{`${user.firstName} ${user.lastName}`}</strong>
-                </span>
-              ),
-              disabled: true,
-            },
-            { key: 'Details', text: 'Account Settings' },
-            { key: 'Refresh', text: 'Refresh Data' },
-            { key: 'divider', text: <Dropdown.Divider />, disabled: true },
-            { key: 'Logout', text: 'Log out' },
-          ];
+    return (
+      <AuthUser>
+        {({ data, error, loading }) => {
+          console.log(data);
 
-          const trigger = (
-            <span>
-              <Icon name="user" />
-              {`Hello, ${user.firstName}`}
-            </span>
-          );
+          if (error) {
+            return <div>{error.message}</div>;
+          }
+
+          if (!loading) {
+            const {
+              data: { user, currentMonth, ytd },
+            } = data;
+            const options = [
+              {
+                key: 'user',
+                text: (
+                  <span>
+                    Signed in as
+                    {' '}
+                    <strong>{`${user.firstName} ${user.lastName}`}</strong>
+                  </span>
+                ),
+                disabled: true,
+              },
+              { key: 'settings', text: 'Account Settings', value: 'settings' },
+              {
+                key: 'refresh',
+                text: 'Refresh Data',
+                value: 'refresh',
+                onClick: () => {
+                  console.log('Getting transactions...');
+                  return <Transactions />;
+                },
+              },
+              { key: 'divider', text: <Dropdown.Divider />, disabled: true },
+              { key: 'logout', text: 'Log out', value: 'logout' },
+            ];
+
+            const trigger = (
+              <span>
+                <Icon name="user" />
+                {`Hello, ${user.firstName}`}
+              </span>
+            );
+
+            return (
+              <>
+                <Meta />
+                <FlexRow>
+                  <SideBar />
+                  <PageContainer>
+                    <Content>
+                      <HeaderBar>
+                        <FlexRow justify="flex-end" padding="5px 20px" style={{ color: 'white' }}>
+                          <Dropdown
+                            trigger={trigger}
+                            pointing="top left"
+                            direction="left"
+                            options={options}
+                            icon={null}
+                            name="user"
+                            onClick={this.handleMenuSelect}
+                          />
+                        </FlexRow>
+                      </HeaderBar>
+
+                      <div
+                        style={{
+                          position: 'absolute',
+                          zIndex: '1',
+                          marginTop: '5px',
+                          width: '100%',
+                        }}
+                      >
+                        <FlexRow>
+                          <Statistic label="Card Balance" value={user.balance} />
+                          <Statistic
+                            label="Last Charge"
+                            value={`$${currentMonth.currTransactions[0].amount}`}
+                          />
+                          <Statistic
+                            label="Year To Date"
+                            value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
+                          />
+                          <Statistic
+                            label="Last Update"
+                            value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                          />
+                        </FlexRow>
+
+                        <Container>
+                          <Main>
+                            <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                          </Main>
+                        </Container>
+                      </div>
+                    </Content>
+                  </PageContainer>
+                </FlexRow>
+              </>
+            );
+          }
 
           return (
-            <>
-              <Meta />
-              <FlexRow>
-                <SideBar />
-                <PageContainer>
-                  <Content>
-                    <HeaderBar>
-                      <FlexRow justify="flex-end" padding="5px 20px" style={{ color: 'white' }}>
-                        <Dropdown
-                          trigger={trigger}
-                          options={options}
-                          pointing="top left"
-                          direction="left"
-                          icon={null}
-                        />
-                      </FlexRow>
-                    </HeaderBar>
-
-                    <div
-                      style={{
-                        position: 'absolute',
-                        zIndex: '1',
-                        marginTop: '5px',
-                        width: '100%',
-                      }}
-                    >
-                      <FlexRow>
-                        <Statistic label="Card Balance" value={user.balance} />
-                        <Statistic
-                          label="Last Charge"
-                          value={`$${currentMonth.currTransactions[0].amount}`}
-                        />
-                        <Statistic
-                          label="Year To Date"
-                          value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
-                        />
-                        <Statistic
-                          label="Last Update"
-                          value={moment(currentMonth.currTransactions[0].date).fromNow()}
-                        />
-                      </FlexRow>
-
-                      <Container>
-                        <Main>
-                          <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
-                        </Main>
-                      </Container>
-                    </div>
-                  </Content>
-                </PageContainer>
-              </FlexRow>
-            </>
+            <Dimmer active>
+              <Loader />
+            </Dimmer>
           );
-        }
+        }}
+      </AuthUser>
+    );
+  }
+}
 
-        return (
-          <Dimmer active>
-            <Loader />
-          </Dimmer>
-        );
-      }}
-    </AuthUser>
-  );
-};
-
-export default Page;
 export { UserContext, FlexRow };
