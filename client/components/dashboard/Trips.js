@@ -11,7 +11,7 @@ export default ({ trips }) => {
     console.log(trip);
     return (
       <Table.Row positive={trip.type === 'Transfer'}>
-        <Table.Cell>{moment(trip.date).fromNow()}</Table.Cell>
+        <Table.Cell>{moment(trip.date).format('MM/DD/YYYY hh:mm:ss A')}</Table.Cell>
         <Table.Cell>{trip.agency}</Table.Cell>
         <Table.Cell>
           <Icon name={icon} />
