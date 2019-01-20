@@ -38,6 +38,7 @@ const Main = styled.main`
   margin-right: 15px;
   border: 1px solid lightgrey;
   background: white;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
 `;
 
 const FlexRow = styled.div`
