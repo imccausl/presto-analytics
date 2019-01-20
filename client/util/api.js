@@ -38,7 +38,7 @@ const API = {
       searchMonth = year;
     }
 
-    return `/transactions/${searchYear}/${searchMonth}`;
+    return `/transactions/monthly/${searchYear}/${searchMonth}`;
   },
   allTransactions: {
     method: 'GET',
@@ -48,7 +48,10 @@ const API = {
     method: 'GET',
     endpoint: '/transactions/ytd',
   },
-
+  yearToDateData: {
+    method: 'GET',
+    endpoint: '/transactions/ytd/data',
+  },
   prestoUsage: '/presto/usage',
 };
 
