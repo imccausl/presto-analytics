@@ -4,31 +4,102 @@ const moment = require('moment');
 const { getMonthName } = require('../../lib/util/date');
 const types = require('../../lib/util/types');
 
+function serializeTransactions(transactions) {
+  const serializedTransactions = {};
+
+  // serialize the shit out of this data:
+  // may be able to do this in a more sql-y way at some point?
+  transactions.forEach(item => {
+    const itemDate = new Date(item.date);
+    const monthNum = moment(itemDate).format('M');
+    const transitPassPurchasePeriod =
+      moment(itemDate)
+        .endOf('month')
+        .diff(itemDate, 'days') <= 8;
+
+    let year = moment(itemDate).format('YYYY');
+    let month = getMonthName(moment(itemDate).month());
+
+    // if a transit pass was purchaseed 8 days before the end of the month,
+    // move it to the next month because it was for that month that it was
+    // purchased.
+
+    if (item.type === types.TRANSIT_PASS_LOAD && transitPassPurchasePeriod) {
+      const addMonth = moment(itemDate, 'M').add(1, 'months');
+      if (monthNum === 12) {
+        year += 1;
+      }
+
+      month = getMonthName(moment(addMonth).month());
+    }
+
+    // god this is a mess. I apologize to my future self
+    // that learns more about sequelize.
+    if (serializedTransactions[year]) {
+      if (serializedTransactions[year][month]) {
+        if (item.type !== types.TRANSIT_PASS_LOAD) {
+          serializedTransactions[year][month].transactions.push(item);
+          serializedTransactions[year][month].amount += parseFloat(item.amount);
+        } else {
+          serializedTransactions[year][month].transitPassAmount += parseFloat(item.amount);
+        }
+      } else {
+        serializedTransactions[year][month] = {
+          transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
+        };
+      }
+    } else {
+      serializedTransactions[year] = {
+        [month]: {
+          transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
+        }
+      };
+    }
+  });
+
+  return serializedTransactions;
+}
+
 const routes = (Transaction, sequelize, Sequelize) => {
   const router = express.Router();
 
   router.get('/:year/:month', async (req, res, next) => {
     try {
-      const searchDateMin = `${req.params.year}-${req.params.month}-01`;
-      const searchDateMax =
-        req.params.month === '12' ? `${parseInt(req.params.year, 10) + 1}-01-01` : `${req.params.year}-${parseInt(req.params.month, 10) + 1}-01`;
+      const { year, month } = req.params;
+      console.log(month);
+      const searchDateMin = `${parseInt(month, 10) === 1 ? parseInt(year, 10) - 1 : year}-${
+        parseInt(month, 10) === 1 ? '12' : parseInt(month, 10) - 1
+      }-01`;
+      const searchDateMax = month === '12' ? `${parseInt(year, 10) + 1}-01-01` : `${year}-${parseInt(month, 10) + 1}-01`;
 
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER),
+          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD),
           date: {
             [Sequelize.Op.gte]: new Date(searchDateMin),
             [Sequelize.Op.lt]: new Date(searchDateMax)
           }
         },
+        attributes: ['id', 'date', 'agency', 'location', 'type', 'amount', 'balance'],
+
         order: sequelize.literal('date DESC')
       });
 
-      const totalAmount = transactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
-      const totalTrips = transactions.length;
-
-      res.json({ status: 'success', data: { transactions, totalTrips, totalAmount } });
+      const serializedTransactions = serializeTransactions(transactions);
+      console.log(serializedTransactions);
+      const totalAmount =
+        serializedTransactions[year][getMonthName(month - 1)].amount + serializedTransactions[year][getMonthName(month - 1)].transitPassAmount;
+      const totalTrips = serializedTransactions[year][getMonthName(month - 1)].transactions.length;
+      console.log(totalAmount);
+      res.json({
+        status: 'success',
+        data: { transactions: serializedTransactions[year][getMonthName(month - 1)].transactions, totalTrips, totalAmount }
+      });
     } catch (err) {
       console.error(err.stack);
       next(err);
@@ -36,8 +107,6 @@ const routes = (Transaction, sequelize, Sequelize) => {
   });
 
   router.get('/all', async (req, res, next) => {
-    const serializedTransactions = {};
-
     try {
       const transactions = await Transaction.findAll({
         where: {
@@ -48,59 +117,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
         order: sequelize.literal('date DESC')
       });
 
-      // serialize the shit out of this data:
-      // may be able to do this in a more sql-y way at some point?
-      transactions.forEach(item => {
-        const itemDate = new Date(item.date);
-        const monthNum = moment(itemDate).format('M');
-        const transitPassPurchasePeriod =
-          moment(itemDate)
-            .endOf('month')
-            .diff(itemDate, 'days') <= 8;
-
-        let year = moment(itemDate).format('YYYY');
-        let month = getMonthName(moment(itemDate).month());
-
-        // if a transit pass was purchaseed 8 days before the end of the month,
-        // move it to the next month because it was for that month that it was
-        // purchased.
-
-        if (item.type === types.TRANSIT_PASS_LOAD && transitPassPurchasePeriod) {
-          const addMonth = moment(itemDate, 'M').add(1, 'months');
-          if (monthNum === 12) {
-            year += 1;
-          }
-
-          month = getMonthName(moment(addMonth).month());
-        }
-
-        // god this is a mess. I apologize to my future self
-        // that learns more about sequelize.
-        if (serializedTransactions[year]) {
-          if (serializedTransactions[year][month]) {
-            if (item.type !== types.TRANSIT_PASS_LOAD) {
-              serializedTransactions[year][month].transactions.push(item);
-              serializedTransactions[year][month].amount += parseFloat(item.amount);
-            } else {
-              serializedTransactions[year][month].transitPassAmount += parseFloat(item.amount);
-            }
-          } else {
-            serializedTransactions[year][month] = {
-              transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-              amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
-              transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
-            };
-          }
-        } else {
-          serializedTransactions[year] = {
-            [month]: {
-              transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-              amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
-              transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
-            }
-          };
-        }
-      });
+      const serializedTransactions = serializeTransactions(transactions);
 
       res.json({ status: 'success', data: serializedTransactions });
     } catch (err) {
