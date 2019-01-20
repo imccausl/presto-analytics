@@ -130,6 +130,7 @@ export default class Dashboard extends Component {
                         if (payload.loading) {
                           return <Loader active />;
                         }
+                        console.log(payload.data.data)
 
                         return (
                           <>

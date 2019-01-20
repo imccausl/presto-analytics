@@ -18,14 +18,26 @@ export default (props) => {
   const { data, month, year } = props;
 
   const { transactions, totalAmount } = data;
+  console.log(transactions);
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);
-  console.log();
+
   return (
     <div>
       <FlexRow justify="space-between" align="center">
-        <h3 style={{ marginTop: '0', color: '#11BB81' }}>{`${month.toUpperCase()} ${year}`}</h3>
-        <h3 style={{ marginTop: '0', color: '#3BB4E9' }}>{`$${totalAmount} SPENT`}</h3>
+        <h3
+          style={{
+            marginTop: '0',
+            marginBottom: '0',
+            marginLeft: '25px',
+            color: '#11BB81',
+          }}
+        >
+          {`${month.toUpperCase()} ${year}`}
+        </h3>
+        <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
+          {`$${totalAmount} SPENT`}
+        </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>
         <LineChart
