@@ -3,35 +3,67 @@ import Fetch from 'react-fetch-component';
 import { Tab, Segment, Header } from 'semantic-ui-react';
 
 import YearStats from './YearStats';
+import YearCostPerTap from './YearCostPerTap';
+import YearTransactionBreakdown from './YearTransactionBreakdown';
+
 import { FlexRow } from '../Page';
 
 import API from '../../util/api';
-import { getMonthNameFromNum } from '../../util/date';
 
-const panes = [
-  { menuItem: 'This Month' },
-  { menuItem: 'Last Month' },
-  { menuItem: { icon: 'calendar alternate outline' } },
-];
+function getMonthNumFromName(name) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
-function getFareTypeCount(data) {
-  const sortedData = {};
+  return months.indexOf(name) + 1;
+}
 
-  data.forEach((item) => {
-    if (!sortedData[item.type]) {
-      sortedData[item.type] = 1;
-    } else {
-      sortedData[item.type] += 1;
-    }
+function getDataset(obj) {
+  const dataset = {
+    data: [],
+    totalAmount: 0,
+    totalTaps: 0,
+    costPerTap: 0,
+  };
+  const years = Object.keys(obj);
+
+  years.forEach((year) => {
+    const months = Object.keys(obj[year]);
+    console.log(obj[year]);
+    months.forEach((month) => {
+      const { amount, transactions, transitPassAmount } = obj[year][month];
+      const monthYearString = `${getMonthNumFromName(month)}/${year}`;
+      const payments = transactions.filter(item => item.type.includes('Payment'));
+      const transfers = transactions.filter(item => item.type.includes('Transfer'));
+
+      dataset.totalAmount += amount + transitPassAmount;
+      dataset.totalTaps += transactions.length;
+
+      dataset.data.push({
+        date: monthYearString,
+        amount: amount + transitPassAmount,
+        costPerTap: Math.round(100 * ((amount + transitPassAmount) / transactions.length)) / 100,
+        paymentTaps: payments.length,
+        transferTaps: transfers.length,
+        taps: transactions.length,
+      });
+    });
   });
 
-  const chartData = Object.keys(sortedData).map(key => ({
-    name: sortedData[key] === 1 ? key : `${key}s`,
-    value: sortedData[key],
-  }));
+  dataset.costPerTap = Math.round(100 * (dataset.totalAmount / dataset.totalTaps)) / 100;
 
-  console.log(chartData);
-  return chartData;
+  return dataset;
 }
 
 export default class MonthlyOverview extends Component {
@@ -53,19 +85,36 @@ export default class MonthlyOverview extends Component {
 
     return (
       <Fetch url={`${API.root}${API.yearToDateData.endpoint}`} options={API.send('GET')}>
-        {payload => (
-          <div style={{ width: '100%' }}>
-            <Header as="div" attached="top" block>
-              <FlexRow justify="space-between" align="center">
-                <h3 style={{ color: '#5558c8', marginBottom: '0' }}>Yearly Overview</h3>
-              </FlexRow>
-            </Header>
+        {(payload) => {
+          let dataset = {};
 
-            <Segment style={{ minHeight: '250px' }} attached loading={payload.loading}>
-              {!payload.loading && <YearStats data={payload.data.data} />}
-            </Segment>
-          </div>
-        )}
+          if (!payload.loading) {
+            dataset = getDataset(payload.data.data);
+            console.log(dataset);
+          }
+
+          return (
+            <>
+              <FlexRow padding="0 0 10px 0">
+                <div style={{ width: '50%', marginRight: '10px' }}>
+                  <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
+                    {!payload.loading && <YearStats dataset={dataset} />}
+                  </Segment>
+                </div>
+                <div style={{ width: '50%' }}>
+                  <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
+                    {!payload.loading && <YearCostPerTap dataset={dataset} />}
+                  </Segment>
+                </div>
+              </FlexRow>
+              <div style={{ width: '100%' }}>
+                <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
+                  {!payload.loading && <YearTransactionBreakdown dataset={dataset} />}
+                </Segment>
+              </div>
+            </>
+          );
+        }}
       </Fetch>
     );
   }

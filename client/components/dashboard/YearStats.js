@@ -11,65 +11,9 @@ import {
 } from 'recharts';
 
 import { FlexRow } from '../Page';
-import { totalDailyTransactionBreakdown } from '../../util/transactions';
 
 export default (props) => {
-  const { data } = props;
-
-  function getMonthNumFromName(name) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
-    return months.indexOf(name) + 1;
-  }
-
-  function getDataset(obj) {
-    const dataset = {
-      data: [],
-      totalAmount: 0,
-      totalTaps: 0,
-      costPerTap: 0,
-    };
-    const years = Object.keys(obj);
-
-    years.forEach((year) => {
-      const months = Object.keys(obj[year]);
-      console.log(obj[year]);
-      months.forEach((month) => {
-        const { amount, transactions, transitPassAmount } = obj[year][month];
-        const monthYearString = `${getMonthNumFromName(month)}/${year}`;
-
-        dataset.totalAmount += amount + transitPassAmount;
-        dataset.totalTaps += transactions.length;
-
-        dataset.data.push({
-          date: monthYearString,
-          amount: amount + transitPassAmount,
-          trips: transactions.length,
-        });
-      });
-    });
-
-    console.log(dataset.totalAmount, dataset.totalTaps, dataset.totalAmount / dataset.totalTaps);
-    dataset.costPerTap = Math.round(100 * (dataset.totalAmount / dataset.totalTaps)) / 100;
-
-    return dataset;
-  }
-
-  const dataset = getDataset(data);
-  console.log(dataset);
+  const { dataset } = props;
 
   return (
     <div>
@@ -82,7 +26,7 @@ export default (props) => {
             color: '#11BB81',
           }}
         >
-          {`$${dataset.costPerTap} / Tap`}
+          {'Year to Month'}
         </h3>
         <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
           {`$${dataset.totalAmount} Total`}
@@ -101,7 +45,7 @@ export default (props) => {
           <CartesianGrid stroke="#EBEBEB" vertical={false} />
 
           <Line
-            dataKey="trips"
+            dataKey="paymentTaps"
             type="monotone"
             stroke="#3333cc"
             strokeWidth={5}
@@ -109,6 +53,18 @@ export default (props) => {
               stroke: 'white',
               strokeWidth: 3,
               fill: '#3333cc',
+              r: 7,
+            }}
+          />
+          <Line
+            dataKey="transferTaps"
+            type="monotone"
+            stroke="#11BB81"
+            strokeWidth={5}
+            dot={{
+              stroke: 'white',
+              strokeWidth: 3,
+              fill: '#11BB81',
               r: 7,
             }}
           />
@@ -125,9 +81,7 @@ export default (props) => {
             }}
           />
           <YAxis
-            allowDecimals={false}
             type="number"
-            domain={dataset}
             tickMargin={20}
             dataKey="amount"
             tickLine={false}
@@ -137,6 +91,8 @@ export default (props) => {
           <XAxis dataKey="date" tickMargin={5} tickLine={false} axisLine={false} stroke="#C4C4C4" />
 
           <ReferenceLine y={146.25} label="Transit Pass Cost" stroke="red" />
+          <ReferenceLine y={146.25 / 3} label="Transit Pass Break-even" stroke="red" />
+
           <Tooltip />
         </LineChart>
       </ResponsiveContainer>
