@@ -28,6 +28,7 @@ const routes = Transaction => {
   router.post('/usage', async (req, res, next) => {
     try {
       let { from, to } = req.body;
+      let filterDateString = '';
       let filteredUsage = [];
 
       const lastTransactionDate = await Transaction.max('date', {
@@ -36,11 +37,12 @@ const routes = Transaction => {
         }
       });
 
-      console.log('lastTransactionDate:', !!lastTransactionDate, lastTransactionDate.toLocaleDateString());
-
       if (lastTransactionDate) {
         from = moment(lastTransactionDate).format('MM/DD/YYYY');
+        filterDateString = moment(lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A');
       }
+
+      console.log('lastTransactionDate:', !!lastTransactionDate, filterDateString);
 
       if (!to) {
         to = moment().format('MM/DD/YYYY');
@@ -50,7 +52,18 @@ const routes = Transaction => {
       filteredUsage = usage;
       // const testUser = await User.findOne({ where: { firstName: 'test' } });
       if (lastTransactionDate) {
-        filteredUsage = usage.filter(item => item.date !== lastTransactionDate);
+        filteredUsage = usage.filter(item => {
+          console.log(
+            `item: ${item.date}`,
+            `lasttransaction: ${filterDateString}`,
+            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isBefore(filterDateString),
+            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isSame(filterDateString)
+          );
+          return (
+            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isBefore(filterDateString) ||
+            !moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isSame(filterDateString)
+          );
+        });
         console.log('filteredUsage:', filteredUsage);
       }
 
@@ -60,7 +73,7 @@ const routes = Transaction => {
       filteredUsage.forEach(async transaction => {
         await Transaction.create({
           userId: req.userId,
-          date: new Date(transaction.date),
+          date: moment(transaction.date, 'MM/DD/YYYY hh:mm:ss A'),
           agency: transaction.agency,
           location: transaction.location,
           type: transaction.type,
