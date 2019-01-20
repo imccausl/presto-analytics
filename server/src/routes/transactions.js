@@ -70,12 +70,10 @@ const routes = (Transaction, sequelize, Sequelize) => {
   router.get('/:year/:month', async (req, res, next) => {
     try {
       const { year, month } = req.params;
-      console.log(month);
       const searchDateMin = `${parseInt(month, 10) === 1 ? parseInt(year, 10) - 1 : year}-${
         parseInt(month, 10) === 1 ? '12' : parseInt(month, 10) - 1
       }-01`;
       const searchDateMax = month === '12' ? `${parseInt(year, 10) + 1}-01-01` : `${year}-${parseInt(month, 10) + 1}-01`;
-
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
@@ -91,11 +89,9 @@ const routes = (Transaction, sequelize, Sequelize) => {
       });
 
       const serializedTransactions = serializeTransactions(transactions);
-      console.log(serializedTransactions);
       const totalAmount =
         serializedTransactions[year][getMonthName(month - 1)].amount + serializedTransactions[year][getMonthName(month - 1)].transitPassAmount;
       const totalTrips = serializedTransactions[year][getMonthName(month - 1)].transactions.length;
-      console.log(totalAmount);
       res.json({
         status: 'success',
         data: { transactions: serializedTransactions[year][getMonthName(month - 1)].transactions, totalTrips, totalAmount }
