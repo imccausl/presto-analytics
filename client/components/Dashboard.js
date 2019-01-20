@@ -6,8 +6,6 @@ import YearOverview from './dashboard/YearOverview';
 export default () => (
   <div>
     <MonthlyOverview />
-    <FlexRow>
-      <YearOverview />
-    </FlexRow>
+    <YearOverview />
   </div>
 );
