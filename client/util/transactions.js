@@ -5,20 +5,22 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
   const domain = [0, 0];
   const currYear = new Date(transactions[0].date).getFullYear();
   const currMonth = new Date(transactions[0].date).getMonth() + 1;
-  const lastDay = new Date(transactions[0].date).getDate();
+  const lastDay = moment(transactions[0].date).date();
 
   for (let i = 1; i <= lastDay; i += 1) {
     const dateString = `${i < 10 ? `0${i}` : i}/${
       currMonth < 10 ? `0${currMonth}` : currMonth
     }/${currYear}`;
-
     dataset[dateString] = { amount: 0, trips: 0 };
   }
 
   transactions.forEach((item) => {
-    const date = moment(item.date).format('DD/MM/YYYY');
-    const amount = parseFloat(item.amount);
+    const date = moment(item.date)
+      .local()
+      .format('DD/MM/YYYY');
 
+    const amount = parseFloat(item.amount);
+    console.log(date);
     dataset[date].amount += amount;
     dataset[date].trips += 1;
   });
@@ -33,7 +35,7 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
     domain[1] = domain[1] < dataset[key].trips ? dataset[key].trips : domain[1];
 
     return {
-      date: currDate.format('D'),
+      date: currDate.format('DD'),
       dayOfWeek: days[currDate.day()],
       amount: dataset[key].amount,
       trips: dataset[key].trips,
