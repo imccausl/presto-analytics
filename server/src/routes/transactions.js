@@ -67,7 +67,7 @@ function serializeTransactions(transactions) {
 const routes = (Transaction, sequelize, Sequelize) => {
   const router = express.Router();
 
-  router.get('/:year/:month', async (req, res, next) => {
+  router.get('/monthly/:year/:month', async (req, res, next) => {
     try {
       const { year, month } = req.params;
       const searchDateMin = `${parseInt(month, 10) === 1 ? parseInt(year, 10) - 1 : year}-${
@@ -121,12 +121,33 @@ const routes = (Transaction, sequelize, Sequelize) => {
     }
   });
 
-  router.get('/yearly', async (req, res, next) => {
+  router.get('/ytd/data', async (req, res, next) => {
     try {
-      const today = moment();
-      const yearBefore = moment().subtract(1, 'years');
+      const today = moment()
+        .endOf('month')
+        .format('DD/MM/YYYY');
+      const yearBefore = moment()
+        .subtract(1, 'years')
+        .startOf('month')
+        .format('DD/MM/YYYY');
 
-      res.json({ lastMonth: today.format('MM/YYYY'), yearBefore: yearBefore.format('MM/YYYY') });
+      console.log(today, yearBefore);
+      const transactions = await Transaction.findAll({
+        where: {
+          userId: req.userId,
+          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD),
+          date: {
+            [Sequelize.Op.gte]: moment(yearBefore, 'DD/MM/YYYY'),
+            [Sequelize.Op.lte]: moment(today, 'DD/MM/YYYY')
+          }
+        },
+        attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
+        order: sequelize.literal('date ASC')
+      });
+
+      const serializedTransactions = serializeTransactions(transactions);
+      console.log(serializedTransactions);
+      res.json({ status: 'success', data: serializedTransactions });
     } catch (error) {
       next({ status: 'error', error });
     }
@@ -134,8 +155,10 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
   router.get('/ytd', async (req, res, next) => {
     try {
-      const today = new Date();
-      const lastYear = moment(today).subtract(1, 'years');
+      const today = moment().format('MM/YYYY');
+      const lastYear = moment()
+        .subtract(1, 'years')
+        .format('MM/YYYY');
 
       const ytd = await Transaction.findAll({
         where: {
@@ -143,8 +166,8 @@ const routes = (Transaction, sequelize, Sequelize) => {
           type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
           serviceClass: 'Regular',
           date: {
-            [Sequelize.Op.gte]: lastYear,
-            [Sequelize.Op.lt]: today
+            [Sequelize.Op.gte]: moment(lastYear, 'MM/YYYY'),
+            [Sequelize.Op.lt]: moment(today, 'MM/YYYY')
           }
         },
         attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],

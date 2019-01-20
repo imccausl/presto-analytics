@@ -45,8 +45,13 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
       const totalAmount = currTransactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
       const totalTrips = currTransactions.length;
 
-      const today = new Date();
-      const lastYear = moment(today).subtract(1, 'years');
+      const today = moment()
+        .endOf('month')
+        .format('DD/MM/YYYY');
+      const lastYear = moment()
+        .subtract(1, 'years')
+        .startOf('month')
+        .format('DD/MM/YYYY');
 
       const ytd = await Transaction.findAll({
         where: {
@@ -54,8 +59,8 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
           type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
           serviceClass: 'Regular',
           date: {
-            [Sequelize.Op.gte]: lastYear,
-            [Sequelize.Op.lt]: today
+            [Sequelize.Op.gte]: moment(lastYear, 'DD/MM/YYYY'),
+            [Sequelize.Op.lte]: moment(today, 'DD/MM/YYYY')
           }
         },
         attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],
