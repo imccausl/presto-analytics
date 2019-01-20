@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React from 'react';
 import {
-  Dropdown, Icon, Dimmer, Loader,
+  Dropdown, Icon, Dimmer, Loader, Button, Menu,
 } from 'semantic-ui-react';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
@@ -75,10 +75,11 @@ const Page = (props) => {
                   <strong>{`${user.firstName} ${user.lastName}`}</strong>
                 </span>
               ),
+              disabled: true,
             },
             { key: 'Details', text: 'Account Settings' },
             { key: 'Refresh', text: 'Refresh Data' },
-            { key: 'divider', text: <Dropdown.Divider /> },
+            { key: 'divider', text: <Dropdown.Divider />, disabled: true },
             { key: 'Logout', text: 'Log out' },
           ];
 
