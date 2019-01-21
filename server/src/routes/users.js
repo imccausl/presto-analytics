@@ -83,12 +83,13 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
 
       console.log(`User ${user.firstName} logged in!`);
       res.json({ status: 'success', data: { user, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
+      next();
     } catch (err) {
-      return next({ status: 'error', error: err });
+      return next(err);
     }
   });
 
-  router.post('/login', async (req, res) => {
+  router.post('/login', async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -101,6 +102,7 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
       if (!user) {
         throw new Error("User doesn't exist");
       }
+
       const isPasswordValid = await user.validatePassword(password);
 
       if (!isPasswordValid) {
@@ -114,9 +116,10 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
         maxAge: 1000 * 60 * 60 * 24 * 356
       });
 
-      res.json({ status: 'success', data: user });
+      res.status(200).json({ status: 'success', data: user });
+      next();
     } catch (err) {
-      res.json({ status: 'failed', error: err });
+      next(err);
     }
   });
 
@@ -127,6 +130,10 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
     try {
       if (password !== passwordAgain) {
         throw new Error('Passwords do not match!');
+      }
+
+      if (!body.email) {
+        throw new Error('No email provided.');
       }
 
       body.email = body.email.toLowerCase();
