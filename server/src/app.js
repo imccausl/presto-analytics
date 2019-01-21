@@ -64,16 +64,12 @@ app.use('/api/v1/presto', prestoRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 
 // handle errors as json
-app.use((err, req, res) => {
-  try {
-    console.error(err.stack);
-    res.send({
-      error: 'error',
-      message: err.message
-    });
-  } catch (error) {
-    console.error(error.stack);
-  }
+app.use((err, req, res, next) => {
+  res.status(401).send({
+    error: 'error',
+    message: err.message,
+    body: err // for debugging
+  });
 });
 
 app.get('/', (req, res) => {
