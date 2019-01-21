@@ -31,6 +31,10 @@ const routes = Transaction => {
       let filterDateString = '';
       let filteredUsage = [];
 
+      if (!req.userId) {
+        throw new Error('No user logged in!');
+      }
+
       const lastTransactionDate = await Transaction.max('date', {
         where: {
           userId: req.userId
