@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React, { Component } from 'react';
+import Router from 'next/router';
 import {
   Dropdown, Icon, Dimmer, Loader, Button, Menu,
 } from 'semantic-ui-react';
@@ -70,10 +71,16 @@ export default class Page extends Component {
           console.log(data);
 
           if (error) {
-            return <div>{error.message}</div>;
+            return (
+              <Container>
+                <Main>
+                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                </Main>
+              </Container>
+            );
           }
 
-          if (!loading) {
+          if (!loading && data.status === 'success') {
             const {
               data: { user, currentMonth, ytd },
             } = data;

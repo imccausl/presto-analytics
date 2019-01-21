@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Router from 'next/router';
 import {
   Input, Icon, Button, Card,
 } from 'semantic-ui-react';
@@ -25,10 +26,16 @@ export default class Login extends Component {
     console.log(password.length);
     return (
       <Fetch manual url={`${API.root}${API.login}`} options={API.send({ email, password })}>
-        {({ fetch, loading, error }) => {
+        {({
+          fetch, data, loading, error,
+        }) => {
           if (error) {
             console.log(error);
             return <div>{error.message}</div>;
+          }
+
+          if (data && data.status === 'success') {
+            return Router.push('/dashboard');
           }
 
           return (
