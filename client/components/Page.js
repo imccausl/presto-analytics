@@ -70,12 +70,10 @@ export default class Page extends Component {
         {({ data, error, loading }) => {
           console.log(data);
 
-          if (error) {
+          if (!loading && error) {
             return (
               <Container>
-                <Main>
-                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
-                </Main>
+                <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
               </Container>
             );
           }
