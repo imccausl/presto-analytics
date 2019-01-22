@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import NProgress from 'nprogress';
 import {
-  Input, Icon, Button, Card,
+  Button, Message, Form, Icon, Card,
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
 
@@ -59,84 +59,66 @@ export default class Register extends Component {
           }
 
           return (
-            <Card centered raised style={{ width: '400px' }}>
-              <Card.Content>
-                <Card.Header>Create an Account</Card.Header>
-                <Card.Description style={{ marginBottom: '15px' }}>
-                  Enter your account details below to create your account.
-                </Card.Description>
-                <Input
-                  style={{ marginBottom: '5px' }}
-                  fluid
-                  iconPosition="left"
-                  placeholder="First Name"
-                >
-                  <Icon name="user circle" />
-                  <input
-                    disabled={loading}
+            <div>
+              <Message
+                attached
+                header="Presto Analytics"
+                content="Fill out the form below to sign-up for a new account"
+              />
+              <Form className="attached fluid segment">
+                <Form.Group widths="equal">
+                  <Form.Input
+                    fluid
+                    label="First Name"
                     type="text"
-                    name="firstName"
-                    onChange={this.saveToState}
+                    placeholder="First Name"
                     value={firstName}
-                  />
-                </Input>
-                <Input
-                  style={{ marginBottom: '5px' }}
-                  fluid
-                  iconPosition="left"
-                  placeholder="Last Name"
-                >
-                  <Icon name="user circle" />
-                  <input
+                    onChange={this.saveToState}
+                    name="firstName"
                     disabled={loading}
+                  />
+                  <Form.Input
+                    fluid
+                    label="Last Name"
+                    placeholder="Last Name"
                     type="text"
                     name="lastName"
                     onChange={this.saveToState}
                     value={lastName}
+                    disabled={loading}
                   />
-                </Input>
-                <Input
-                  style={{ marginBottom: '5px' }}
+                </Form.Group>
+
+                <Form.Input
                   fluid
-                  iconPosition="left"
                   placeholder="Email"
-                >
-                  <Icon name="at" />
-                  <input
-                    disabled={loading}
-                    type="text"
-                    name="email"
-                    onChange={this.saveToState}
-                    value={email}
-                  />
-                </Input>
-                <Input
-                  style={{ marginBottom: '5px' }}
+                  label="Email"
+                  disabled={loading}
+                  type="text"
+                  name="email"
+                  onChange={this.saveToState}
+                  value={email}
+                />
+                <Form.Input
                   fluid
-                  iconPosition="left"
                   placeholder="Password"
-                >
-                  <Icon name="key" />
-                  <input
-                    disabled={loading}
-                    type="password"
-                    name="password"
-                    onChange={this.saveToState}
-                    value={password}
-                  />
-                </Input>
-                <Input fluid iconPosition="left" placeholder="Password Again">
-                  <Icon name="key" />
-                  <input
-                    disabled={loading}
-                    type="password"
-                    name="passwordAgain"
-                    onChange={this.saveToState}
-                    value={passwordAgain}
-                  />
-                </Input>
-              </Card.Content>
-              <Card.Content extra style={{ textAlign: 'right' }}>
+                  label="Password"
+                  disabled={loading}
+                  type="password"
+                  name="password"
+                  onChange={this.saveToState}
+                  value={password}
+                />
+                <Form.Input
+                  fluid
+                  placeholder="Password Again"
+                  disabled={loading}
+                  label="Password Again"
+                  type="password"
+                  name="passwordAgain"
+                  onChange={this.saveToState}
+                  value={passwordAgain}
+                />
                 <Button
                   positive
                   labelPosition="right"
@@ -165,8 +147,14 @@ export default class Register extends Component {
                     });
                   }}
                 />
-              </Card.Content>
-            </Card>
+              </Form>
+              <Message attached="bottom" warning>
+                <Icon name="help" />
+                Already signed up?&nbsp;
+                <a href="#">Login here</a>
+&nbsp;instead.
+              </Message>
+            </div>
           );
         }}
       </Fetch>
