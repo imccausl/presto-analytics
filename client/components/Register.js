@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import NProgress from 'nprogress';
 import {
-  Button, Message, Form, Icon, Card,
+  Button, Message, Form, Icon,
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
 
@@ -152,7 +152,7 @@ export default class Register extends Component {
                 <Icon name="help" />
                 Already signed up?&nbsp;
                 <a href="#">Login here</a>
-&nbsp;instead.
+                &nbsp;instead.
               </Message>
             </div>
           );
