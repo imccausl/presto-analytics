@@ -123,6 +123,11 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
     }
   });
 
+  router.get('/logout', async (req, res) => {
+    res.clearCookie('token');
+    res.json({ status: 'success', message: 'Logout completed' });
+  });
+
   router.post('/signup', async (req, res, next) => {
     const { body } = req;
     const { firstName, lastName, password, passwordAgain } = body;
