@@ -8,7 +8,6 @@ export default ({ trips }) => {
     if (trip.location.includes('STATION')) {
       icon = 'subway';
     }
-    console.log(trip);
     return (
       <Table.Row positive={trip.type === 'Transfer'}>
         <Table.Cell>

@@ -22,7 +22,6 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
       .format('DD/MM/YYYY');
 
     const amount = parseFloat(item.amount);
-    console.log(date);
     dataset[date].amount += amount;
     dataset[date].trips += 1;
   });
@@ -44,7 +43,6 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
     };
   });
 
-  console.log(breakdown);
   return { dataset: breakdown, domain };
 }
 

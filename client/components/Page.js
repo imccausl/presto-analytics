@@ -68,7 +68,6 @@ export default class Page extends Component {
     return (
       <AuthUser>
         {({ data, error, loading }) => {
-          console.log(data);
 
           if (!loading && error) {
             return (

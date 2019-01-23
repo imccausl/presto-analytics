@@ -2,7 +2,7 @@ import Fetch from 'react-fetch-component';
 import { Segment, Label, Loader } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import API from '../../util/api';
+import API from '../../lib/api';
 
 import { FlexRow } from '../Page';
 import MonthlyTapGraph from './MonthlyTapGraph';
@@ -24,7 +24,6 @@ export default (props) => {
         if (!loading && data) {
           const year = '2018';
 
-          console.log(data);
           const months = Object.keys(data.data[year]).map((month) => {
             const monthData = data.data[year][month];
 

@@ -89,7 +89,6 @@ export default class TransfersVsPayments extends Component {
       name: key.replace('Payment', ''),
       value: sortedData[key],
     }));
-    console.log(chartData);
     return (
       <div style={{ margin: '0 20px', padding: '0 20px' }}>
         <PieChart width={450} height={200}>

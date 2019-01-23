@@ -12,13 +12,12 @@ import {
 
 import { FlexRow } from '../Page';
 
-import { totalDailyTransactionBreakdown } from '../../util/transactions';
+import { totalDailyTransactionBreakdown } from '../../lib/transactions';
 
 export default (props) => {
   const { data, month, year } = props;
 
   const { transactions, totalAmount } = data;
-  console.log(transactions);
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);
 

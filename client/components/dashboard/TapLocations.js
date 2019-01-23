@@ -8,7 +8,6 @@ export default (props) => {
   function makeDataset(data) {
     const sortedData = {};
 
-    console.log(data);
 
     data.forEach((item) => {
       if (!sortedData[item.location]) {
@@ -27,7 +26,6 @@ export default (props) => {
   }
 
   const dataset = makeDataset(transactions);
-  console.log(dataset);
 
   return (
     <div style={{ width: '300px', margin: '0 auto' }}>

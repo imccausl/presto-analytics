@@ -9,14 +9,13 @@ import {
   Tooltip,
 } from 'recharts';
 
-import { totalDailyTransactionBreakdown } from '../../util/transactions';
+import { totalDailyTransactionBreakdown } from '../../lib/transactions';
 
 export default (props) => {
   const {
     data: { transactions },
   } = props;
   const breakdown = totalDailyTransactionBreakdown(transactions);
-  console.log(breakdown.domain);
 
   return (
     <ResponsiveContainer width="60%" height={100}>

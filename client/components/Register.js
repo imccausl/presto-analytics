@@ -6,7 +6,7 @@ import {
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
 
-import API from '../util/api';
+import API from '../lib/api';
 
 export default class Register extends Component {
   constructor() {

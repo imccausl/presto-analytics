@@ -8,7 +8,7 @@ import YearTransactionBreakdown from './YearTransactionBreakdown';
 
 import { FlexRow } from '../Page';
 
-import API from '../../util/api';
+import API from '../../lib/api';
 
 function getMonthNumFromName(name) {
   const months = [
@@ -40,7 +40,6 @@ function getDataset(obj) {
 
   years.forEach((year) => {
     const months = Object.keys(obj[year]);
-    console.log(obj[year]);
     months.forEach((month) => {
       const { amount, transactions, transitPassAmount } = obj[year][month];
       const monthYearString = `${getMonthNumFromName(month)}/${year}`;
@@ -90,7 +89,6 @@ export default class MonthlyOverview extends Component {
 
           if (!payload.loading) {
             dataset = getDataset(payload.data.data);
-            console.log(dataset);
           }
 
           return (

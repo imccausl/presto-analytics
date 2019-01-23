@@ -5,7 +5,7 @@ import {
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
 
-import API from '../util/api';
+import API from '../lib/api';
 
 export default class Login extends Component {
   constructor() {
@@ -23,14 +23,12 @@ export default class Login extends Component {
 
   render() {
     const { email, password } = this.state;
-    console.log(password.length);
     return (
       <Fetch manual url={`${API.root}${API.login}`} options={API.send({ email, password })}>
         {({
           fetch, data, loading, error,
         }) => {
           if (error) {
-            console.log(error);
             return <div>{error.message}</div>;
           }
 

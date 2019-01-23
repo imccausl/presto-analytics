@@ -1,19 +1,25 @@
 import Router from 'next/router';
 
 import AuthUser from '../components/AuthUser';
+import withAuth from '../lib/withAuth';
 
-export default () => (
-  <>
-    <AuthUser>
-      {({ data, error, loading }) => {
-        if (!loading) {
-          if (data) {
-            Router.push('/dashboard');
+const Index = (props) => {
+  console.log(props);
+  return (
+    <>
+      <AuthUser>
+        {({ data, error, loading }) => {
+          if (!loading) {
+            if (data) {
+              Router.push('/dashboard');
+            }
+
+            if (error) Router.push('/login');
           }
+        }}
+      </AuthUser>
+    </>
+  );
+};
 
-          if (error) Router.push('/login');
-        }
-      }}
-    </AuthUser>
-  </>
-);
+export default withAuth(Index);

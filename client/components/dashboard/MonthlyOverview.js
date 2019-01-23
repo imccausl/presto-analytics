@@ -9,8 +9,8 @@ import Statistic from '../styled/Statistic';
 import MonthlyStats from './MonthlyStats';
 import { FlexRow } from '../Page';
 
-import API from '../../util/api';
-import { getMonthNameFromNum } from '../../util/date';
+import API from '../../lib/api';
+import { getMonthNameFromNum } from '../../lib/date';
 
 const panes = [
   { menuItem: 'This Month' },
@@ -34,7 +34,6 @@ function getFareTypeCount(data) {
     value: sortedData[key],
   }));
 
-  console.log(chartData);
   return chartData;
 }
 
@@ -51,7 +50,6 @@ export default class MonthlyOverview extends Component {
   close = () => this.setState({ open: false });
 
   handleCalChange = (event, { name, value }) => {
-    console.log(name, value);
     this.setState({ [name]: value });
   };
 
@@ -161,7 +159,6 @@ export default class MonthlyOverview extends Component {
               labelPosition="right"
               content="Yes"
               onClick={() => {
-                console.log(selectedYear, selectedMonth);
                 this.setState({
                   month: selectedMonth - 1,
                   year: selectedYear || thisYear,
