@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Router from 'next/router';
 import {
-  Input, Icon, Button, Card,
+  Input, Icon, Button, Form, Message,
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
+import Link from 'next/link';
 
 import API from '../lib/api';
 
@@ -37,18 +38,14 @@ export default class Login extends Component {
           }
 
           return (
-            <Card centered raised style={{ width: '400px' }}>
-              <Card.Content>
-                <Card.Header>Sign in</Card.Header>
-                <Card.Description style={{ marginBottom: '15px' }}>
-                  Enter your email address and password below.
-                </Card.Description>
-                <Input
-                  style={{ marginBottom: '5px' }}
-                  fluid
-                  iconPosition="left"
-                  placeholder="Email"
-                >
+            <div style={{ minWidth: '35%' }}>
+              <Message
+                attached
+                header="Log in"
+                content="Enter your email address and password to log in to your account"
+              />
+              <Form className="attached fluid segment">
+                <Form.Input fluid iconPosition="left" placeholder="Email">
                   <Icon name="at" />
                   <input
                     disabled={loading}
@@ -57,8 +54,8 @@ export default class Login extends Component {
                     onChange={this.saveToState}
                     value={email}
                   />
-                </Input>
-                <Input fluid iconPosition="left" placeholder="Password">
+                </Form.Input>
+                <Form.Input fluid iconPosition="left" placeholder="Password">
                   <Icon name="key" />
                   <input
                     disabled={loading}
@@ -67,23 +64,31 @@ export default class Login extends Component {
                     onChange={this.saveToState}
                     value={password}
                   />
-                </Input>
-              </Card.Content>
-              <Card.Content extra style={{ textAlign: 'right' }}>
-                <Button
-                  positive
-                  labelPosition="right"
-                  icon="chevron circle right"
-                  content="Login"
-                  disabled={loading || (!email.length || !password.length)}
-                  loading={loading}
-                  onClick={() => {
-                    fetch();
-                    this.setState({ email: '', password: '' });
-                  }}
-                />
-              </Card.Content>
-            </Card>
+                </Form.Input>
+
+                <div style={{ textAlign: 'right' }}>
+                  <Button
+                    style={{ marginRight: 0 }}
+                    positive
+                    labelPosition="right"
+                    icon="chevron circle right"
+                    content="Login"
+                    disabled={loading || (!email.length || !password.length)}
+                    loading={loading}
+                    onClick={() => {
+                      fetch();
+                      this.setState({ email: '', password: '' });
+                    }}
+                  />
+                </div>
+              </Form>
+              <Message attached="bottom" warning>
+                <Icon name="help" />
+                Don't have an account?
+                <Link href="/register"> Register</Link>
+                &nbsp;instead.
+              </Message>
+            </div>
           );
         }}
       </Fetch>
