@@ -27,6 +27,10 @@ const API = {
     endpoint: '/me',
   },
   login: '/login',
+  logout: {
+    endpoint: '/logout',
+    method: 'GET',
+  },
   register: '/signup',
 
   monthlyTransactions: (year, month) => {
