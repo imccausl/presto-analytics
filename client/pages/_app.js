@@ -8,6 +8,8 @@ import NProgress from 'nprogress';
 
 import Page from '../components/Page';
 
+NProgress.configure({ showSpinner: false });
+
 Router.onRouteChangeStart = () => {
   NProgress.start();
 };
