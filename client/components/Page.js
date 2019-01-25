@@ -7,6 +7,7 @@ import {
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import Index from './Index';
 import AuthUser from './AuthUser';
 import HeaderBar from './styled/HeaderBar';
 import Meta from './Meta';
@@ -26,9 +27,7 @@ const Content = styled.div`
 
 const Container = styled.div`
   display: block;
-
   height: 100vh;
-  margin-top: 10px;
   color: black;
 `;
 
@@ -39,6 +38,7 @@ const Main = styled.main`
   margin-right: 15px;
   /* border: 1px solid lightgrey; */
   background: white;
+  margin-top: 10px;
   box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
   padding: 10px;
 `;
@@ -68,11 +68,12 @@ export default class Page extends Component {
     return (
       <AuthUser>
         {({ data, error, loading }) => {
-
           if (!loading && error) {
             return (
               <Container>
-                <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                <Index>
+                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                </Index>
               </Container>
             );
           }
@@ -183,4 +184,6 @@ export default class Page extends Component {
   }
 }
 
-export { UserContext, FlexRow };
+export {
+  UserContext, FlexRow, Content, Container,
+};

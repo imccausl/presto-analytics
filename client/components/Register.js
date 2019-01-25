@@ -5,6 +5,7 @@ import {
   Button, Message, Form, Icon,
 } from 'semantic-ui-react';
 import Fetch from 'react-fetch-component';
+import Link from 'next/link';
 
 import API from '../lib/api';
 
@@ -59,10 +60,10 @@ export default class Register extends Component {
           }
 
           return (
-            <div>
+            <div style={{ minWidth: '50%' }}>
               <Message
                 attached
-                header="Presto Analytics"
+                header="Register"
                 content="Fill out the form below to sign-up for a new account"
               />
               <Form className="attached fluid segment">
@@ -151,7 +152,7 @@ export default class Register extends Component {
               <Message attached="bottom" warning>
                 <Icon name="help" />
                 Already signed up?&nbsp;
-                <a href="#">Login here</a>
+                <Link href="/login">Login</Link>
                 &nbsp;instead.
               </Message>
             </div>
