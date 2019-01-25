@@ -16,6 +16,8 @@ import PageContainer from './styled/Container';
 import Statistic from './styled/Statistic';
 import Transactions from './dashboard/Transactions';
 
+import requestApi from '../lib/requestApi';
+
 const UserContext = React.createContext();
 
 const Content = styled.div`
@@ -105,7 +107,15 @@ export default class Page extends Component {
                 },
               },
               { key: 'divider', text: <Dropdown.Divider />, disabled: true },
-              { key: 'logout', text: 'Log out', value: 'logout' },
+              {
+                key: 'logout',
+                text: 'Log out',
+                value: 'logout',
+                onClick: async () => {
+                  requestApi.logout();
+                  window.location.href = '/';
+                },
+              },
             ];
 
             const trigger = (
