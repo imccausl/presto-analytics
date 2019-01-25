@@ -9,6 +9,8 @@ const Index = (props) => {
     <>
       <AuthUser>
         {({ data, error, loading }) => {
+          console.log(data, error, loading);
+
           if (!loading) {
             if (data) {
               Router.push('/dashboard');
@@ -22,4 +24,4 @@ const Index = (props) => {
   );
 };
 
-export default withAuth(Index);
+export default Index;
