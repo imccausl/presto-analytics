@@ -14,9 +14,9 @@ async function getCSRF(requestInstance, endpoint = API.homepage, parentId = 'sig
   try {
     const { body } = await requestInstance({ uri: endpoint });
     const dom = new JSDOM(body, { cookieJar });
-    const token = dom.window.document.querySelector(`#${parentId} input[name='__RequestVerificationToken']`).value;
+    const token = dom.window.document.querySelector(`#${parentId} input[name='__RequestVerificationToken']`);
 
-    return token;
+    return token ? token.value : '';
   } catch (error) {
     return { error };
   }
