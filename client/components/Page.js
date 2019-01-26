@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import Router from 'next/router';
 import {
-  Dropdown, Icon, Dimmer, Loader, Button, Menu,
+  Dropdown, Icon, Dimmer, Loader, Button, Menu, Message,
 } from 'semantic-ui-react';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import Meta from './Meta';
 import SideBar from './SideBar';
 import PageContainer from './styled/Container';
 import Statistic from './styled/Statistic';
-import Transactions from './dashboard/Transactions';
+import UpdatePresto from './dashboard/UpdatePresto';
 
 import requestApi from '../lib/requestApi';
 
@@ -57,7 +57,7 @@ const FlexRow = styled.div`
 `;
 
 export default class Page extends Component {
-  state = { menuValue: '' };
+  state = { menuValue: '', updatePrestoOpen: false };
 
   handleMenuSelect = (e, { name, value }) => {
     console.log(name, value);
@@ -71,9 +71,11 @@ export default class Page extends Component {
       <AuthUser>
         {({ data, error, loading }) => {
           if (!loading && error) {
+            console.log(error);
             return (
               <Container>
                 <Index>
+                  {error && <Message error>{error.message}</Message>}
                   <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
                 </Index>
               </Container>
@@ -103,7 +105,7 @@ export default class Page extends Component {
                 value: 'refresh',
                 onClick: () => {
                   console.log('Getting transactions...');
-                  return <Transactions />;
+                  this.setState({ updatePrestoOpen: true });
                 },
               },
               { key: 'divider', text: <Dropdown.Divider />, disabled: true },
@@ -127,6 +129,8 @@ export default class Page extends Component {
 
             return (
               <>
+                <UpdatePresto open={this.state.updatePrestoOpen} />
+
                 <Meta />
                 <FlexRow>
                   <SideBar />
@@ -158,15 +162,19 @@ export default class Page extends Component {
                           <Statistic label="Card Balance" value={user.balance} />
                           <Statistic
                             label="Last Charge"
-                            value={`$${currentMonth.currTransactions[0].amount}`}
+                            value={`$${currentMonth.currTransactions.length === 0 ? 0 : currentMonth.currTransactions[0].amount}`}
                           />
                           <Statistic
                             label="Year To Date"
-                            value={`$${ytd.reduce((count, curr) => count + curr.total, 0)}`}
+                            value={`$${ytd.reduce((count, curr) => count + curr.total, 0) || 0}`}
                           />
                           <Statistic
                             label="Last Update"
-                            value={moment(currentMonth.currTransactions[0].date).fromNow()}
+                            value={
+                              currentMonth.currTransactions.length === 0
+                                ? 'Never'
+                                : moment(currentMonth.currTransactions[0].date).fromNow()
+                            }
                           />
                         </FlexRow>
 
@@ -182,12 +190,6 @@ export default class Page extends Component {
               </>
             );
           }
-
-          return (
-            <Dimmer active>
-              <Loader />
-            </Dimmer>
-          );
         }}
       </AuthUser>
     );
