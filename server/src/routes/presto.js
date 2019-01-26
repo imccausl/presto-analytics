@@ -1,14 +1,14 @@
 const express = require('express');
 const moment = require('moment');
 
-const { login, getBasicAccountInfo, getActivityByDateRange } = require('../../lib/presto');
+const { login, getBasicAccountInfo, isLoggedIn, getActivityByDateRange } = require('../../lib/presto');
 
 const routes = Transaction => {
   const router = express.Router();
 
   router.post('/login', async (req, res) => {
     const prestoCredentials = req.body;
-
+    console.log(req.body);
     if (!prestoCredentials.username && !prestoCredentials.password) {
       res.sendStatus(500);
       console.log('Invalid request body.');
@@ -17,11 +17,21 @@ const routes = Transaction => {
 
     try {
       const prestoLoginResp = await login(prestoCredentials.username, prestoCredentials.password);
-      const accountInfo = await getBasicAccountInfo();
+      // const accountInfo = await getBasicAccountInfo();
       console.log(prestoLoginResp);
-      res.send(accountInfo);
+      res.json(prestoLoginResp);
     } catch (error) {
       res.send({ error });
+    }
+  });
+
+  router.get('/check-login', async (req, res, next) => {
+    const response = await isLoggedIn();
+
+    if (response === 'true') {
+      res.json({ status: 'success', message: 'Logged in to Presto.' });
+    } else {
+      res.json({ status: 'error', message: 'Not logged in to Presto' });
     }
   });
 
@@ -29,7 +39,8 @@ const routes = Transaction => {
     try {
       let { from, to } = req.body;
       let filterDateString = '';
-      let filteredUsage = [];
+      let transactions = [];
+      const filteredUsage = [];
 
       if (!req.userId) {
         throw new Error('No user logged in!');
@@ -53,40 +64,41 @@ const routes = Transaction => {
       }
 
       const usage = await getActivityByDateRange(from, to);
-      filteredUsage = usage;
-      // const testUser = await User.findOne({ where: { firstName: 'test' } });
+
+      console.log('Checking for duplicates...');
+
+      console.log(`Saving usage to db...`);
+
+      // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
-        filteredUsage = usage.filter(item => {
-          console.log(
-            `item: ${item.date}`,
-            `lasttransaction: ${filterDateString}`,
-            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isBefore(filterDateString),
-            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isSame(filterDateString)
-          );
-          return (
-            moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isBefore(filterDateString) ||
-            !moment(item.date, 'MM/DD/YYYY hh:mm:ss A').isSame(filterDateString)
-          );
+        usage.forEach(async item => {
+          const transactionDate = await Transaction.findOne({
+            where: {
+              date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
+              userId: req.userId
+            },
+            attributes: ['date']
+          });
+
+          if (!transactionDate && lastTransactionDate) {
+            console.log('Not dupe:', item);
+            item.userId = req.userId;
+            return filteredUsage.push(item);
+          }
+
+          return console.log('Dup! Skipping: ', item);
         });
-        console.log('filteredUsage:', filteredUsage);
+
+        transactions = await Transaction.bulkCreate(filteredUsage);
+      } else {
+        updatedUsage = usage.map(item => {
+          item.userId = req.userId;
+          return item;
+        });
+        transactions = await Transaction.bulkCreate(updatedUsage);
       }
 
-      console.log(`Getting activity from ${from} to ${to}...`);
-      res.send(usage);
-      console.log(`Saving usage to db...`);
-      filteredUsage.forEach(async transaction => {
-        await Transaction.create({
-          userId: req.userId,
-          date: moment(transaction.date, 'MM/DD/YYYY hh:mm:ss A'),
-          agency: transaction.agency,
-          location: transaction.location,
-          type: transaction.type,
-          serviceClass: transaction.serviceClass,
-          discount: transaction.discount,
-          amount: transaction.amount,
-          balance: transaction.balance
-        });
-      });
+      res.json({ status: 'success', data: transactions });
     } catch (error) {
       next(error);
     }
