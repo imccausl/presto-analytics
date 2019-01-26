@@ -9,7 +9,10 @@ async function sendRequest(fetchHandler, path, method, opts = {}) {
 
   const response = await fetchHandler(
     `${ROOT_URL}${path}`,
-    Object.assign({ method, credentials: 'include' }, opts, { headers }),
+    Object.assign({ method, credentials: 'include' }, opts, {
+      headers,
+      body: JSON.stringify(opts.body),
+    }),
   );
 
   const data = await response.json();
