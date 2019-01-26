@@ -80,7 +80,7 @@ const routes = Transaction => {
             attributes: ['date']
           });
 
-          if (!transactionDate && lastTransactionDate) {
+          if (!transactionDate) {
             console.log('Not dupe:', item);
             item.userId = req.userId;
             return filteredUsage.push(item);
@@ -91,7 +91,7 @@ const routes = Transaction => {
 
         transactions = await Transaction.bulkCreate(filteredUsage);
       } else {
-        updatedUsage = usage.map(item => {
+        const updatedUsage = usage.map(item => {
           item.userId = req.userId;
           return item;
         });
