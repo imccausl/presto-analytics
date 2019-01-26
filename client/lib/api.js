@@ -57,6 +57,7 @@ const API = {
     endpoint: '/transactions/ytd/data',
   },
   prestoUsage: '/presto/usage',
+  prestoLogin: { endpoint: '/presto/login', method: 'POST' },
 };
 
 export default API;
