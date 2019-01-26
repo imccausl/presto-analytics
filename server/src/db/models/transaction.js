@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes, UserModel) =>
-  sequelize.define('transaction', {
+module.exports = (sequelize, DataTypes, UserModel) => {
+  const Transaction = sequelize.define('transaction', {
     userId: {
       type: DataTypes.INTEGER,
       references: {
@@ -32,3 +32,8 @@ module.exports = (sequelize, DataTypes, UserModel) =>
       type: DataTypes.STRING
     }
   });
+
+  Transaction.belongsTo(UserModel, {});
+
+  return Transaction;
+};

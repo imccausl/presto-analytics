@@ -23,7 +23,7 @@ const Transaction = require('./db/models/transaction')(sequelize, Sequelize, Use
 
 // routes
 const userRoutes = require('./routes/users')(User, Transaction, sequelize, Sequelize);
-const prestoRoutes = require('./routes/presto')(Transaction);
+const prestoRoutes = require('./routes/presto')(Transaction, User);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 
 const PORT = process.env.SERVER_PORT || 3333;
@@ -32,12 +32,12 @@ const corsOptions = {
   credentials: true
 };
 
+User.hasMany(Transaction);
+
 sequelize
   .sync()
   .then(() => console.log('Database and tables created!'))
   .catch(err => console.log('Error:', err));
-
-User.hasMany(Transaction, { foreignKey: 'userId', sourceKey: 'id' });
 
 // Middleware
 app.use(cors(corsOptions));
