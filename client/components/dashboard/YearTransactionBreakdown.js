@@ -14,6 +14,7 @@ import { FlexRow } from '../Page';
 
 export default (props) => {
   const { dataset } = props;
+  const numOfMonths = dataset.data.length;
 
   return (
     <div>
@@ -46,6 +47,11 @@ export default (props) => {
           <Tooltip />
           <Bar stackId="a" dataKey="paymentTaps" fill="#3333cc" />
           <Bar stackId="a" dataKey="transferTaps" fill="#3BB4E9" />
+          <ReferenceLine
+            y={dataset.totalTaps / numOfMonths}
+            label="Average Monthly Taps"
+            stroke="red"
+          />
           <YAxis
             allowDecimals={false}
             type="number"
