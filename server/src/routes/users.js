@@ -67,19 +67,19 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
         group: ['type']
       });
 
-      // if (!user.cardNumber) {
-      console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
-      const loginStatus = await login(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
-      console.log(loginStatus);
+      if (!user.cardNumber) {
+        console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
+        const loginStatus = await login(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
+        console.log(loginStatus);
 
-      if (loginStatus.success) {
-        accountInfo = await getBasicAccountInfo();
+        if (loginStatus.success) {
+          accountInfo = await getBasicAccountInfo();
+        }
+
+        user.balance = accountInfo.balance || '0.00';
+        user.cardNumber = accountInfo.cardNumber || null;
+        await user.save();
       }
-
-      user.balance = accountInfo.balance || '0.00';
-      user.cardNumber = accountInfo.cardNumber || null;
-      await user.save();
-      // }
 
       console.log(`User ${user.firstName} logged in!`);
       res.json({ status: 'success', data: { user, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });

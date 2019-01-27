@@ -104,6 +104,10 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
   router.get('/all', async (req, res, next) => {
     try {
+      if (!req.userId) {
+        throw new Error('You must be logged in to access this');
+      }
+
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
@@ -123,6 +127,10 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
   router.get('/ytd/data', async (req, res, next) => {
     try {
+      if (!req.userId) {
+        throw new Error('You must be logged in to access this');
+      }
+
       const today = moment()
         .endOf('month')
         .format('DD/MM/YYYY');
@@ -149,7 +157,7 @@ const routes = (Transaction, sequelize, Sequelize) => {
       console.log(serializedTransactions);
       res.json({ status: 'success', data: serializedTransactions });
     } catch (error) {
-      next({ status: 'error', error });
+      next(error);
     }
   });
 
