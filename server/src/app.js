@@ -20,11 +20,13 @@ const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
 // db models
 const User = require('./db/models/user')(sequelize, Sequelize);
 const Transaction = require('./db/models/transaction')(sequelize, Sequelize, User);
+const Budget = require('./db/models/budget')(sequelize, Sequelize, User);
 
 // routes
 const userRoutes = require('./routes/users')(User, Transaction, sequelize, Sequelize);
 const prestoRoutes = require('./routes/presto')(Transaction, User);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
+const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
 
 const PORT = process.env.SERVER_PORT || 3333;
 const corsOptions = {
@@ -62,6 +64,7 @@ app.use((req, res, next) => {
 app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
+app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json
 app.use((err, req, res, next) => {
