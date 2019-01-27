@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Fetch from 'react-fetch-component';
-import { Tab, Segment, Header } from 'semantic-ui-react';
+import {
+  Tab, Segment, Header, Message,
+} from 'semantic-ui-react';
 
 import YearStats from './YearStats';
 import YearCostPerTap from './YearCostPerTap';
@@ -86,6 +88,10 @@ export default class MonthlyOverview extends Component {
       <Fetch url={`${API.root}${API.yearToDateData.endpoint}`} options={API.send('GET')}>
         {(payload) => {
           let dataset = {};
+
+          if (!payload.loading && payload.error) {
+            return <Message error>{payload.error.message}</Message>;
+          }
 
           if (!payload.loading) {
             dataset = getDataset(payload.data.data);
