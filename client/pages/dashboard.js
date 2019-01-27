@@ -1,3 +1,8 @@
 import Dashboard from '../components/Dashboard';
+import Page from '../components/Page';
 
-export default () => <Dashboard />;
+export default () => (
+  <Page loginRequired>
+    <Dashboard />
+  </Page>
+);

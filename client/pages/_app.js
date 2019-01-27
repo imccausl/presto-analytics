@@ -37,9 +37,7 @@ export default class MyApp extends App {
 
     return (
       <Container>
-        <Page>
-          <Component {...pageProps} />
-        </Page>
+        <Component {...pageProps} />
       </Container>
     );
   }

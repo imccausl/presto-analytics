@@ -64,14 +64,14 @@ export default class Page extends Component {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, loginRequired } = this.props;
     const { menuValue } = this.state;
 
     return (
       <AuthUser>
         {({ data, error, loading }) => {
-          if (!loading && error) {
-            console.log(error);
+          if (!loading && error && loginRequired) {
+            Router.push('/login');
             return (
               <Container>
                 <Index>
@@ -82,7 +82,18 @@ export default class Page extends Component {
             );
           }
 
-          if (!loading && data.status === 'success') {
+          if (!loading && error && !loginRequired) {
+
+            return (
+              <Container>
+                <Index>
+                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                </Index>
+              </Container>
+            );
+          }
+
+          if (!loading && data && data.status === 'success') {
             const {
               data: { user, currentMonth, ytd },
             } = data;
@@ -162,7 +173,11 @@ export default class Page extends Component {
                           <Statistic label="Card Balance" value={user.balance} />
                           <Statistic
                             label="Last Charge"
-                            value={`$${currentMonth.currTransactions.length === 0 ? 0 : currentMonth.currTransactions[0].amount}`}
+                            value={`$${
+                              currentMonth.currTransactions.length === 0
+                                ? 0
+                                : currentMonth.currTransactions[0].amount
+                            }`}
                           />
                           <Statistic
                             label="Year To Date"
