@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import Index from './Index';
 import AuthUser from './AuthUser';
 import HeaderBar from './styled/HeaderBar';
+import Login from './Login';
 import Meta from './Meta';
 import SideBar from './SideBar';
 import PageContainer from './styled/Container';
@@ -57,7 +58,7 @@ const FlexRow = styled.div`
 `;
 
 export default class Page extends Component {
-  state = { menuValue: '', updatePrestoOpen: false };
+  state = { menuValue: '', updatePrestoOpen: false, redirect: false };
 
   handleMenuSelect = (e, { name, value }) => {
     console.log(name, value);
@@ -71,26 +72,42 @@ export default class Page extends Component {
       <AuthUser>
         {({ data, error, loading }) => {
           if (!loading && error && loginRequired) {
-            Router.push('/login');
             return (
               <Container>
                 <Index>
                   {error && <Message error>{error.message}</Message>}
-                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                  <UserContext.Provider
+                    value={{
+                      data,
+                      error,
+                    }}
+                  >
+                    <Login />
+                  </UserContext.Provider>
                 </Index>
               </Container>
             );
           }
 
           if (!loading && error && !loginRequired) {
-
             return (
               <Container>
                 <Index>
-                  <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                  <UserContext.Provider
+                    value={{
+                      data,
+                      error,
+                    }}
+                  >
+                    {children}
+                  </UserContext.Provider>
                 </Index>
               </Container>
             );
+          }
+
+          if (!loading && data && data.status === 'success' && !loginRequired) {
+            Router.replace('/dashboard');
           }
 
           if (!loading && data && data.status === 'success') {
@@ -126,7 +143,7 @@ export default class Page extends Component {
                 value: 'logout',
                 onClick: async () => {
                   requestApi.logout();
-                  window.location.href = '/';
+                  window.location.href = '/login';
                 },
               },
             ];
