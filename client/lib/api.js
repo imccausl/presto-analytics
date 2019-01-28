@@ -62,6 +62,7 @@ const API = {
   },
   prestoUsage: '/presto/usage',
   prestoLogin: { endpoint: '/presto/login', method: 'POST' },
+  prestoCheckLogin: { endpoint: '/presto/check-login', method: 'GET' },
 };
 
 export default API;

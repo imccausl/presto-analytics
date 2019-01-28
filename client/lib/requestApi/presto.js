@@ -8,6 +8,10 @@ async function prestoLogin(requestHandler, username, password) {
   return response;
 }
 
-async function prestoIsLoggedIn(requestHandler) {}
+async function prestoIsLoggedIn(requestHandler) {
+  const response = await requestHandler(API.prestoCheckLogin.endpoint, API.prestoCheckLogin.method);
 
-export { prestoLogin };
+  return response;
+}
+
+export { prestoLogin, prestoIsLoggedIn };
