@@ -9,8 +9,8 @@ const Dashboard = (props) => {
 
   return (
     <div>
-      <MonthlyOverview budget={budget} />
-      <YearOverview budget={budget} />
+      <MonthlyOverview budget={budget || {}} />
+      <YearOverview budget={budget || {}} />
     </div>
   );
 };

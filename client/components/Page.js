@@ -174,7 +174,7 @@ export default class Page extends Component {
                 <AccountSettings
                   open={accountSettingsOpen}
                   user={data.data.user}
-                  budget={data.data.budget}
+                  budget={data.data.budget || {}}
                 />
 
                 <Meta />

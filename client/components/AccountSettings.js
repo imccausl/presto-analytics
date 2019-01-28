@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button, Header, Icon, Modal, Form, Segment,
 } from 'semantic-ui-react';
@@ -6,6 +7,25 @@ import {
 import requestApi from '../lib/requestApi';
 
 class AccountSettings extends Component {
+  static propTypes = {
+    budget: PropTypes.shape({
+      monthlyPassCost: PropTypes.string,
+      fareCost: PropTypes.string,
+    }),
+    user: PropTypes.shape({
+      firstName: PropTypes.string.isRequired,
+      lastName: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+    }).isRequired,
+  };
+
+  static defaultProps = {
+    budget: PropTypes.shape({
+      monthlyPassCost: '146.25',
+      fareCost: '3.00',
+    }),
+  };
+
   state = {
     firstName: this.props.user.firstName,
     lastName: this.props.user.lastName,
