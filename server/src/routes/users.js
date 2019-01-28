@@ -117,7 +117,7 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
 
       // create JWT token for logged in user
       const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
-      res.cookie('token', token, {
+      res.cookie('auth', token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 356
       });
@@ -130,7 +130,7 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
   });
 
   router.get('/logout', async (req, res) => {
-    res.clearCookie('token');
+    res.clearCookie('auth');
     res.json({ status: 'success', message: 'Logout completed' });
   });
 
@@ -155,6 +155,13 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         email: body.email,
         password,
         permission: ['USER']
+      });
+
+      // create JWT token for logged in user
+      const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+      res.cookie('auth', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 356
       });
 
       res.json({ status: 'success', message: `User ${firstName} ${lastName} created.`, data: user });
