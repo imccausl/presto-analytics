@@ -7,7 +7,7 @@ const moment = require('moment');
 const { login, getBasicAccountInfo } = require('../../lib/presto');
 const types = require('../../lib/util/types');
 
-const routes = (User, Transaction, sequelize, Sequelize) => {
+const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
   const router = express.Router();
 
   router.get('/me', async (req, res, next) => {
@@ -28,6 +28,12 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
           id: req.userId
         },
         attributes: ['id', 'firstName', 'lastName', 'email', 'cardNumber', 'balance', 'permission']
+      });
+
+      const budget = await Budget.findOne({
+        where: {
+          userId: req.userId
+        }
       });
 
       const currTransactions = await Transaction.findAll({
@@ -82,7 +88,7 @@ const routes = (User, Transaction, sequelize, Sequelize) => {
       }
 
       console.log(`User ${user.firstName} logged in!`);
-      res.json({ status: 'success', data: { user, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
+      res.json({ status: 'success', data: { user, budget, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
       next();
     } catch (err) {
       return next(err);
