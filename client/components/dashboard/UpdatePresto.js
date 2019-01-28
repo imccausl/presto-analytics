@@ -90,6 +90,8 @@ export default class UpdatePresto extends Component {
                   color="green"
                   inverted
                   onClick={async () => {
+                    const isLoggedIn = await requestApi.prestoIsLoggedIn();
+                    console.log(isLoggedIn);
                     const response = await requestApi.prestoLogin(username, password);
                     console.log(response);
                     fetch();
