@@ -8,7 +8,7 @@ import API from '../../lib/api';
 import requestApi from '../../lib/requestApi';
 
 export default class UpdatePresto extends Component {
-  state = { open: false, username: '', password: '' };
+  state = { open: this.props.open, username: '', password: '' };
 
   componentDidUpdate(prevProps, nextProps) {
     if (prevProps.open !== this.props.open) {

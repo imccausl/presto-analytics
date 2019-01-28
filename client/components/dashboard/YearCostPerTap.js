@@ -13,7 +13,16 @@ import {
 import { FlexRow } from '../Page';
 
 export default (props) => {
-  const { dataset } = props;
+  const {
+    dataset,
+    budget: { monthlyPassCost },
+  } = props;
+  const costPerPassTaps = dataset.data.forEach((item) => {
+    item.costPerTapIfPass = Math.round((parseFloat(monthlyPassCost) / (item.paymentTaps + item.transferTaps)) * 100)
+      / 100;
+  });
+
+  console.log(dataset.data);
 
   return (
     <div>
@@ -55,11 +64,22 @@ export default (props) => {
               r: 7,
             }}
           />
+          <Line
+            dataKey="costPerTapIfPass"
+            type="monotone"
+            stroke="#3333cc"
+            strokeWidth={5}
+            dot={{
+              stroke: 'white',
+              strokeWidth: 3,
+              fill: '#3333cc',
+              r: 7,
+            }}
+          />
           <YAxis
             type="number"
             tickMargin={20}
-            domain={[4, 0]}
-            dataKey="costPerTap"
+            dataKey="costPerTapIfPass"
             tickLine={false}
             axisLine={false}
             stroke="#C4C4C4"

@@ -4,12 +4,13 @@ import MonthlyOverview from './dashboard/MonthlyOverview';
 import YearOverview from './dashboard/YearOverview';
 
 const Dashboard = (props) => {
-  console.log(props);
+  const { budget } = props.props;
+  console.log('Dasboard: ', props.props);
 
   return (
     <div>
-      <MonthlyOverview />
-      <YearOverview />
+      <MonthlyOverview budget={budget} />
+      <YearOverview budget={budget} />
     </div>
   );
 };

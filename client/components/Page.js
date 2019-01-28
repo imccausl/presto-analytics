@@ -7,6 +7,7 @@ import {
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import AccountSettings from './AccountSettings';
 import Index from './Index';
 import AuthUser from './AuthUser';
 import HeaderBar from './styled/HeaderBar';
@@ -58,7 +59,12 @@ const FlexRow = styled.div`
 `;
 
 export default class Page extends Component {
-  state = { menuValue: '', updatePrestoOpen: false, redirect: false };
+  state = {
+    menuValue: '',
+    updatePrestoOpen: false,
+    accountSettingsOpen: false,
+    redirect: false,
+  };
 
   handleMenuSelect = (e, { name, value }) => {
     console.log(name, value);
@@ -66,7 +72,7 @@ export default class Page extends Component {
 
   render() {
     const { children, loginRequired } = this.props;
-    const { menuValue } = this.state;
+    const { menuValue, accountSettingsOpen } = this.state;
 
     return (
       <AuthUser>
@@ -126,7 +132,14 @@ export default class Page extends Component {
                 ),
                 disabled: true,
               },
-              { key: 'settings', text: 'Account Settings', value: 'settings' },
+              {
+                key: 'settings',
+                text: 'Account Settings',
+                value: 'settings',
+                onClick: () => {
+                  this.setState({ accountSettingsOpen: true });
+                },
+              },
               {
                 key: 'refresh',
                 text: 'Refresh Data',
@@ -158,6 +171,11 @@ export default class Page extends Component {
             return (
               <>
                 <UpdatePresto open={this.state.updatePrestoOpen} />
+                <AccountSettings
+                  open={accountSettingsOpen}
+                  user={data.data.user}
+                  budget={data.data.budget}
+                />
 
                 <Meta />
                 <FlexRow>
@@ -212,7 +230,11 @@ export default class Page extends Component {
 
                         <Container>
                           <Main>
-                            <UserContext.Provider value={{ data }}>{children}</UserContext.Provider>
+                            <UserContext.Provider
+                              value={{ user: data.data.user, budget: data.data.budget }}
+                            >
+                              {children}
+                            </UserContext.Provider>
                           </Main>
                         </Container>
                       </div>

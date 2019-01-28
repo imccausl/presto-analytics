@@ -1,8 +1,8 @@
 import Dashboard from '../components/Dashboard';
-import Page from '../components/Page';
+import Page, { UserContext } from '../components/Page';
 
-export default () => (
+export default props => (
   <Page loginRequired>
-    <Dashboard />
+    <UserContext.Consumer>{data => <Dashboard props={data} />}</UserContext.Consumer>
   </Page>
 );

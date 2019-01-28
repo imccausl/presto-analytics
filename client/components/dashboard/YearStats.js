@@ -13,7 +13,11 @@ import {
 import { FlexRow } from '../Page';
 
 export default (props) => {
-  const { dataset } = props;
+  console.log(props);
+  const {
+    dataset,
+    budget: { fareCost, monthlyPassCost },
+  } = props;
 
   return (
     <div>
@@ -90,8 +94,12 @@ export default (props) => {
           />
           <XAxis dataKey="date" tickMargin={5} tickLine={false} axisLine={false} stroke="#C4C4C4" />
 
-          <ReferenceLine y={146.25} label="Transit Pass Cost" stroke="red" />
-          <ReferenceLine y={146.25 / 3} label="Transit Pass Break-even" stroke="red" />
+          <ReferenceLine y={parseFloat(monthlyPassCost)} label="Transit Pass Cost" stroke="red" />
+          <ReferenceLine
+            y={parseFloat(monthlyPassCost) / parseFloat(fareCost)}
+            label="Transit Pass Break-even"
+            stroke="red"
+          />
 
           <Tooltip />
         </LineChart>

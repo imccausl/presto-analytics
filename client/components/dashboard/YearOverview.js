@@ -77,9 +77,11 @@ export default class MonthlyOverview extends Component {
   };
 
   render() {
+    console.log(this.props);
     const {
       year, month, selectedYear, selectedMonth, activeIndex,
     } = this.state;
+    const { budget } = this.props;
 
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
@@ -102,12 +104,12 @@ export default class MonthlyOverview extends Component {
               <FlexRow padding="0 0 10px 0">
                 <div style={{ width: '50%', marginRight: '10px' }}>
                   <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
-                    {!payload.loading && <YearStats dataset={dataset} />}
+                    {!payload.loading && <YearStats dataset={dataset} budget={budget} />}
                   </Segment>
                 </div>
                 <div style={{ width: '50%' }}>
                   <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
-                    {!payload.loading && <YearCostPerTap dataset={dataset} />}
+                    {!payload.loading && <YearCostPerTap dataset={dataset} budget={budget} />}
                   </Segment>
                 </div>
               </FlexRow>

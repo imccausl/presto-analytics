@@ -56,6 +56,10 @@ const API = {
     method: 'GET',
     endpoint: '/transactions/ytd/data',
   },
+  updateBudget: {
+    method: 'POST',
+    endpoint: '/budget/save',
+  },
   prestoUsage: '/presto/usage',
   prestoLogin: { endpoint: '/presto/login', method: 'POST' },
 };

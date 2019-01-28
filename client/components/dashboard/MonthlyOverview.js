@@ -58,6 +58,8 @@ export default class MonthlyOverview extends Component {
       year, month, open, selectedYear, selectedMonth, activeIndex,
     } = this.state;
 
+    console.log('monthlyOverview:', this.props);
+
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
     return (
