@@ -120,46 +120,6 @@ export default class Page extends Component {
             const {
               data: { user, currentMonth, ytd },
             } = data;
-            const options = [
-              {
-                key: 'user',
-                text: (
-                  <span>
-                    Signed in as
-                    {' '}
-                    <strong>{`${user.firstName} ${user.lastName}`}</strong>
-                  </span>
-                ),
-                disabled: true,
-              },
-              {
-                key: 'settings',
-                text: 'Account Settings',
-                value: 'settings',
-                onClick: () => {
-                  this.setState({ accountSettingsOpen: true });
-                },
-              },
-              {
-                key: 'refresh',
-                text: 'Refresh Data',
-                value: 'refresh',
-                onClick: () => {
-                  console.log('Getting transactions...');
-                  this.setState({ updatePrestoOpen: true });
-                },
-              },
-              { key: 'divider', text: <Dropdown.Divider />, disabled: true },
-              {
-                key: 'logout',
-                text: 'Log out',
-                value: 'logout',
-                onClick: async () => {
-                  requestApi.logout();
-                  window.location.href = '/login';
-                },
-              },
-            ];
 
             const trigger = (
               <span>
@@ -170,13 +130,6 @@ export default class Page extends Component {
 
             return (
               <>
-                <UpdatePresto open={this.state.updatePrestoOpen} />
-                <AccountSettings
-                  open={accountSettingsOpen}
-                  user={data.data.user}
-                  budget={data.data.budget || {}}
-                />
-
                 <Meta />
                 <FlexRow>
                   <SideBar />
@@ -188,11 +141,35 @@ export default class Page extends Component {
                             trigger={trigger}
                             pointing="top left"
                             direction="left"
-                            options={options}
                             icon={null}
                             name="user"
                             onClick={this.handleMenuSelect}
-                          />
+                          >
+                            <Dropdown.Menu>
+                              <Dropdown.Item disabled>
+                                <span>
+                                  Signed in as
+                                  {' '}
+                                  <strong>{`${user.firstName} ${user.lastName}`}</strong>
+                                </span>
+                              </Dropdown.Item>
+                              <AccountSettings
+                                open={accountSettingsOpen}
+                                user={data.data.user}
+                                budget={data.data.budget || {}}
+                              />
+                              <UpdatePresto open={this.state.updatePrestoOpen} />
+                              <Dropdown.Divider />
+                              <Dropdown.Item
+                                onClick={async () => {
+                                  requestApi.logout();
+                                  window.location.href = '/login';
+                                }}
+                              >
+                                Log out
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
                         </FlexRow>
                       </HeaderBar>
 

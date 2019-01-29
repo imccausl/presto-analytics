@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Fetch from 'react-fetch-component';
 import {
-  Dimmer, Loader, Form, Modal, Header, Icon, Button,
+  Dimmer, Loader, Form, Modal, Header, Icon, Button, Dropdown,
 } from 'semantic-ui-react';
 
 import API from '../../lib/api';
@@ -43,65 +43,75 @@ export default class UpdatePresto extends Component {
           }
 
           return (
-            <Modal open={open} basic size="small">
-              <Header open icon="subway" content="Log in to your Presto account" />
-              <Modal.Content>
-                <p>
-                  Enter your username and password below to gather the data from your Presto account
-                </p>
-                <Form>
-                  <Form.Field>
-                    <label style={{ color: 'white' }} htmlFor="username">
-                      Username
-                      <input
-                        id="username"
-                        aria-label="username"
-                        placeholder="Username"
-                        name="username"
-                        value={username}
-                        type="text"
-                        onChange={this.handleTextEntry}
-                      />
-                    </label>
-                  </Form.Field>
-                  <Form.Field>
-                    <label style={{ color: 'white' }} htmlFor="password">
-                      Password
-                      <input
-                        id="password"
-                        aria-label="password"
-                        placeholder="Password"
-                        name="password"
-                        value={password}
-                        type="password"
-                        onChange={this.handleTextEntry}
-                      />
-                    </label>
-                  </Form.Field>
-                </Form>
-              </Modal.Content>
+            <>
+              <Dropdown.Item
+                onClick={() => {
+                  this.setState({ open: true });
+                }}
+              >
+                Update Presto Data
+              </Dropdown.Item>
+              <Modal open={open} basic size="small">
+                <Header open icon="subway" content="Log in to your Presto account" />
+                <Modal.Content>
+                  <p>
+                    Enter your username and password below to gather the data from your Presto
+                    account
+                  </p>
+                  <Form>
+                    <Form.Field>
+                      <label style={{ color: 'white' }} htmlFor="username">
+                        Username
+                        <input
+                          id="username"
+                          aria-label="username"
+                          placeholder="Username"
+                          name="username"
+                          value={username}
+                          type="text"
+                          onChange={this.handleTextEntry}
+                        />
+                      </label>
+                    </Form.Field>
+                    <Form.Field>
+                      <label style={{ color: 'white' }} htmlFor="password">
+                        Password
+                        <input
+                          id="password"
+                          aria-label="password"
+                          placeholder="Password"
+                          name="password"
+                          value={password}
+                          type="password"
+                          onChange={this.handleTextEntry}
+                        />
+                      </label>
+                    </Form.Field>
+                  </Form>
+                </Modal.Content>
 
-              <Modal.Actions>
-                <Button basic color="red" inverted onClick={() => this.setState({ open: false })}>
-                  <Icon name="remove" />
-                  {' Cancel'}
-                </Button>
-                <Button
-                  color="green"
-                  inverted
-                  onClick={async () => {
-                    const isLoggedIn = await requestApi.prestoIsLoggedIn();
-                    console.log(isLoggedIn);
-                    const response = await requestApi.prestoLogin(username, password);
-                    console.log(response);
-                    fetch();
-                  }}
-                >
-                  <Icon name="checkmark" />
-                  {' OK'}
-                </Button>
-              </Modal.Actions>
-            </Modal>
+                <Modal.Actions>
+                  <Button basic color="red" inverted onClick={() => this.setState({ open: false })}>
+                    <Icon name="remove" />
+                    {' Cancel'}
+                  </Button>
+                  <Button
+                    color="green"
+                    inverted
+                    onClick={async () => {
+                      const isLoggedIn = await requestApi.prestoIsLoggedIn();
+                      console.log(isLoggedIn);
+                      const response = await requestApi.prestoLogin(username, password);
+                      console.log(response);
+                      fetch();
+                    }}
+                  >
+                    <Icon name="checkmark" />
+                    {' OK'}
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            </>
           );
         }}
       </Fetch>
