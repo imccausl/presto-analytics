@@ -50,10 +50,10 @@ app.use(cookieParser());
 // decode the userId on incoming requests
 // if the jwt exists
 app.use((req, res, next) => {
-  const { token } = req.cookies;
+  const { auth } = req.cookies;
 
-  if (token) {
-    const { userId } = jwt.verify(token, process.env.APP_SECRET);
+  if (auth) {
+    const { userId } = jwt.verify(auth, process.env.APP_SECRET);
     req.userId = userId;
   }
 
