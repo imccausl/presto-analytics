@@ -26,33 +26,33 @@ export default class UpdatePresto extends Component {
     const { open, username, password } = this.state;
 
     return (
-      <Fetch
-        manual
-        url={`${API.root}${API.prestoUsage}`}
-        options={API.send({ from: '01/01/2018' })}
-      >
-        {({
-          fetch, data, error, loading,
-        }) => {
-          if (loading) {
-            return (
-              <Dimmer active>
-                <Loader />
-              </Dimmer>
-            );
-          }
+      <>
+        <Dropdown.Item
+          onClick={() => {
+            this.setState({ open: true });
+          }}
+        >
+          Update Presto Data
+        </Dropdown.Item>
+        <Fetch
+          manual
+          url={`${API.root}${API.prestoUsage}`}
+          options={API.send({ from: '01/01/2018' })}
+        >
+          {({
+            fetch, data, error, loading,
+          }) => {
+            if (loading) {
+              return (
+                <Dimmer active>
+                  <Loader />
+                </Dimmer>
+              );
+            }
 
-          return (
-            <>
-              <Dropdown.Item
-                onClick={() => {
-                  this.setState({ open: true });
-                }}
-              >
-                Update Presto Data
-              </Dropdown.Item>
-              <Modal open={open} basic size="small">
-                <Header open icon="subway" content="Log in to your Presto account" />
+            return (
+              <Modal open={open} size="mini">
+                <Header open icon="subway" content="Log In To Your Presto Account" />
                 <Modal.Content>
                   <p>
                     Enter your username and password below to gather the data from your Presto
@@ -111,10 +111,10 @@ export default class UpdatePresto extends Component {
                   </Button>
                 </Modal.Actions>
               </Modal>
-            </>
-          );
-        }}
-      </Fetch>
+            );
+          }}
+        </Fetch>
+      </>
     );
   }
 }
