@@ -10,5 +10,5 @@ module.exports = requestInstance => ({
   getBasicAccountInfo: () => getBasicAccountInfo(requestInstance),
   getUsageReport: year => getUsageReport(requestInstance, year),
   // getActivityByMonth: (year, month) => getActivityByMonth(requestInstance, year, month),
-  getActivityByDateRange: (from, to) => getActivityByDateRange(requestInstance, from, to)
+  getActivityByDateRange: (from, to, cardNumber) => getActivityByDateRange(requestInstance, from, to, cardNumber)
 });
