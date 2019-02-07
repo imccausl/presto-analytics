@@ -13,9 +13,15 @@ function removeDuplicates(myArr, prop) {
 
 function getCardsAndBalances(serverResponse) {
   const dom = new JSDOM(serverResponse.body);
-  const data = [...dom.window.document.querySelectorAll('a.fareMediaID')];
-  const cardsAndBalances = data.map(item => ({ cardNumber: item.dataset.visibleid, balance: item.childNodes[2].textContent.trim() }));
-  const cards = removeDuplicates(cardsAndBalances, 'cardNumber');
+  const scrapeCards = dom.window.document.querySelectorAll('a.fareMediaID');
+  let cards = [];
+
+  if (scrapeCards) {
+    const data = [...scrapeCards]; // convert NodeList into Array
+    const cardsAndBalances = data.map(item => ({ cardNumber: item.dataset.visibleid, balance: item.childNodes[2].textContent.trim() }));
+    cards = removeDuplicates(cardsAndBalances, 'cardNumber');
+  }
+
   cards.push({
     cardNumber: dom.window.document.getElementById('cardNumber').textContent,
     balance: dom.window.document.querySelector('.dashboard__quantity').textContent
