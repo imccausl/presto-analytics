@@ -104,16 +104,6 @@ async function getActivityByDateRange(requestInstance, from, to = moment()) {
       method: 'POST',
       json: getActivityRequestBody(dateRange),
       withCredentials: true
-      // headers: {
-      //   // __RequestVerificationToken: token,
-      //   'Accept-Language': 'en-US,en;q=0.5',
-      //   'Content-Type': 'application/json; charset=utf-8',
-      //   Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
-      //   'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
-      //   'X-Requested-With': 'XMLHttpRequest',
-      //   Accept: '*/*',
-      //   Connection: 'keep-alive'
-      // }
     });
 
     return parseActivity(resp);
