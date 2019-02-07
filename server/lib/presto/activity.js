@@ -33,8 +33,13 @@ async function getBasicAccountInfo(requestInstance) {
 
 function parseActivity(serverResponse) {
   const dom = new JSDOM(serverResponse.body);
+  const error = dom.window.document.getElementById('card-activity--error');
   const data = dom.window.document.querySelectorAll('table#tblTHR tbody tr');
   const transactions = [];
+
+  if (error) {
+    return { status: 'error', message: "Sorry, but we don't have any transactions for your PRESTO card for the selected month.", transactions };
+  }
 
   data.forEach(node => {
     const transactionInfo = node.querySelectorAll('td');
@@ -56,7 +61,7 @@ function parseActivity(serverResponse) {
     });
   });
 
-  return transactions;
+  return { status: 'success', transactions };
 }
 
 function getActivityRequestBody(selectedMonth) {
@@ -69,6 +74,27 @@ function getActivityRequestBody(selectedMonth) {
     selectedMonth,
     currentModel: paginationModel
   };
+}
+
+async function setCard(requestInstance, cardNumber) {
+  try {
+    const token = await getCSRF(requestInstance, API.dashboard, `form[action='${API.switchCards}']`);
+    console.log('setCard token:', token);
+    const response = await requestInstance({
+      uri: API.switchCards,
+      method: 'POST',
+      form: {
+        setFareMediaSession: cardNumber,
+        __RequestVerificationToken: token
+      },
+      withCredentials: true,
+      followAllRedirects: true
+    });
+
+    return response;
+  } catch (error) {
+    return error;
+  }
 }
 
 // THIS DOESN'T TOTALLY WORK AS I'D LIKE BUT ITS NOT IMPORTANT RIGHT NOW
@@ -113,6 +139,8 @@ async function getActivityByDateRange(requestInstance, from, to = moment()) {
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
+
+    const setC = await setCard(requestInstance, '31240105719043004');
     const resp = await requestInstance({
       uri: API.activityEndpoint,
       method: 'POST',

@@ -5,6 +5,7 @@ module.exports = {
   dashboard: '/en/dashboard',
   homepage: '/en/',
   activityEndpoint: '/api/sitecore/Paginator/CardActivityFilteredIndex',
+  switchCards: '/api/sitecore/Global/UpdateFareMediaSession?id=lowerFareMediaId&class=lowerFareMediaId',
   cardActivity: '/en/dashboard/card-activity',
   usageReport: '/en/dashboard/transit-usage-report',
   csvEndpoint: '/api/sitecore/Paginator/TransitUsageExportCSV',

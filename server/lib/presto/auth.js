@@ -10,14 +10,16 @@ function isSuccessfulLogin(requestBody) {
   return Object.prototype.hasOwnProperty.call(requestBody, 'Result') && requestBody.Result === 'success';
 }
 
-async function getCSRF(requestInstance, endpoint = API.homepage, parentId = 'signwithaccount') {
+async function getCSRF(requestInstance, endpoint = API.homepage, parent = '#signwithaccount') {
   try {
     const { body } = await requestInstance({ uri: endpoint });
     const dom = new JSDOM(body, { cookieJar });
-    const token = dom.window.document.querySelector(`#${parentId} input[name='__RequestVerificationToken']`);
-
+    console.log(parent);
+    const token = dom.window.document.querySelector(`${parent} input[name='__RequestVerificationToken']`);
+    console.log(token);
     return token.value;
   } catch (error) {
+    console.log(error);
     return { error };
   }
 }

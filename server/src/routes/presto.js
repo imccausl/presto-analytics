@@ -66,14 +66,17 @@ const routes = Transaction => {
       }
 
       const usage = await getActivityByDateRange(from, to);
-
+      console.log(usage);
+      if (usage.status === 'error') {
+        throw new Error(usage.message);
+      }
       console.log('Checking for duplicates...');
 
       console.log(`Saving usage to db...`);
 
       // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
-        usage.forEach(async item => {
+        usage.transactions.forEach(async item => {
           const transactionDate = await Transaction.findOne({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
@@ -89,7 +92,7 @@ const routes = Transaction => {
           }
         });
       } else {
-        const updatedUsage = usage.map(item => {
+        const updatedUsage = usage.transactions.map(item => {
           item.userId = req.userId;
           return item;
         });
