@@ -26,14 +26,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    balance: {
-      type: DataTypes.STRING,
+    cards: {
+      type: DataTypes.TEXT,
       allowNull: false,
-      defaultValue: '0.00'
-    },
-    cardNumber: {
-      type: DataTypes.STRING,
-      allowNull: true
+      get() {
+        return JSON.parse(this.getDataValue('cards'));
+      },
+      set(cards) {
+        this.setDataValue('cards', JSON.stringify(cards));
+      }
     },
     permission: {
       type: DataTypes.ARRAY(DataTypes.TEXT)

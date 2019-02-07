@@ -8,7 +8,7 @@ const routes = Transaction => {
 
   router.post('/login', async (req, res) => {
     const prestoCredentials = req.body;
-    console.log(req.body);
+
     if (!prestoCredentials.username && !prestoCredentials.password) {
       res.sendStatus(500);
       console.log('Invalid request body.');
@@ -50,7 +50,8 @@ const routes = Transaction => {
 
       const lastTransactionDate = await Transaction.max('date', {
         where: {
-          userId: req.userId
+          userId: req.userId,
+          cardNumber
         }
       });
 
@@ -80,6 +81,7 @@ const routes = Transaction => {
           const transactionDate = await Transaction.findOne({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
+              cardNumber,
               userId: req.userId
             },
             attributes: ['date']
@@ -88,11 +90,13 @@ const routes = Transaction => {
           if (!transactionDate) {
             console.log('Not dupe:', item);
             item.userId = req.userId;
+            item.cardNumber = cardNumber;
             transactions = Transaction.create(item);
           }
         });
       } else {
         const updatedUsage = usage.transactions.map(item => {
+          item.cardNumber = cardNumber;
           item.userId = req.userId;
           return item;
         });

@@ -16,7 +16,7 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
     const searchDateMin = `${thisYear}-${thisMonth}-01`;
     const searchDateMax = thisMonth === '12' ? `${parseInt(thisYear, 10) + 1}-01-01` : `${thisYear}-${parseInt(thisMonth, 10) + 1}-01`;
 
-    let accountInfo = {};
+    const accountInfo = {};
 
     try {
       if (!req.userId) {
@@ -27,7 +27,7 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         where: {
           id: req.userId
         },
-        attributes: ['id', 'firstName', 'lastName', 'email', 'cardNumber', 'balance', 'permission']
+        attributes: ['id', 'firstName', 'lastName', 'email', 'cards', 'permission']
       });
 
       const budget = await Budget.findOne({
@@ -73,19 +73,16 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         group: ['type']
       });
 
-      if (!user.cardNumber) {
-        console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
-        const loginStatus = await login(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
-        console.log(loginStatus);
+      // console.log(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
+      // const loginStatus = await login(process.env.TEST_USERNAME, process.env.TEST_PASSWORD);
+      // console.log(loginStatus);
 
-        if (loginStatus.success) {
-          accountInfo = await getBasicAccountInfo();
-        }
+      // if (loginStatus.success) {
+      //   accountInfo = await getBasicAccountInfo();
+      // }
 
-        user.balance = accountInfo.balance || '0.00';
-        user.cardNumber = accountInfo.cardNumber || null;
-        await user.save();
-      }
+      // user.cards = accountInfo || [{ cardNumber: '', balance: '0.00' }];
+      // await user.save();
 
       console.log(`User ${user.firstName} logged in!`);
       res.json({ status: 'success', data: { user, budget, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
@@ -154,6 +151,7 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         lastName,
         email: body.email,
         password,
+        cards: [{}],
         permission: ['USER']
       });
 

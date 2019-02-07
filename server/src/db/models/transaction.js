@@ -7,6 +7,9 @@ module.exports = (sequelize, DataTypes, UserModel) => {
         key: 'id'
       }
     },
+    cardNumber: {
+      type: DataTypes.STRING
+    },
     date: {
       type: DataTypes.DATE
     },
