@@ -39,7 +39,7 @@ const routes = Transaction => {
 
   router.post('/usage', async (req, res, next) => {
     try {
-      let { from, to } = req.body;
+      let { from, to, cardNumber } = req.body;
       let filterDateString = '';
       let transactions = [];
       const filteredUsage = [];
@@ -65,7 +65,7 @@ const routes = Transaction => {
         to = moment().format('MM/DD/YYYY');
       }
 
-      const usage = await getActivityByDateRange(from, to);
+      const usage = await getActivityByDateRange(from, to, cardNumber);
       console.log(usage);
       if (usage.status === 'error') {
         throw new Error(usage.message);

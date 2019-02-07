@@ -134,13 +134,13 @@ async function setCard(requestInstance, cardNumber) {
 //   }
 // }
 
-async function getActivityByDateRange(requestInstance, from, to = moment()) {
+async function getActivityByDateRange(requestInstance, from, to = moment(), cardNumber) {
   try {
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
 
-    const setC = await setCard(requestInstance, '31240105719043004');
+    const setC = await setCard(requestInstance, cardNumber);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
       method: 'POST',
