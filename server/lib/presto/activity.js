@@ -79,7 +79,6 @@ function getActivityRequestBody(selectedMonth) {
 async function setCard(requestInstance, cardNumber) {
   try {
     const token = await getCSRF(requestInstance, API.dashboard, `form[action='${API.switchCards}']`);
-    console.log('setCard token:', token);
     const response = await requestInstance({
       uri: API.switchCards,
       method: 'POST',
@@ -139,7 +138,6 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
-
     const setC = await setCard(requestInstance, cardNumber);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
@@ -147,7 +145,6 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
       json: getActivityRequestBody(dateRange),
       withCredentials: true
     });
-
     return parseActivity(resp);
   } catch (error) {
     return { error };
