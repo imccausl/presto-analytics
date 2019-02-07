@@ -17,7 +17,9 @@ const routes = Transaction => {
 
     try {
       const prestoLoginResp = await login(prestoCredentials.username, prestoCredentials.password);
-      // const accountInfo = await getBasicAccountInfo();
+      const accountInfo = await getBasicAccountInfo();
+      prestoLoginResp.accountInfo = accountInfo;
+
       console.log(prestoLoginResp);
       res.json(prestoLoginResp);
     } catch (error) {
@@ -86,7 +88,6 @@ const routes = Transaction => {
             transactions = Transaction.create(item);
           }
         });
-
       } else {
         const updatedUsage = usage.map(item => {
           item.userId = req.userId;

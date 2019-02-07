@@ -7,14 +7,28 @@ const { getCSRF } = require('./auth');
 
 const { JSDOM } = jsdom;
 
+function removeDuplicates(myArr, prop) {
+  return myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos);
+}
+
+function getCardsAndBalances(serverResponse) {
+  const dom = new JSDOM(serverResponse.body);
+  const data = [...dom.window.document.querySelectorAll('a.fareMediaID')];
+  const cardsAndBalances = data.map(item => ({ cardNumber: item.dataset.visibleid, balance: item.childNodes[2].textContent.trim() }));
+  const cards = removeDuplicates(cardsAndBalances, 'cardNumber');
+  cards.push({
+    cardNumber: dom.window.document.getElementById('cardNumber').textContent,
+    balance: dom.window.document.querySelector('.dashboard__quantity').textContent
+  });
+
+  return cards;
+}
+
 async function getBasicAccountInfo(requestInstance) {
   const accountResponse = await requestInstance({ uri: API.dashboard });
-  const { window } = new JSDOM(accountResponse.body);
+  const cardsAndBalances = getCardsAndBalances(accountResponse);
 
-  const balance = window.document.querySelector('.dashboard__quantity').textContent;
-  const cardNumber = window.document.querySelector('#cardNumber').textContent;
-
-  return { balance, cardNumber };
+  return cardsAndBalances;
 }
 
 function parseActivity(serverResponse) {
