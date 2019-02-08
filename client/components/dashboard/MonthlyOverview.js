@@ -69,10 +69,7 @@ export default class MonthlyOverview extends Component {
           options={API.send('GET')}
         >
           {(payload) => {
-            console.log(payload.error);
-            if (!payload.loading && payload.error) {
-              return <Message error>{payload.error.message}</Message>;
-            }
+            console.log(payload);
 
             return (
               <>
@@ -107,31 +104,41 @@ export default class MonthlyOverview extends Component {
                 </Header>
 
                 <Segment style={{ minHeight: '250px' }} attached loading={payload.loading}>
-                  {!payload.loading && (
+                  {!payload.loading && !payload.error && (
                     <MonthlyStats
                       month={getMonthNameFromNum(month)}
                       year={year}
                       data={payload.data.data}
                     />
                   )}
+                  {!payload.loading && payload.error && (
+                    <Message error>{payload.error.message}</Message>
+                  )}
                 </Segment>
-                <Header as="div" attached="bottom" style={{ minHeight: '80px' }}>
-                  <FlexRow justify="space-around">
-                    {!payload.loading && (
-                      <Statistic
-                        label="Taps"
-                        labelColor="#5558c8"
-                        value={payload.data.data.totalTrips}
-                      />
-                    )}
+                {!payload.loading && (
+                  <Header as="div" attached="bottom" style={{ minHeight: '80px' }}>
+                    <FlexRow justify="space-around">
+                      {!payload.error && (
+                        <Statistic
+                          label="Taps"
+                          labelColor="#5558c8"
+                          value={payload.data.data.totalTrips}
+                        />
+                      )}
 
-                    {payload.loading
-                      ? ''
-                      : getFareTypeCount(payload.data.data.transactions).map(item => (
-                        <Statistic label={item.name} labelColor="#5558c8" value={item.value} />
-                      ))}
-                  </FlexRow>
-                </Header>
+                      {payload.error
+                        ? ''
+                        : getFareTypeCount(payload.data.data.transactions).map(item => (
+                          <Statistic
+                            key={item.name}
+                            label={item.name}
+                            labelColor="#5558c8"
+                            value={item.value}
+                          />
+                        ))}
+                    </FlexRow>
+                  </Header>
+                )}
               </>
             );
           }}

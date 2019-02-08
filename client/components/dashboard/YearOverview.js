@@ -47,6 +47,13 @@ function getDataset(obj) {
       const monthYearString = `${getMonthNumFromName(month)}/${year}`;
       const payments = transactions.filter(item => item.type.includes('Payment'));
       const transfers = transactions.filter(item => item.type.includes('Transfer'));
+      let costPerTap = Math.round(100 * ((amount + transitPassAmount) / transactions.length)) / 100;
+
+      if (isNaN(costPerTap)) {
+        costPerTap = 0;
+      }
+
+      console.log(costPerTap);
 
       dataset.totalAmount += amount + transitPassAmount;
       dataset.totalTaps += transactions.length;
@@ -54,7 +61,7 @@ function getDataset(obj) {
       dataset.data.push({
         date: monthYearString,
         amount: amount + transitPassAmount,
-        costPerTap: Math.round(100 * ((amount + transitPassAmount) / transactions.length)) / 100,
+        costPerTap,
         paymentTaps: payments.length,
         transferTaps: transfers.length,
         taps: transactions.length,
@@ -62,7 +69,12 @@ function getDataset(obj) {
     });
   });
 
-  dataset.costPerTap = Math.round(100 * (dataset.totalAmount / dataset.totalTaps)) / 100;
+  let totalCostPerTap = Math.round(100 * (dataset.totalAmount / dataset.totalTaps)) / 100;
+  if (isNaN(totalCostPerTap)) {
+    totalCostPerTap = 0;
+  }
+  console.log('HEYHEY:', typeof totalCostPerTap);
+  dataset.costPerTap = totalCostPerTap;
 
   return dataset;
 }
@@ -77,7 +89,7 @@ export default class MonthlyOverview extends Component {
   };
 
   render() {
-    console.log(this.props);
+    console.log('SUP?', this.props);
     const {
       year, month, selectedYear, selectedMonth, activeIndex,
     } = this.state;
