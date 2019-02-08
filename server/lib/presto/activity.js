@@ -37,7 +37,7 @@ async function getBasicAccountInfo(requestInstance) {
   return cardsAndBalances;
 }
 
-function parseActivity(serverResponse) {
+function parseActivity(serverResponse, cardNumber) {
   const dom = new JSDOM(serverResponse.body);
   const error = dom.window.document.getElementById('card-activity--error');
   const data = dom.window.document.querySelectorAll('table#tblTHR tbody tr');
@@ -56,6 +56,7 @@ function parseActivity(serverResponse) {
     });
 
     transactions.push({
+      cardNumber,
       date: items[0],
       agency: items[1],
       location: items[2],
@@ -151,7 +152,7 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
       json: getActivityRequestBody(dateRange),
       withCredentials: true
     });
-    return parseActivity(resp);
+    return parseActivity(resp, cardNumber);
   } catch (error) {
     return { error };
   }
