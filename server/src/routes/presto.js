@@ -3,7 +3,7 @@ const moment = require('moment');
 
 const { login, getBasicAccountInfo, isLoggedIn, getActivityByDateRange } = require('../../lib/presto');
 
-const routes = Transaction => {
+const routes = (Transaction, User) => {
   const router = express.Router();
 
   router.post('/login', async (req, res) => {
@@ -16,11 +16,27 @@ const routes = Transaction => {
     }
 
     try {
+      if (!req.userId) {
+        throw new Error('No user logged in!');
+      }
+
       const prestoLoginResp = await login(prestoCredentials.username, prestoCredentials.password);
       const accountInfo = await getBasicAccountInfo();
+      const user = await User.findOne({
+        where: {
+          id: req.userId
+        }
+      });
+
       prestoLoginResp.accountInfo = accountInfo;
 
-      console.log(prestoLoginResp);
+      // refresh the cards when user logs into presto -- we need to always
+      // check this and save, because they may have added a new card since the last time.
+      // could add logic to only do this save if the accountInfo differs from last save,
+      // but I don't see the point in going that far.
+      user.cards = accountInfo;
+      user.save();
+
       res.json(prestoLoginResp);
     } catch (error) {
       res.send({ error });
@@ -90,13 +106,11 @@ const routes = Transaction => {
           if (!transactionDate) {
             console.log('Not dupe:', item);
             item.userId = req.userId;
-            item.cardNumber = cardNumber;
             transactions = Transaction.create(item);
           }
         });
       } else {
         const updatedUsage = usage.transactions.map(item => {
-          item.cardNumber = cardNumber;
           item.userId = req.userId;
           return item;
         });
