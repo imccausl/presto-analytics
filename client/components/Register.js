@@ -1,164 +1,54 @@
 import React, { Component } from 'react';
-
-import NProgress from 'nprogress';
 import {
-  Button, Message, Form, Icon,
+  Container, Header, Icon, Step, Segment,
 } from 'semantic-ui-react';
-import Fetch from 'react-fetch-component';
-import Link from 'next/link';
 
-import API from '../lib/api';
+import RegisterAccount from './RegisterAccount';
 
-export default class Register extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      passwordAgain: '',
-    };
-  }
-
-  saveToState = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+class Register extends Component {
+  state = {
+    activeStep: 1,
+    completedSteps: 0,
   };
 
   render() {
-    const {
-      firstName, lastName, email, password, passwordAgain,
-    } = this.state;
+    const { activeStep, completedSteps } = this.state;
+
     return (
-      <Fetch
-        manual
-        url={`${API.root}${API.register}`}
-        options={API.send({
-          firstName,
-          lastName,
-          email,
-          password,
-          passwordAgain,
-        })}
-      >
-        {({
-          fetch, loading, data, error,
-        }) => {
-          if (data) {
-            NProgress.done();
-          }
+      <Container>
+        <Segment basic textAlign="center">
+          <Step.Group ordered>
+            <Step active={activeStep === 1} completed={completedSteps > 1}>
+              <Icon name="user" />
+              <Step.Content>
+                <Step.Title>Sign Up</Step.Title>
+                <Step.Description>Sign up for your account</Step.Description>
+              </Step.Content>
+            </Step>
 
-          if (error) {
-            NProgress.done();
-            return (
-              <div>
-                ERROR:
-                {error.message}
-              </div>
-            );
-          }
+            <Step active={activeStep === 2} completed={completedSteps > 2}>
+              <Icon name="subway" />
+              <Step.Content>
+                <Step.Title>Presto</Step.Title>
+                <Step.Description>Sign in to Presto</Step.Description>
+              </Step.Content>
+            </Step>
 
-          return (
-            <div style={{ minWidth: '50%' }}>
-              <Message
-                attached
-                header="Register"
-                content="Fill out the form below to sign-up for a new account"
-              />
-              <Form className="attached fluid segment">
-                <Form.Group widths="equal">
-                  <Form.Input
-                    fluid
-                    label="First Name"
-                    type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={this.saveToState}
-                    name="firstName"
-                    disabled={loading}
-                  />
-                  <Form.Input
-                    fluid
-                    label="Last Name"
-                    placeholder="Last Name"
-                    type="text"
-                    name="lastName"
-                    onChange={this.saveToState}
-                    value={lastName}
-                    disabled={loading}
-                  />
-                </Form.Group>
+            <Step active={activeStep === 3} completed={completedSteps > 3}>
+              <Icon name="bullseye" />
+              <Step.Content>
+                <Step.Title>Finalize</Step.Title>
+              </Step.Content>
+            </Step>
+          </Step.Group>
+        </Segment>
 
-                <Form.Input
-                  fluid
-                  placeholder="Email"
-                  label="Email"
-                  disabled={loading}
-                  type="text"
-                  name="email"
-                  onChange={this.saveToState}
-                  value={email}
-                />
-                <Form.Input
-                  fluid
-                  placeholder="Password"
-                  label="Password"
-                  disabled={loading}
-                  type="password"
-                  name="password"
-                  onChange={this.saveToState}
-                  value={password}
-                />
-                <Form.Input
-                  fluid
-                  placeholder="Password Again"
-                  disabled={loading}
-                  label="Password Again"
-                  type="password"
-                  name="passwordAgain"
-                  onChange={this.saveToState}
-                  value={passwordAgain}
-                />
-                <Button
-                  positive
-                  labelPosition="right"
-                  icon="chevron circle right"
-                  content="Sign Up"
-                  disabled={
-                    loading
-                    || (!firstName
-                      || !lastName
-                      || !email
-                      || !password
-                      || !passwordAgain
-                      || password !== passwordAgain)
-                  }
-                  loading={loading}
-                  onClick={() => {
-                    NProgress.start();
-                    fetch();
-
-                    this.setState({
-                      firstName: '',
-                      lastName: '',
-                      email: '',
-                      password: '',
-                      passwordAgain: '',
-                    });
-                  }}
-                />
-              </Form>
-              <Message attached="bottom" warning>
-                <Icon name="help" />
-                Already signed up?&nbsp;
-                <Link href="/login">Login</Link>
-                &nbsp;instead.
-              </Message>
-            </div>
-          );
-        }}
-      </Fetch>
+        <Segment basic>
+          <RegisterAccount />
+        </Segment>
+      </Container>
     );
   }
 }
+
+export default Register;
