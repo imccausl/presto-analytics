@@ -43,9 +43,10 @@ export default class Register extends Component {
         }) => {
           if (data) {
             NProgress.done();
+            this.props.incrementSteps();
           }
 
-          if (error) {
+          const handleError = () => {
             NProgress.done();
             return (
               <div>
@@ -53,7 +54,7 @@ export default class Register extends Component {
                 {error.message}
               </div>
             );
-          }
+          };
 
           return (
             <div style={{ minWidth: '50%' }}>
@@ -62,6 +63,8 @@ export default class Register extends Component {
                 header="Register"
                 content="Fill out the form below to sign-up for a new account"
               />
+
+              {error && handleError()}
 
               <Form className="attached fluid segment">
                 <Form.Group widths="equal">
