@@ -10,17 +10,13 @@ import Link from 'next/link';
 import API from '../lib/api';
 
 export default class Register extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      passwordAgain: '',
-    };
-  }
+  state = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    passwordAgain: '',
+  };
 
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
