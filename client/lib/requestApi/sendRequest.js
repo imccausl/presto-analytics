@@ -17,9 +17,14 @@ async function sendRequest(fetchHandler, path, method, opts = {}) {
 
   const data = await response.json();
 
-  if (data.error) {
-    throw new Error(data.error);
-  }
+  // commented this out because I don't know how necessary it is.
+  // the logic behind it was to detect errors such as not logged in, etc. and have special
+  // error handling for them on the FE, but it just causes crashes and I might
+  // be able to do this better without having it. Keeping it here for now as a TODO reminder.
+
+  // if (data.error) {
+  //   throw new Error(data.error);
+  // }
 
   return data;
 }
