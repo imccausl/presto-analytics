@@ -4,6 +4,7 @@ import {
 } from 'semantic-ui-react';
 
 import RegisterAccount from './RegisterAccount';
+import PrestoSignin from './PrestoSignin';
 
 class Register extends Component {
   state = {
@@ -48,8 +49,8 @@ class Register extends Component {
 
         <Segment basic>
           {activeStep === 1 && <RegisterAccount incrementSteps={this.incrementSteps} />}
-          {activeStep === 2 && <div />}
-          {activeStep === 3 && <div />}
+          {activeStep === 2 && <PrestoSignin incrementSteps={this.incrementSteps} />}
+          {activeStep === 3 && <div>ALL DONE</div>}
         </Segment>
       </Container>
     );

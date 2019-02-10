@@ -26,6 +26,8 @@ export default class Register extends Component {
     const {
       firstName, lastName, email, password, passwordAgain,
     } = this.state;
+    const { incrementSteps } = this.props;
+
     return (
       <Fetch
         manual
@@ -43,7 +45,9 @@ export default class Register extends Component {
         }) => {
           if (data) {
             NProgress.done();
-            this.props.incrementSteps();
+            if (incrementSteps) {
+              incrementSteps();
+            }
           }
 
           const handleError = () => {
