@@ -8,7 +8,7 @@ const routes = (Transaction, User) => {
 
   router.post('/login', async (req, res) => {
     const prestoCredentials = req.body;
-
+    console.log('Logging in!');
     if (!prestoCredentials.username && !prestoCredentials.password) {
       res.sendStatus(500);
       console.log('Invalid request body.');
@@ -29,11 +29,11 @@ const routes = (Transaction, User) => {
       });
 
       prestoLoginResp.accountInfo = accountInfo;
-
+      console.log(prestoLoginResp);
       // refresh the cards when user logs into presto -- we need to always
       // check this and save, because they may have added a new card since the last time.
       // could add logic to only do this save if the accountInfo differs from last save,
-      // but I don't see the point in going that far.
+      // but I don't see the point in going that far as yet.
       user.cards = accountInfo;
       user.save();
 
@@ -45,6 +45,7 @@ const routes = (Transaction, User) => {
 
   router.get('/check-login', async (req, res, next) => {
     const response = await isLoggedIn();
+    console.log(response);
 
     if (response === 'true') {
       res.json({ status: 'success', message: 'Logged in to Presto.' });
@@ -55,7 +56,7 @@ const routes = (Transaction, User) => {
 
   router.post('/usage', async (req, res, next) => {
     try {
-      let { from, to, cardNumber } = req.body;
+      let { from, to, cards } = req.body;
       let filterDateString = '';
       let transactions = [];
       const filteredUsage = [];
@@ -64,57 +65,62 @@ const routes = (Transaction, User) => {
         throw new Error('No user logged in!');
       }
 
-      const lastTransactionDate = await Transaction.max('date', {
-        where: {
-          userId: req.userId,
-          cardNumber
-        }
-      });
+      for (let i = 0; i < cards.length; i++) {
+        const cardNumber = cards[i];
 
-      if (lastTransactionDate) {
-        from = moment(lastTransactionDate).format('MM/DD/YYYY');
-        filterDateString = moment(lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A');
-      }
-
-      console.log('lastTransactionDate:', !!lastTransactionDate, filterDateString);
-
-      if (!to) {
-        to = moment().format('MM/DD/YYYY');
-      }
-
-      const usage = await getActivityByDateRange(from, to, cardNumber);
-      console.log(usage);
-      if (usage.status === 'error') {
-        throw new Error(usage.message);
-      }
-      console.log('Checking for duplicates...');
-
-      console.log(`Saving usage to db...`);
-
-      // res.json({ status: 'success', usage: filteredUsage });
-      if (lastTransactionDate) {
-        usage.transactions.forEach(async item => {
-          const transactionDate = await Transaction.findOne({
-            where: {
-              date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
-              cardNumber,
-              userId: req.userId
-            },
-            attributes: ['date']
-          });
-
-          if (!transactionDate) {
-            console.log('Not dupe:', item);
-            item.userId = req.userId;
-            transactions = Transaction.create(item);
+        console.log('Getting from card number: ', cardNumber);
+        const lastTransactionDate = await Transaction.max('date', {
+          where: {
+            userId: req.userId,
+            cardNumber
           }
         });
-      } else {
-        const updatedUsage = usage.transactions.map(item => {
-          item.userId = req.userId;
-          return item;
-        });
-        transactions = await Transaction.bulkCreate(updatedUsage);
+
+        if (lastTransactionDate) {
+          from = moment(lastTransactionDate).format('MM/DD/YYYY');
+          filterDateString = moment(lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A');
+        }
+
+        console.log('lastTransactionDate:', !!lastTransactionDate, filterDateString);
+
+        if (!to) {
+          to = moment().format('MM/DD/YYYY');
+        }
+
+        const usage = await getActivityByDateRange(from, to, cardNumber);
+        console.log(usage);
+        if (usage.status === 'error') {
+          throw new Error(usage.message);
+        }
+        console.log('Checking for duplicates...');
+
+        console.log(`Saving usage to db...`);
+
+        // res.json({ status: 'success', usage: filteredUsage });
+        if (lastTransactionDate) {
+          usage.transactions.forEach(async item => {
+            const transactionDate = await Transaction.findOne({
+              where: {
+                date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
+                cardNumber,
+                userId: req.userId
+              },
+              attributes: ['date']
+            });
+
+            if (!transactionDate) {
+              console.log('Not dupe:', item);
+              item.userId = req.userId;
+              transactions = Transaction.create(item);
+            }
+          });
+        } else {
+          const updatedUsage = usage.transactions.map(item => {
+            item.userId = req.userId;
+            return item;
+          });
+          transactions = await Transaction.bulkCreate(updatedUsage);
+        }
       }
 
       res.json({ status: 'success', data: transactions });
