@@ -17,8 +17,15 @@ export default props => {
   } = props;
 
   dataset.data.forEach(item => {
-    item.costPerTapIfPass = Math.round((parseFloat(monthlyPassCost) / (item.paymentTaps + item.transferTaps)) * 100)
-      / 100;
+    let totalMonthlyPassCost = 0;
+
+    if (monthlyPassCost) {
+      totalMonthlyPassCost = monthlyPassCost;
+    }
+
+    item.costPerTapIfPass = Math.round(
+      (parseFloat(totalMonthlyPassCost) / (item.paymentTaps + item.transferTaps)) * 100,
+    ) / 100;
   });
 
   return (
@@ -61,18 +68,20 @@ export default props => {
               r: 7,
             }}
           />
-          <Line
-            dataKey="costPerTapIfPass"
-            type="monotone"
-            stroke="#3333cc"
-            strokeWidth={5}
-            dot={{
-              stroke: 'white',
-              strokeWidth: 3,
-              fill: '#3333cc',
-              r: 7,
-            }}
-          />
+          {dataset.data[0].costPerTapIfPass > 0 && (
+            <Line
+              dataKey="costPerTapIfPass"
+              type="monotone"
+              stroke="#3333cc"
+              strokeWidth={5}
+              dot={{
+                stroke: 'white',
+                strokeWidth: 3,
+                fill: '#3333cc',
+                r: 7,
+              }}
+            />
+          )}
           <YAxis
             type="number"
             tickMargin={20}
