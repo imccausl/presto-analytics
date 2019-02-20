@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
   ResponsiveContainer,
   CartesianGrid,
@@ -6,23 +5,21 @@ import {
   LineChart,
   XAxis,
   YAxis,
-  ReferenceLine,
   Tooltip,
 } from 'recharts';
 
 import { FlexRow } from '../Page';
 
-export default (props) => {
+export default props => {
   const {
     dataset,
     budget: { monthlyPassCost },
   } = props;
-  const costPerPassTaps = dataset.data.forEach((item) => {
+
+  dataset.data.forEach(item => {
     item.costPerTapIfPass = Math.round((parseFloat(monthlyPassCost) / (item.paymentTaps + item.transferTaps)) * 100)
       / 100;
   });
-
-  console.log(dataset.data);
 
   return (
     <div>
