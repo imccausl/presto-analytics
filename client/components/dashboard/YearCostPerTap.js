@@ -68,7 +68,7 @@ export default props => {
               r: 7,
             }}
           />
-          {dataset.data[0].costPerTapIfPass > 0 && (
+          {dataset.data[0] && dataset.data[0].costPerTapIfPass > 0 && (
             <Line
               dataKey="costPerTapIfPass"
               type="monotone"
