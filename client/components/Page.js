@@ -118,7 +118,9 @@ export default class Page extends Component {
 
           if (!loading && data && data.status === 'success') {
             const {
-              data: { user, currentMonth, ytd },
+              data: {
+                user, balance, currentMonth, ytd,
+              },
             } = data;
 
             const trigger = (
@@ -182,7 +184,7 @@ export default class Page extends Component {
                         }}
                       >
                         <FlexRow>
-                          <Statistic label="Card Balance" value={user.balance} />
+                          <Statistic label="Total Balance" value={balance} />
                           <Statistic
                             label="Last Charge"
                             value={`$${

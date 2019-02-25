@@ -14,7 +14,10 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
     const thisYear = new Date().getFullYear();
     const thisMonth = new Date().getMonth() + 1;
     const searchDateMin = `${thisYear}-${thisMonth}-01`;
-    const searchDateMax = thisMonth === '12' ? `${parseInt(thisYear, 10) + 1}-01-01` : `${thisYear}-${parseInt(thisMonth, 10) + 1}-01`;
+    const searchDateMax =
+      thisMonth === '12'
+        ? `${parseInt(thisYear, 10) + 1}-01-01`
+        : `${thisYear}-${parseInt(thisMonth, 10) + 1}-01`;
 
     const accountInfo = {};
 
@@ -29,6 +32,20 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         },
         attributes: ['id', 'firstName', 'lastName', 'email', 'cards', 'permission']
       });
+
+      const balance = user.cards.reduce((sum, curr) => {
+        const amount = parseFloat(
+          // make it a negative number if there are brackets around it.
+          curr.balance
+            .replace('$', '')
+            .replace('(', '-')
+            .replace(')', '')
+        );
+
+        return sum + amount;
+      }, 0);
+
+      console.log('Card Balance:', balance);
 
       const budget = await Budget.findOne({
         where: {
@@ -48,7 +65,10 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         order: sequelize.literal('date DESC')
       });
 
-      const totalAmount = currTransactions.reduce((sum, trans) => sum + parseFloat(trans.amount), 0);
+      const totalAmount = currTransactions.reduce(
+        (sum, trans) => sum + parseFloat(trans.amount),
+        0
+      );
       const totalTrips = currTransactions.length;
 
       const today = moment()
@@ -69,7 +89,11 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
             [Sequelize.Op.lte]: moment(today, 'DD/MM/YYYY')
           }
         },
-        attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],
+        attributes: [
+          'type',
+          [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'],
+          [sequelize.literal('COUNT(type)'), 'count']
+        ],
         group: ['type']
       });
 
@@ -85,7 +109,17 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
       // await user.save();
 
       console.log(`User ${user.firstName} logged in!`);
-      res.json({ status: 'success', data: { user, budget, ytd, currentMonth: { currTransactions, totalAmount, totalTrips } } });
+
+      res.json({
+        status: 'success',
+        data: {
+          user,
+          balance,
+          budget,
+          ytd,
+          currentMonth: { currTransactions, totalAmount, totalTrips }
+        }
+      });
       next();
     } catch (err) {
       return next(err);
@@ -162,7 +196,11 @@ const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
         maxAge: 1000 * 60 * 60 * 24 * 356
       });
 
-      res.json({ status: 'success', message: `User ${firstName} ${lastName} created.`, data: user });
+      res.json({
+        status: 'success',
+        message: `User ${firstName} ${lastName} created.`,
+        data: user
+      });
     } catch (err) {
       next(err);
     }
