@@ -20,9 +20,11 @@ function serializeTransactions(transactions) {
     let year = moment(itemDate).format('YYYY');
     let month = getMonthName(moment(itemDate).month());
 
-    // if a transit pass was purchaseed 8 days before the end of the month,
+    // if a transit pass was purchased 8 days before the end of the month,
     // move it to the next month because it was for that month that it was
     // purchased.
+
+    // There is a bug here: amount sometimes reverts to 0.
 
     if (item.type === types.TRANSIT_PASS_LOAD && transitPassPurchasePeriod) {
       const addMonth = moment(itemDate, 'M').add(1, 'months');
@@ -73,11 +75,19 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const searchDateMin = `${parseInt(month, 10) === 1 ? parseInt(year, 10) - 1 : year}-${
         parseInt(month, 10) === 1 ? '12' : parseInt(month, 10) - 1
       }-01`;
-      const searchDateMax = month === '12' ? `${parseInt(year, 10) + 1}-01-01` : `${year}-${parseInt(month, 10) + 1}-01`;
+      const searchDateMax =
+        month === '12'
+          ? `${parseInt(year, 10) + 1}-01-01`
+          : `${year}-${parseInt(month, 10) + 1}-01`;
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD),
+          type: Sequelize.or(
+            types.TRANSIT_FARE,
+            types.TRANSIT_PASS,
+            types.TRANSFER,
+            types.TRANSIT_PASS_LOAD
+          ),
           date: {
             [Sequelize.Op.gte]: new Date(searchDateMin),
             [Sequelize.Op.lt]: new Date(searchDateMax)
@@ -90,11 +100,16 @@ const routes = (Transaction, sequelize, Sequelize) => {
 
       const serializedTransactions = serializeTransactions(transactions);
       const totalAmount =
-        serializedTransactions[year][getMonthName(month - 1)].amount + serializedTransactions[year][getMonthName(month - 1)].transitPassAmount;
+        serializedTransactions[year][getMonthName(month - 1)].amount +
+        serializedTransactions[year][getMonthName(month - 1)].transitPassAmount;
       const totalTrips = serializedTransactions[year][getMonthName(month - 1)].transactions.length;
       res.json({
         status: 'success',
-        data: { transactions: serializedTransactions[year][getMonthName(month - 1)].transactions, totalTrips, totalAmount }
+        data: {
+          transactions: serializedTransactions[year][getMonthName(month - 1)].transactions,
+          totalTrips,
+          totalAmount
+        }
       });
     } catch (err) {
       console.error(err.stack);
@@ -111,12 +126,18 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD)
+          type: Sequelize.or(
+            types.TRANSIT_FARE,
+            types.TRANSIT_PASS,
+            types.TRANSFER,
+            types.TRANSIT_PASS_LOAD
+          )
         },
         attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
         order: sequelize.literal('date DESC')
       });
 
+      console.log('raw transactions:', transactions);
       const serializedTransactions = serializeTransactions(transactions);
 
       res.json({ status: 'success', data: serializedTransactions });
@@ -143,7 +164,12 @@ const routes = (Transaction, sequelize, Sequelize) => {
       const transactions = await Transaction.findAll({
         where: {
           userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD),
+          type: Sequelize.or(
+            types.TRANSIT_FARE,
+            types.TRANSIT_PASS,
+            types.TRANSFER,
+            types.TRANSIT_PASS_LOAD
+          ),
           date: {
             [Sequelize.Op.gte]: moment(yearBefore, 'DD/MM/YYYY'),
             [Sequelize.Op.lte]: moment(today, 'DD/MM/YYYY')
@@ -178,7 +204,11 @@ const routes = (Transaction, sequelize, Sequelize) => {
             [Sequelize.Op.lt]: moment(today, 'MM/YYYY')
           }
         },
-        attributes: ['type', [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'], [sequelize.literal('COUNT(type)'), 'count']],
+        attributes: [
+          'type',
+          [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'],
+          [sequelize.literal('COUNT(type)'), 'count']
+        ],
         group: ['type']
       });
 
