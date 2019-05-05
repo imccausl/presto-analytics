@@ -8,7 +8,9 @@ const { getCSRF } = require('./auth');
 const { JSDOM } = jsdom;
 
 function removeDuplicates(myArr, prop) {
-  return myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos);
+  return myArr.filter(
+    (obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
+  );
 }
 
 function getCardsAndBalances(serverResponse) {
@@ -18,7 +20,10 @@ function getCardsAndBalances(serverResponse) {
 
   if (scrapeCards) {
     const data = [...scrapeCards]; // convert NodeList into Array
-    const cardsAndBalances = data.map(item => ({ cardNumber: item.dataset.visibleid, balance: item.childNodes[2].textContent.trim() }));
+    const cardsAndBalances = data.map(item => ({
+      cardNumber: item.dataset.visibleid,
+      balance: item.childNodes[2].textContent.trim()
+    }));
     cards = removeDuplicates(cardsAndBalances, 'cardNumber');
   }
 
@@ -44,7 +49,12 @@ function parseActivity(serverResponse, cardNumber) {
   const transactions = [];
 
   if (error) {
-    return { status: 'error', message: "Sorry, but we don't have any transactions for your PRESTO card for the selected month.", transactions };
+    return {
+      status: 'error',
+      message:
+        "Sorry, but we don't have any transactions for your PRESTO card for the selected month.",
+      transactions
+    };
   }
 
   data.forEach(node => {
@@ -85,7 +95,11 @@ function getActivityRequestBody(selectedMonth) {
 
 async function setCard(requestInstance, cardNumber) {
   try {
-    const token = await getCSRF(requestInstance, API.dashboard, `form[action='${API.switchCards}']`);
+    const token = await getCSRF(
+      requestInstance,
+      API.dashboard,
+      `form[action='${API.switchCards}']`
+    );
     const response = await requestInstance({
       uri: API.switchCards,
       method: 'POST',
@@ -161,7 +175,8 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
 async function getUsageReport(requestInstance, year) {
   try {
     const token = await getCSRF(requestInstance, API.usageReport, 'TransitUsageReport');
-    const searchYear = (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
+    const searchYear =
+      (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
     const PAGE_SIZE = 1000;
     const TransactionCategory = {
       ALL: '0',
@@ -183,14 +198,15 @@ async function getUsageReport(requestInstance, year) {
         'Accept-Language': 'en-US,en;q=0.5',
         'Content-Type': 'application/json; charset=utf-8',
         Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
-        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+        'User-Agent':
+          'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
         'X-Requested-With': 'XMLHttpRequest',
         Accept: '*/*',
         Connection: 'keep-alive'
       }
     });
 
-    // return parseUsageReport(resp); selector: #tblTUR
+    // return parseUsageReport(resp); //selector: #tblTUR
   } catch (error) {
     return { error };
   }
