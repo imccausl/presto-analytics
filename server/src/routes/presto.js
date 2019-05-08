@@ -94,26 +94,33 @@ const routes = (Transaction, User, sequelize, Sequelize) => {
     // instead of just working with the eachCardLastTransaction object directly.
     const lastTransactionDates = eachCardLastTransaction.map(row => ({
       cardNumber: row.cardNumber,
-      lastTransactionDate: moment(row.lastTransactionDate).format('MM/DD/YYYY'),
-      filterDateString: moment(row.lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A')
+      lastTransactionDate: row.lastTransactionDate
+        ? moment(row.lastTransactionDate).format('MM/DD/YYYY')
+        : moment(from).format('MM/DD/YYYY'),
+      filterDateString: moment(row.lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A'),
+      toDate: to ? moment(to).format('MM/DD/YYYY') : moment().format('MM/DD/YYYY')
     }));
 
     console.log('lastTransactionDates:', lastTransactionDates);
 
-    // if (lastTransactionDate) {
-    //   from = moment(lastTransactionDate).format('MM/DD/YYYY');
-    //   filterDateString = moment(lastTransactionDate).format('MM/DD/YYYY hh:mm:ss A');
-    // }
+    const resolvedActivityArray = await Promise.all(
+      lastTransactionDates.map(async card => {
+        const usage = await getActivityByDateRange(
+          card.lastTransactionDate,
+          card.toDate,
+          card.cardNumber
+        );
 
-    // console.log('lastTransactionDate:', !!lastTransactionDate, filterDateString);
+        if (usage.status === 'error') {
+          throw new Error(usage.message);
+        }
 
-    // if (!to) {
-    //   to = moment().format('MM/DD/YYYY');
-    // }
+        return usage;
+      })
+    );
 
-    // // need to fix this to work with arrays
-    const usage = await getActivityByDateRange(from, to, cards);
-    // console.log(usage);
+    console.log(resolvedActivityArray);
+
     // if (usage.status === 'error') {
     //   throw new Error(usage.message);
     // }
