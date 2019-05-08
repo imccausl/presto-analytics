@@ -88,6 +88,8 @@ const routes = (Transaction, User, sequelize, Sequelize) => {
       group: ['cardNumber']
     });
 
+    console.log(eachCardLastTransaction);
+
     // convert the dates using moment
     // and create an array with the essential pieces necessary for the next query?
     // Wondering how necessary it is to loop through everything here
@@ -111,9 +113,9 @@ const routes = (Transaction, User, sequelize, Sequelize) => {
           card.cardNumber
         );
 
-        if (usage.status === 'error') {
-          throw new Error(usage.message);
-        }
+        // if (usage.status === 'error') {
+        //   throw new Error(usage.message);
+        // }
 
         return usage;
       })
@@ -121,12 +123,30 @@ const routes = (Transaction, User, sequelize, Sequelize) => {
 
     console.log(resolvedActivityArray);
 
-    // if (usage.status === 'error') {
-    //   throw new Error(usage.message);
-    // }
-    // console.log('Checking for duplicates...');
+    // get activity from db
 
-    // console.log(`Saving usage to db...`);
+    // worst case scenerio the lastTransactionDates array is an array of essentially empty objects
+    // so this check won't work.
+    if (lastTransactionDates.length > 0) {
+      const resolvedPreviousDataArray = await Promise.all(
+        lastTransactionDates.map(async card => {
+          const possibleDuplicateTransactions = await Transaction.findAll({
+            where: {
+              date: moment(card.lastTransactiondate).format('MM/DD/YYY'),
+              cardNumber: card.cardNumber,
+              userId: req.userId
+            },
+            attributes: ['date']
+          });
+
+          return { cardNumber: card.cardNumber, possibleDuplicateTransactions };
+        })
+      );
+
+      console.log(resolvedPreviousDataArray);
+    } else {
+      console.log('Oh hello!');
+    }
 
     // // res.json({ status: 'success', usage: filteredUsage });
     // if (lastTransactionDate) {
@@ -156,7 +176,7 @@ const routes = (Transaction, User, sequelize, Sequelize) => {
     //   transactions = await Transaction.bulkCreate(updatedUsage);
     // }
 
-    // res.json({ status: 'success', data: transactions });
+    res.json({ status: 'success', data: transactions });
     // } catch (error) {
     //   next(error);
     // }
