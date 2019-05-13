@@ -78,7 +78,7 @@ function parseActivity(serverResponse, cardNumber) {
     });
   });
 
-  return { status: 'success', transactions };
+  return { [cardNumber]: transactions };
 }
 
 function getActivityRequestBody(selectedMonth) {
@@ -93,7 +93,13 @@ function getActivityRequestBody(selectedMonth) {
   };
 }
 
+// BUG:
+// card doesn't always switch even though this returns success.
+// we need to check to make sure the card is switched by
+// checking that cardNumber matches the cardNumber in the span
+// identfied by the id cardNumber on the returned data.
 async function setCard(requestInstance, cardNumber) {
+  console.log('Calling setCard with card', cardNumber);
   try {
     const token = await getCSRF(
       requestInstance,
@@ -111,8 +117,18 @@ async function setCard(requestInstance, cardNumber) {
       followAllRedirects: true
     });
 
+    // const dom = new JSDOM(response.body);
+    // const domCardNumber = dom.window.document.getElementById('cardNumber').textContent;
+
+    // console.log('domCardNumber:', domCardNumber);
+    // console.log('do they match?', domCardNumber === cardNumber);
+    // if (domCardNumber !== cardNumber) {
+    //   setCard(requestInstance, cardNumber);
+    // }
+
     return response;
   } catch (error) {
+    console.log('Error in setCard:', error);
     return error;
   }
 }
@@ -159,6 +175,12 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
+    console.log(
+      'Calling getActivityByDateRange with inputs:',
+      fromFormatted,
+      toFormatted,
+      cardNumber
+    );
     const setC = await setCard(requestInstance, cardNumber);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
