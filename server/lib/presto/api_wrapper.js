@@ -1,14 +1,21 @@
-const { login, isLoggedIn } = require('./auth');
-const { getBasicAccountInfo, getUsageReport, getActivityByMonth, getActivityByDateRange } = require('./activity');
+const { login, isLoggedIn, createCookieJar } = require('./auth');
+const {
+  getBasicAccountInfo,
+  getUsageReport,
+  getActivityByMonth,
+  getActivityByDateRange
+} = require('./activity');
 
 module.exports = requestInstance => ({
   // auth.js functions
-  login: (username, password) => login(requestInstance, username, password),
-  isLoggedIn: () => isLoggedIn(requestInstance),
+  login: (username, password, jar) => login(requestInstance, username, password, jar),
+  isLoggedIn: jar => isLoggedIn(requestInstance, jar),
+  createCookieJar: () => createCookieJar(requestInstance),
 
   // activity.js functions
-  getBasicAccountInfo: () => getBasicAccountInfo(requestInstance),
-  getUsageReport: year => getUsageReport(requestInstance, year),
+  getBasicAccountInfo: jar => getBasicAccountInfo(requestInstance, jar),
+  getUsageReport: (year, jar) => getUsageReport(requestInstance, year, jar),
   // getActivityByMonth: (year, month) => getActivityByMonth(requestInstance, year, month),
-  getActivityByDateRange: (from, to, cardNumber) => getActivityByDateRange(requestInstance, from, to, cardNumber)
+  getActivityByDateRange: (from, to, cardNumber, jar) =>
+    getActivityByDateRange(requestInstance, from, to, cardNumber, jar)
 });

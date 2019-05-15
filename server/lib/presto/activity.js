@@ -1,5 +1,6 @@
 const jsdom = require('jsdom');
 const moment = require('moment');
+const tough = require('tough-cookie');
 
 const paginationModel = require('./data/paginationModel.json');
 const API = require('./api_endpoints');
@@ -35,8 +36,9 @@ function getCardsAndBalances(serverResponse) {
   return cards;
 }
 
-async function getBasicAccountInfo(requestInstance) {
-  const accountResponse = await requestInstance({ uri: API.dashboard });
+async function getBasicAccountInfo(requestInstance, jar) {
+  const cj = jar || requestInstance.jar();
+  const accountResponse = await requestInstance({ uri: API.dashboard, jar: cj });
   const cardsAndBalances = getCardsAndBalances(accountResponse);
 
   return cardsAndBalances;
@@ -93,15 +95,20 @@ function getActivityRequestBody(selectedMonth) {
   };
 }
 
-async function setCard(requestInstance, cardNumber) {
+async function setCard(requestInstance, cardNumber, jar) {
   try {
+    const cj = jar;
+    console.log('setCard jar:', cj);
     const token = await getCSRF(
       requestInstance,
+      cj,
       API.dashboard,
       `form[action='${API.switchCards}']`
     );
+    console.log('Token:', token);
     const response = await requestInstance({
       uri: API.switchCards,
+      jar: cj,
       method: 'POST',
       form: {
         setFareMediaSession: cardNumber,
@@ -154,14 +161,57 @@ async function setCard(requestInstance, cardNumber) {
 //   }
 // }
 
-async function getActivityByDateRange(requestInstance, from, to = moment(), cardNumber) {
+async function getActivityByDateRange(
+  requestInstance,
+  from,
+  to = moment(),
+  cardNumber,
+  userCookies = ''
+) {
   try {
+    const cj = requestInstance.jar();
+    const cookieData = JSON.parse(userCookies);
+    const cookies = [];
+
+    cookieData.forEach(cookie => {
+      const {
+        key,
+        value,
+        domain,
+        path,
+        secure,
+        httpOnly,
+        hostOnly,
+        creation,
+        lastAccessed
+      } = cookie;
+      console.log(Date.now() - Date.parse(creation));
+
+      cookies.push(
+        new tough.Cookie({
+          key,
+          value,
+          domain,
+          path,
+          secure,
+          httpOnly,
+          hostOnly
+        })
+      );
+    });
+
+    cookies.forEach(cookie => {
+      console.log('cookie:', cookie);
+      cj.setCookie(cookie.toString(), `${API.baseUrl}`);
+    });
+    console.log(cj);
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
-    const setC = await setCard(requestInstance, cardNumber);
+    const setC = await setCard(requestInstance, cardNumber, cj);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
+      jar: cj,
       method: 'POST',
       json: getActivityRequestBody(dateRange),
       withCredentials: true

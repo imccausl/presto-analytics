@@ -2,51 +2,58 @@ const jsdom = require('jsdom');
 const API = require('./api_endpoints');
 
 const { JSDOM } = jsdom;
-const cookieJar = new jsdom.CookieJar();
 
-const INVALID_LOGIN = 'You could not be signed in to your account. Please check your username/email and password and try again.';
+const INVALID_LOGIN =
+  'You could not be signed in to your account. Please check your username/email and password and try again.';
 
 function isSuccessfulLogin(requestBody) {
-  return Object.prototype.hasOwnProperty.call(requestBody, 'Result') && requestBody.Result === 'success';
+  return (
+    Object.prototype.hasOwnProperty.call(requestBody, 'Result') && requestBody.Result === 'success'
+  );
 }
 
-async function getCSRF(requestInstance, endpoint = API.homepage, parent = '#signwithaccount') {
+async function getCSRF(requestInstance, jar, endpoint = API.homepage, parent = '#signwithaccount') {
+  const cj = jar;
+  console.log('getCSRF jar:', cj);
   try {
-    const { body } = await requestInstance({ uri: endpoint });
-    const dom = new JSDOM(body, { cookieJar });
-    console.log(parent);
-    const token = dom.window.document.querySelector(`${parent} input[name='__RequestVerificationToken']`);
-    console.log(token);
-    return token.value;
+    const { body } = await requestInstance({ uri: endpoint, jar: cj });
+    const dom = new JSDOM(body);
+    const token = dom.window.document.querySelector(
+      `${parent} input[name='__RequestVerificationToken']`
+    );
+    console.log('cookieJar at getCSRF:', cj);
+    return { token: token.value, cookies: cj.getCookies(API.baseUrl) };
   } catch (error) {
     console.log(error);
     return { error };
   }
 }
 
-async function login(requestInstance, username, password) {
-  const token = await getCSRF(requestInstance);
+async function login(requestInstance, username, password, jar) {
+  const cj = jar || requestInstance.jar();
+  const CSRFResponse = await getCSRF(requestInstance, cj);
 
-  if (typeof token === 'object') {
+  if (typeof CSRFResponse.token !== 'string') {
     return {
       success: false,
-      error: token.error
+      error: CSRFResponse.error
     };
   }
 
   const loginResponse = await requestInstance({
     uri: API.loginEndpoint,
+    jar: cj,
     method: 'POST',
     json: {
       anonymousOrderACard: false,
       custSecurity: {
         Login: username,
         Password: password,
-        __RequestVerificationToken: token
+        __RequestVerificationToken: CSRFResponse.token
       }
     },
     headers: {
-      __RequestVerificationToken: token,
+      __RequestVerificationToken: CSRFResponse.token,
       'Accept-Language': 'en-US,en;q=0.5',
       'Content-Type': 'application/json; charset=utf-8',
       Referrer: 'https://www.prestocard.ca/home',
@@ -58,7 +65,9 @@ async function login(requestInstance, username, password) {
   });
 
   if (isSuccessfulLogin(loginResponse.body)) {
-    return { success: true };
+    console.log('Cookies:', CSRFResponse.cookies);
+    console.log('login Cookies:', cj.getCookies(API.baseUrl));
+    return { success: true, cookieJar: cj.getCookies(API.baseUrl) };
   }
 
   return {
@@ -68,9 +77,11 @@ async function login(requestInstance, username, password) {
   };
 }
 
-async function isLoggedIn(responseInstance) {
+async function isLoggedIn(requestInstance, jar) {
+  const cj = jar || requestInstance.jar();
+
   try {
-    const resp = await responseInstance({ uri: API.dashboard });
+    const resp = await requestInstance({ uri: API.dashboard, jar: cj });
 
     if (resp.statusCode !== 200) {
       return false;
@@ -83,7 +94,12 @@ async function isLoggedIn(responseInstance) {
   }
 }
 
+function createCookieJar(requestInstance) {
+  return requestInstance.jar();
+}
+
 module.exports = {
+  createCookieJar,
   isSuccessfulLogin,
   getCSRF,
   login,

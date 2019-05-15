@@ -1,7 +1,13 @@
 const express = require('express');
 const moment = require('moment');
 
-const { login, getBasicAccountInfo, isLoggedIn, getActivityByDateRange } = require('../../lib/presto');
+const {
+  login,
+  createCookieJar,
+  getBasicAccountInfo,
+  isLoggedIn,
+  getActivityByDateRange
+} = require('../../lib/presto');
 
 const routes = (Transaction, User) => {
   const router = express.Router();
@@ -20,8 +26,13 @@ const routes = (Transaction, User) => {
         throw new Error('No user logged in!');
       }
 
-      const prestoLoginResp = await login(prestoCredentials.username, prestoCredentials.password);
-      const accountInfo = await getBasicAccountInfo();
+      const cj = createCookieJar();
+      const prestoLoginResp = await login(
+        prestoCredentials.username,
+        prestoCredentials.password,
+        cj
+      );
+      const accountInfo = await getBasicAccountInfo(cj);
       const user = await User.findOne({
         where: {
           id: req.userId
@@ -34,6 +45,7 @@ const routes = (Transaction, User) => {
       // check this and save, because they may have added a new card since the last time.
       // could add logic to only do this save if the accountInfo differs from last save,
       // but I don't see the point in going that far as yet.
+      user.cookies = prestoLoginResp.cookieJar;
       user.cards = accountInfo;
       user.save();
 
@@ -60,10 +72,16 @@ const routes = (Transaction, User) => {
       let filterDateString = '';
       let transactions = [];
       const filteredUsage = [];
-
+      cards = JSON.parse(cards);
       if (!req.userId) {
         throw new Error('No user logged in!');
       }
+      const userCookies = await User.findOne({
+        where: {
+          id: req.userId
+        },
+        attributes: ['cookies']
+      });
 
       for (let i = 0; i < cards.length; i++) {
         const cardNumber = cards[i];
@@ -87,7 +105,8 @@ const routes = (Transaction, User) => {
           to = moment().format('MM/DD/YYYY');
         }
 
-        const usage = await getActivityByDateRange(from, to, cardNumber);
+        console.log('/usage cookies:', userCookies.cookies);
+        const usage = await getActivityByDateRange(from, to, cardNumber, userCookies.cookies);
         console.log(usage);
         if (usage.status === 'error') {
           throw new Error(usage.message);

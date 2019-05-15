@@ -7,7 +7,7 @@ const API = require('./api_endpoints');
 
 const jar = req.jar();
 
-const options = { jar, baseUrl: API.baseUrl };
+const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));
 
 module.exports = apiRequestWrapper(request);
