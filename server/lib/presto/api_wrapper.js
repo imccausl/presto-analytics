@@ -8,14 +8,14 @@ const {
 
 module.exports = requestInstance => ({
   // auth.js functions
-  login: (username, password, jar) => login(requestInstance, username, password, jar),
-  isLoggedIn: jar => isLoggedIn(requestInstance, jar),
+  login: (username, password) => login(requestInstance, username, password),
+  isLoggedIn: () => isLoggedIn(requestInstance),
   createCookieJar: () => createCookieJar(requestInstance),
 
   // activity.js functions
-  getBasicAccountInfo: jar => getBasicAccountInfo(requestInstance, jar),
+  getBasicAccountInfo: () => getBasicAccountInfo(requestInstance),
   getUsageReport: (year, jar) => getUsageReport(requestInstance, year, jar),
   // getActivityByMonth: (year, month) => getActivityByMonth(requestInstance, year, month),
-  getActivityByDateRange: (from, to, cardNumber, jar) =>
-    getActivityByDateRange(requestInstance, from, to, cardNumber, jar)
+  getActivityByDateRange: (from, to, cardNumber) =>
+    getActivityByDateRange(requestInstance, from, to, cardNumber)
 });

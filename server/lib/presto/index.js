@@ -5,9 +5,17 @@ const req = require('request');
 const apiRequestWrapper = require('./api_wrapper');
 const API = require('./api_endpoints');
 
-const jar = req.jar();
-
 const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));
 
-module.exports = apiRequestWrapper(request);
+function Presto(cookieJar) {
+  this.cookieJar = cookieJar || apiRequestWrapper(request).createCookieJar();
+}
+
+Presto.prototype = {
+  ...apiRequestWrapper.call(Presto, request),
+  getCookieJar: () => this.cookieJar.getCookies(API.baseUrl)
+};
+
+console.log(Presto.prototype);
+module.exports = Presto;

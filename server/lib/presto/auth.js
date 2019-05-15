@@ -12,10 +12,9 @@ function isSuccessfulLogin(requestBody) {
   );
 }
 
-async function getCSRF(requestInstance, jar, endpoint = API.homepage, parent = '#signwithaccount') {
-  const cj = jar;
+async function getCSRF(requestInstance, endpoint = API.homepage, parent = '#signwithaccount') {
   try {
-    const { body } = await requestInstance({ uri: endpoint, jar: cj });
+    const { body } = await requestInstance({ uri: endpoint, jar: this.cookieJar });
     const dom = new JSDOM(body);
     const token = dom.window.document.querySelector(
       `${parent} input[name='__RequestVerificationToken']`
@@ -26,16 +25,15 @@ async function getCSRF(requestInstance, jar, endpoint = API.homepage, parent = '
       );
     }
 
-    return { token: token.value, cookies: cj.getCookies(API.baseUrl) };
+    return { token: token.value };
   } catch (error) {
     console.log(error);
     return { error };
   }
 }
 
-async function login(requestInstance, username, password, jar) {
-  const cj = jar || requestInstance.jar();
-  const CSRFResponse = await getCSRF(requestInstance, cj);
+async function login(requestInstance, username, password) {
+  const CSRFResponse = await getCSRF(requestInstance);
 
   if (typeof CSRFResponse.token !== 'string') {
     return {
@@ -46,7 +44,7 @@ async function login(requestInstance, username, password, jar) {
 
   const loginResponse = await requestInstance({
     uri: API.loginEndpoint,
-    jar: cj,
+    jar: this.cookieJar,
     method: 'POST',
     json: {
       anonymousOrderACard: false,
@@ -69,9 +67,9 @@ async function login(requestInstance, username, password, jar) {
   });
 
   if (isSuccessfulLogin(loginResponse.body)) {
-    console.log('Cookies:', CSRFResponse.cookies);
-    console.log('login Cookies:', cj.getCookies(API.baseUrl));
-    return { success: true, cookieJar: cj.getCookies(API.baseUrl) };
+    console.log('cookieJar:', this.cookieJar);
+    console.log('login Cookies:', this.getCookieJar());
+    return { success: true };
   }
 
   return {

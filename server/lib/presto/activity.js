@@ -14,7 +14,7 @@ function removeDuplicates(myArr, prop) {
   );
 }
 
-function getCardsAndBalances(serverResponse) {
+const getCardsAndBalances = serverResponse => {
   const dom = new JSDOM(serverResponse.body);
   const scrapeCards = dom.window.document.querySelectorAll('a.fareMediaID');
   let cards = [];
@@ -34,15 +34,15 @@ function getCardsAndBalances(serverResponse) {
   });
 
   return cards;
-}
+};
 
-async function getBasicAccountInfo(requestInstance, jar) {
-  const cj = jar || requestInstance.jar();
-  const accountResponse = await requestInstance({ uri: API.dashboard, jar: cj });
+const getBasicAccountInfo = async requestInstance => {
+  console.log('Why undefined?', this.cookieJar);
+  const accountResponse = await requestInstance({ uri: API.dashboard, jar: this.cookieJar });
   const cardsAndBalances = getCardsAndBalances(accountResponse);
 
   return cardsAndBalances;
-}
+};
 
 function parseActivity(serverResponse, cardNumber) {
   const dom = new JSDOM(serverResponse.body);
@@ -243,7 +243,7 @@ async function getUsageReport(requestInstance, year) {
         currentModel: ''
       },
       headers: {
-        __RequestVerificationToken: token,
+        __RequestVerificationToken: token.token,
         'Accept-Language': 'en-US,en;q=0.5',
         'Content-Type': 'application/json; charset=utf-8',
         Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
