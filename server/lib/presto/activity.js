@@ -98,12 +98,11 @@ function getActivityRequestBody(selectedMonth) {
 async function setCard(requestInstance, cardNumber, jar) {
   try {
     const cj = jar;
-    console.log('setCard jar:', cj);
     const token = await getCSRF(
       requestInstance,
       cj,
       API.dashboard,
-      `form[action='${API.switchCards}']`
+      `form[action='/${API.switchCards}']`
     );
     console.log('Token:', token);
     const response = await requestInstance({
@@ -112,7 +111,7 @@ async function setCard(requestInstance, cardNumber, jar) {
       method: 'POST',
       form: {
         setFareMediaSession: cardNumber,
-        __RequestVerificationToken: token
+        __RequestVerificationToken: token.token
       },
       withCredentials: true,
       followAllRedirects: true
@@ -204,7 +203,7 @@ async function getActivityByDateRange(
       console.log('cookie:', cookie);
       cj.setCookie(cookie.toString(), `${API.baseUrl}`);
     });
-    console.log(cj);
+
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;

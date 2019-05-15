@@ -72,7 +72,7 @@ const routes = (Transaction, User) => {
       let filterDateString = '';
       let transactions = [];
       const filteredUsage = [];
-      cards = JSON.parse(cards);
+      cards = typeof cards === 'string' ? JSON.parse(cards) : cards;
       if (!req.userId) {
         throw new Error('No user logged in!');
       }

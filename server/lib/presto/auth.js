@@ -14,7 +14,6 @@ function isSuccessfulLogin(requestBody) {
 
 async function getCSRF(requestInstance, jar, endpoint = API.homepage, parent = '#signwithaccount') {
   const cj = jar;
-  console.log('getCSRF jar:', cj);
   try {
     const { body } = await requestInstance({ uri: endpoint, jar: cj });
     const dom = new JSDOM(body);
