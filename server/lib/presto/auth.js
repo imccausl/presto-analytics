@@ -20,7 +20,12 @@ async function getCSRF(requestInstance, jar, endpoint = API.homepage, parent = '
     const token = dom.window.document.querySelector(
       `${parent} input[name='__RequestVerificationToken']`
     );
-    console.log('cookieJar at getCSRF:', cj);
+    if (!token) {
+      throw new Error(
+        'Could not get token. Session may have expired or user was not logged in correctly.'
+      );
+    }
+
     return { token: token.value, cookies: cj.getCookies(API.baseUrl) };
   } catch (error) {
     console.log(error);
