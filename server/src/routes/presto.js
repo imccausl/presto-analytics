@@ -21,7 +21,7 @@ const routes = (Transaction, User) => {
     }
 
     const presto = new Presto();
-    console.log(presto);
+    console.log(presto, Presto.prototype);
     const prestoLoginResp = await presto.login(
       prestoCredentials.username,
       prestoCredentials.password
@@ -39,7 +39,7 @@ const routes = (Transaction, User) => {
     // check this and save, because they may have added a new card since the last time.
     // could add logic to only do this save if the accountInfo differs from last save,
     // but I don't see the point in going that far as yet.
-    user.cookies = prestoLoginResp.cookieJar;
+    user.cookies = presto.getCookies();
     user.cards = accountInfo;
     user.save();
 
@@ -77,6 +77,8 @@ const routes = (Transaction, User) => {
         attributes: ['cookies']
       });
 
+      const presto = new Presto(userCookies.cookies);
+
       for (let i = 0; i < cards.length; i++) {
         const cardNumber = cards[i];
 
@@ -100,7 +102,7 @@ const routes = (Transaction, User) => {
         }
 
         console.log('/usage cookies:', userCookies.cookies);
-        const usage = await getActivityByDateRange(from, to, cardNumber, userCookies.cookies);
+        const usage = await presto.getActivityByDateRange(from, to, cardNumber);
         console.log(usage);
         if (usage.status === 'error') {
           throw new Error(usage.message);
