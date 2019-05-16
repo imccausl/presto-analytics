@@ -19,7 +19,6 @@ const getCSRF = async (
   parent = '#signwithaccount'
 ) => {
   try {
-    console.log('csrf:', cookieJar);
     const { body } = await requestInstance({ uri: endpoint, jar: cookieJar });
     const dom = new JSDOM(body);
     const token = dom.window.document.querySelector(
@@ -73,7 +72,6 @@ async function login(requestInstance, username, password) {
   });
 
   if (isSuccessfulLogin(loginResponse.body)) {
-    console.log('cookieJar:', this.cookieJar);
     console.log('login Cookies:', this.getCookies());
     return { success: true };
   }

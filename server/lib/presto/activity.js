@@ -138,7 +138,6 @@ function setCookieJar(requestInstance, userCookies) {
     });
 
     cookies.forEach(cookie => {
-      console.log('cookie:', cookie);
       cj.setCookie(cookie.toString(), `${API.baseUrl}`);
     });
   }
@@ -162,7 +161,6 @@ async function setCard(requestInstance, cardNumber, jar) {
       API.dashboard,
       `form[action='/${API.switchCards}']`
     );
-    console.log('Token:', token);
     const response = await requestInstance({
       uri: API.switchCards,
       jar: cj,
