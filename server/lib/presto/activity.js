@@ -8,6 +8,37 @@ const { getCSRF } = require('./auth');
 
 const { JSDOM } = jsdom;
 
+function setCookieJar(requestInstance, userCookies) {
+  const cj = requestInstance.jar();
+  if (userCookies) {
+    const cookieData = typeof userCookies === 'string' ? JSON.parse(userCookies) : userCookies;
+    const cookies = [];
+
+    cookieData.forEach(cookie => {
+      const { key, value, domain, path, secure, httpOnly, hostOnly } = cookie;
+
+      cookies.push(
+        new tough.Cookie({
+          key,
+          value,
+          domain,
+          path,
+          secure,
+          httpOnly,
+          hostOnly
+        })
+      );
+    });
+
+    cookies.forEach(cookie => {
+      console.log('cookie:', cookie);
+      cj.setCookie(cookie.toString(), `${API.baseUrl}`);
+    });
+  }
+
+  this.cookieJar = cj;
+}
+
 function removeDuplicates(myArr, prop) {
   return myArr.filter(
     (obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
@@ -36,13 +67,12 @@ const getCardsAndBalances = serverResponse => {
   return cards;
 };
 
-const getBasicAccountInfo = async requestInstance => {
-  console.log('Why undefined?', this.cookieJar);
+async function getBasicAccountInfo(requestInstance) {
   const accountResponse = await requestInstance({ uri: API.dashboard, jar: this.cookieJar });
   const cardsAndBalances = getCardsAndBalances(accountResponse);
 
   return cardsAndBalances;
-};
+}
 
 function parseActivity(serverResponse, cardNumber) {
   const dom = new JSDOM(serverResponse.body);
@@ -160,57 +190,15 @@ async function setCard(requestInstance, cardNumber, jar) {
 //   }
 // }
 
-async function getActivityByDateRange(
-  requestInstance,
-  from,
-  to = moment(),
-  cardNumber,
-  userCookies = ''
-) {
+async function getActivityByDateRange(requestInstance, from, to = moment(), cardNumber) {
   try {
-    const cj = requestInstance.jar();
-    const cookieData = JSON.parse(userCookies);
-    const cookies = [];
-
-    cookieData.forEach(cookie => {
-      const {
-        key,
-        value,
-        domain,
-        path,
-        secure,
-        httpOnly,
-        hostOnly,
-        creation,
-        lastAccessed
-      } = cookie;
-      console.log(Date.now() - Date.parse(creation));
-
-      cookies.push(
-        new tough.Cookie({
-          key,
-          value,
-          domain,
-          path,
-          secure,
-          httpOnly,
-          hostOnly
-        })
-      );
-    });
-
-    cookies.forEach(cookie => {
-      console.log('cookie:', cookie);
-      cj.setCookie(cookie.toString(), `${API.baseUrl}`);
-    });
-
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
-    const setC = await setCard(requestInstance, cardNumber, cj);
+    const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
-      jar: cj,
+      jar: this.cookieJar,
       method: 'POST',
       json: getActivityRequestBody(dateRange),
       withCredentials: true
@@ -264,5 +252,6 @@ async function getUsageReport(requestInstance, year) {
 module.exports = {
   getUsageReport,
   getBasicAccountInfo,
-  getActivityByDateRange
+  getActivityByDateRange,
+  setCookieJar
 };
