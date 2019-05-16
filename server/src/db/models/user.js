@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const tough = require('tough-cookie');
 
 module.exports = (sequelize, DataTypes) => {
   // const permissions = DataTypes.ENUM('ADMIN', 'USER');
@@ -38,6 +39,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     permission: {
       type: DataTypes.ARRAY(DataTypes.TEXT)
+    },
+    cookies: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      // get() {
+      //   return tough.toJSON(this.getDataValue('cookies'));
+      // },
+      set(cookies) {
+        this.setDataValue('cookies', JSON.stringify(cookies));
+      }
     }
   });
 

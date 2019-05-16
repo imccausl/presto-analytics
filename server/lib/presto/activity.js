@@ -1,5 +1,6 @@
 const jsdom = require('jsdom');
 const moment = require('moment');
+const tough = require('tough-cookie');
 
 const paginationModel = require('./data/paginationModel.json');
 const API = require('./api_endpoints');
@@ -7,13 +8,44 @@ const { getCSRF } = require('./auth');
 
 const { JSDOM } = jsdom;
 
+function setCookieJar(requestInstance, userCookies) {
+  const cj = requestInstance.jar();
+  if (userCookies) {
+    const cookieData = typeof userCookies === 'string' ? JSON.parse(userCookies) : userCookies;
+    const cookies = [];
+
+    cookieData.forEach(cookie => {
+      const { key, value, domain, path, secure, httpOnly, hostOnly } = cookie;
+
+      cookies.push(
+        new tough.Cookie({
+          key,
+          value,
+          domain,
+          path,
+          secure,
+          httpOnly,
+          hostOnly
+        })
+      );
+    });
+
+    cookies.forEach(cookie => {
+      console.log('cookie:', cookie);
+      cj.setCookie(cookie.toString(), `${API.baseUrl}`);
+    });
+  }
+
+  this.cookieJar = cj;
+}
+
 function removeDuplicates(myArr, prop) {
   return myArr.filter(
     (obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
   );
 }
 
-function getCardsAndBalances(serverResponse) {
+const getCardsAndBalances = serverResponse => {
   const dom = new JSDOM(serverResponse.body);
   const scrapeCards = dom.window.document.querySelectorAll('a.fareMediaID');
   let cards = [];
@@ -33,10 +65,10 @@ function getCardsAndBalances(serverResponse) {
   });
 
   return cards;
-}
+};
 
 async function getBasicAccountInfo(requestInstance) {
-  const accountResponse = await requestInstance({ uri: API.dashboard });
+  const accountResponse = await requestInstance({ uri: API.dashboard, jar: this.cookieJar });
   const cardsAndBalances = getCardsAndBalances(accountResponse);
 
   return cardsAndBalances;
@@ -93,19 +125,23 @@ function getActivityRequestBody(selectedMonth) {
   };
 }
 
-async function setCard(requestInstance, cardNumber) {
+async function setCard(requestInstance, cardNumber, jar) {
   try {
+    const cj = jar;
     const token = await getCSRF(
       requestInstance,
+      cj,
       API.dashboard,
-      `form[action='${API.switchCards}']`
+      `form[action='/${API.switchCards}']`
     );
+    console.log('Token:', token);
     const response = await requestInstance({
       uri: API.switchCards,
+      jar: cj,
       method: 'POST',
       form: {
         setFareMediaSession: cardNumber,
-        __RequestVerificationToken: token
+        __RequestVerificationToken: token.token
       },
       withCredentials: true,
       followAllRedirects: true
@@ -159,9 +195,10 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
     const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
     const dateRange = `${fromFormatted} - ${toFormatted}`;
-    const setC = await setCard(requestInstance, cardNumber);
+    const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
     const resp = await requestInstance({
       uri: API.activityEndpoint,
+      jar: this.cookieJar,
       method: 'POST',
       json: getActivityRequestBody(dateRange),
       withCredentials: true
@@ -194,7 +231,7 @@ async function getUsageReport(requestInstance, year) {
         currentModel: ''
       },
       headers: {
-        __RequestVerificationToken: token,
+        __RequestVerificationToken: token.token,
         'Accept-Language': 'en-US,en;q=0.5',
         'Content-Type': 'application/json; charset=utf-8',
         Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
@@ -215,5 +252,6 @@ async function getUsageReport(requestInstance, year) {
 module.exports = {
   getUsageReport,
   getBasicAccountInfo,
-  getActivityByDateRange
+  getActivityByDateRange,
+  setCookieJar
 };

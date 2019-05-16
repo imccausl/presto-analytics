@@ -1,7 +1,7 @@
 const express = require('express');
 const moment = require('moment');
 
-const { login, getBasicAccountInfo, isLoggedIn, getActivityByDateRange } = require('../../lib/presto');
+const Presto = require('../../lib/presto');
 
 const routes = (Transaction, User) => {
   const router = express.Router();
@@ -15,36 +15,43 @@ const routes = (Transaction, User) => {
       return;
     }
 
-    try {
-      if (!req.userId) {
-        throw new Error('No user logged in!');
-      }
-
-      const prestoLoginResp = await login(prestoCredentials.username, prestoCredentials.password);
-      const accountInfo = await getBasicAccountInfo();
-      const user = await User.findOne({
-        where: {
-          id: req.userId
-        }
-      });
-
-      prestoLoginResp.accountInfo = accountInfo;
-      console.log(prestoLoginResp);
-      // refresh the cards when user logs into presto -- we need to always
-      // check this and save, because they may have added a new card since the last time.
-      // could add logic to only do this save if the accountInfo differs from last save,
-      // but I don't see the point in going that far as yet.
-      user.cards = accountInfo;
-      user.save();
-
-      res.json(prestoLoginResp);
-    } catch (error) {
-      res.send({ error });
+    // try {
+    if (!req.userId) {
+      throw new Error('No user logged in!');
     }
+
+    const presto = new Presto();
+    console.log(presto, Presto.prototype);
+    const prestoLoginResp = await presto.login(
+      prestoCredentials.username,
+      prestoCredentials.password
+    );
+    const accountInfo = await presto.getBasicAccountInfo();
+    const user = await User.findOne({
+      where: {
+        id: req.userId
+      }
+    });
+
+    prestoLoginResp.accountInfo = accountInfo;
+    console.log(prestoLoginResp);
+    // refresh the cards when user logs into presto -- we need to always
+    // check this and save, because they may have added a new card since the last time.
+    // could add logic to only do this save if the accountInfo differs from last save,
+    // but I don't see the point in going that far as yet.
+    user.cookies = presto.getCookies();
+    user.cards = accountInfo;
+    user.save();
+
+    res.json(prestoLoginResp);
+    // } catch (error) {
+    //   res.send({ error });
+    // }
   });
 
   router.get('/check-login', async (req, res, next) => {
-    const response = await isLoggedIn();
+    const presto = new Presto();
+    const response = await presto.isLoggedIn();
     console.log(response);
 
     if (response === 'true') {
@@ -60,10 +67,18 @@ const routes = (Transaction, User) => {
       let filterDateString = '';
       let transactions = [];
       const filteredUsage = [];
-
+      cards = typeof cards === 'string' ? JSON.parse(cards) : cards;
       if (!req.userId) {
         throw new Error('No user logged in!');
       }
+      const userCookies = await User.findOne({
+        where: {
+          id: req.userId
+        },
+        attributes: ['cookies']
+      });
+
+      const presto = new Presto(userCookies.cookies);
 
       for (let i = 0; i < cards.length; i++) {
         const cardNumber = cards[i];
@@ -87,7 +102,8 @@ const routes = (Transaction, User) => {
           to = moment().format('MM/DD/YYYY');
         }
 
-        const usage = await getActivityByDateRange(from, to, cardNumber);
+        console.log('/usage cookies:', userCookies.cookies);
+        const usage = await presto.getActivityByDateRange(from, to, cardNumber);
         console.log(usage);
         if (usage.status === 'error') {
           throw new Error(usage.message);

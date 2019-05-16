@@ -4,7 +4,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
-const { login, getBasicAccountInfo } = require('../../lib/presto');
+const Presto = require('../../lib/presto/api_wrapper');
 const types = require('../../lib/util/types');
 
 const routes = (User, Budget, Transaction, sequelize, Sequelize) => {
