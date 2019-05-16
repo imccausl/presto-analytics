@@ -50,7 +50,8 @@ const routes = (Transaction, User) => {
   });
 
   router.get('/check-login', async (req, res, next) => {
-    const response = await isLoggedIn();
+    const presto = new Presto();
+    const response = await presto.isLoggedIn();
     console.log(response);
 
     if (response === 'true') {
