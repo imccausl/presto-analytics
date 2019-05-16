@@ -12,9 +12,15 @@ function isSuccessfulLogin(requestBody) {
   );
 }
 
-async function getCSRF(requestInstance, endpoint = API.homepage, parent = '#signwithaccount') {
+const getCSRF = async (
+  requestInstance,
+  cookieJar,
+  endpoint = API.homepage,
+  parent = '#signwithaccount'
+) => {
   try {
-    const { body } = await requestInstance({ uri: endpoint, jar: this.cookieJar });
+    console.log('csrf:', cookieJar);
+    const { body } = await requestInstance({ uri: endpoint, jar: cookieJar });
     const dom = new JSDOM(body);
     const token = dom.window.document.querySelector(
       `${parent} input[name='__RequestVerificationToken']`
@@ -30,10 +36,10 @@ async function getCSRF(requestInstance, endpoint = API.homepage, parent = '#sign
     console.log(error);
     return { error };
   }
-}
+};
 
 async function login(requestInstance, username, password) {
-  const CSRFResponse = await getCSRF(requestInstance);
+  const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
 
   if (typeof CSRFResponse.token !== 'string') {
     return {
@@ -68,7 +74,7 @@ async function login(requestInstance, username, password) {
 
   if (isSuccessfulLogin(loginResponse.body)) {
     console.log('cookieJar:', this.cookieJar);
-    console.log('login Cookies:', this.getCookieJar());
+    console.log('login Cookies:', this.getCookies());
     return { success: true };
   }
 
