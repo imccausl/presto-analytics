@@ -1,5 +1,6 @@
 const jsdom = require('jsdom');
 const API = require('./api_endpoints');
+const { AuthError } = require('./errors');
 
 const { JSDOM } = jsdom;
 
@@ -19,14 +20,12 @@ const getCSRF = async (
   parent = '#signwithaccount'
 ) => {
   try {
-    const { body } = await requestInstance({ uri: endpoint, jar: cookieJar });
-    const dom = new JSDOM(body);
+    const response = await requestInstance({ uri: endpoint, jar: cookieJar });
+    const dom = new JSDOM(response.body);
 
     const token = dom.window.document.querySelector(
       `${parent} input[name='__RequestVerificationToken']`
     );
-
-    console.log(body);
 
     if (token && !token.value) {
       throw new Error(
@@ -53,50 +52,52 @@ Stuff from the server indicating an error
 */
 
 async function login(requestInstance, username, password) {
-  const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
+  try {
+    const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
 
-  if (typeof CSRFResponse.token !== 'string') {
-    return {
-      success: false,
-      error: CSRFResponse.error
-    };
-  }
-
-  const loginResponse = await requestInstance({
-    uri: API.loginEndpoint,
-    jar: this.cookieJar,
-    method: 'POST',
-    json: {
-      anonymousOrderACard: false,
-      custSecurity: {
-        Login: username,
-        Password: password,
-        __RequestVerificationToken: CSRFResponse.token
-      }
-    },
-    headers: {
-      __RequestVerificationToken: CSRFResponse.token,
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Content-Type': 'application/json; charset=utf-8',
-      Referrer: 'https://www.prestocard.ca/home',
-      'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
-      'X-Requested-With': 'XMLHttpRequest',
-      Accept: '*/*',
-      Connection: 'keep-alive'
+    if (typeof CSRFResponse.token !== 'string') {
+      return {
+        success: false,
+        error: CSRFResponse.error
+      };
     }
-  });
 
-  if (isSuccessfulLogin(loginResponse.body)) {
-    console.log('Status code:', loginResponse && loginResponse.statusCode);
-    console.log('Error:', loginResponse.error);
-    return { success: true };
+    const loginResponse = await requestInstance({
+      uri: API.loginEndpoint,
+      jar: this.cookieJar,
+      method: 'POST',
+      json: {
+        anonymousOrderACard: false,
+        custSecurity: {
+          Login: username,
+          Password: password,
+          __RequestVerificationToken: CSRFResponse.token
+        }
+      },
+      headers: {
+        __RequestVerificationToken: CSRFResponse.token,
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Content-Type': 'application/json; charset=utf-8',
+        Referrer: 'https://www.prestocard.ca/home',
+        'User-Agent':
+          'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+        'X-Requested-With': 'XMLHttpRequest',
+        Accept: '*/*',
+        Connection: 'keep-alive'
+      }
+    });
+
+    if (isSuccessfulLogin(loginResponse.body)) {
+      return { payload: { ...loginResponse.body }, statusCode: loginResponse.statusCode };
+    }
+
+    return {
+      payload: { ...loginResponse.body },
+      statusCode: loginResponse.statusCode
+    };
+  } catch (error) {
+    return error;
   }
-
-  return {
-    success: false,
-    error: loginResponse.body,
-    code: loginResponse.statusCode
-  };
 }
 
 async function checkLogin(requestInstance, cookieJar) {
@@ -111,10 +112,14 @@ async function checkLogin(requestInstance, cookieJar) {
       throw new Error();
     }
 
-    const dom = new JSDOM(resp.body);
+    if (response === INVALID_LOGIN) {
+      return { status: 'failed', message: response.body, statusCode: response.statusCode };
+    }
+
+    const dom = new JSDOM(response.body);
     return dom.window.document.querySelectorAll('.signInSignOut').length > 0;
   } catch (err) {
-    return { status: 'failed', statusCode: err.statusCode };
+    return { Result: 'failed', statusCode: err.statusCode };
   }
 }
 
