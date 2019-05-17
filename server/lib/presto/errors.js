@@ -10,6 +10,20 @@ class ConnectionError extends Error {
   }
 }
 
+class AuthError extends Error {
+  constructor(message) {
+    super(message);
+
+    this.name = 'AuthError';
+    this.Result = 'failed';
+    this.message = message;
+  }
+
+  statusCode(code) {
+    this.statusCode = code;
+  }
+}
+
 function handleErrors(func) {
   return (...args) => {
     try {
@@ -20,4 +34,4 @@ function handleErrors(func) {
   };
 }
 
-module.export = { ConnectionError, addErrorHandling };
+module.export = { ConnectionError, AuthError, handleErrors };
