@@ -23,6 +23,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.5.1",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.8.0",
     "nock": "^10.0.6",
