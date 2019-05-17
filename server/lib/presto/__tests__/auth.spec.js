@@ -1,16 +1,26 @@
 const nock = require('nock');
 
-const API = require('./helpers/nockApiEndpoints');
-const Presto = require('../../presto');
+const API = require('./data/nockApiEndpoints');
+const Presto = require('..');
 
 beforeEach(() => {
   const CSRFScope = nock(API.baseUrl)
     .defaultReplyHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
     .get(API.homepage)
-    .reply(200, {
-      body:
-        '<html lang="en"><head><meta charset="utf-8"></head><body><input id="signwithaccount" type="hidden" name="__RequestVerificationToken" value="testCSRFtokenvalue"></body></html>'
-    });
+    .reply(
+      200,
+      `<html lang="en">
+            <head>
+                <meta charset="utf-8">
+            </head>
+
+            <body>
+                <form id="signwithaccount">
+                    <input type="hidden" name="__RequestVerificationToken" value="testCSRFtokenvalue">
+                </form>
+            </body>
+        </html>`
+    );
 });
 
 describe('logging into presto', () => {
