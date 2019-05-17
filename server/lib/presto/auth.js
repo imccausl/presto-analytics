@@ -21,10 +21,14 @@ const getCSRF = async (
   try {
     const { body } = await requestInstance({ uri: endpoint, jar: cookieJar });
     const dom = new JSDOM(body);
+
     const token = dom.window.document.querySelector(
       `${parent} input[name='__RequestVerificationToken']`
     );
-    if (!token) {
+
+    console.log(body);
+
+    if (token && !token.value) {
       throw new Error(
         'Could not get token. Session may have expired or user was not logged in correctly.'
       );
@@ -36,6 +40,17 @@ const getCSRF = async (
     return { error };
   }
 };
+
+/*
+Stuff from the server indicating an error
+<div class="form-group signinwithoutaccount08">
+<label for="SignIn_Password">Password*</label>
+<input class="signin-input form-control signin-tabs_input valid" id="SignIn_Password" autocomplete="off" type="password" data-daxmapper="Password" name="Password" aria-required="true" data-com.agilebits.onepassword.user-edited="yes" data-op-id="1" aria-describedby="error_SignIn_Password">
+<span for="SignIn_Password" class="error" id="error_SignIn_Password" style="display: none;">Your password must contain a minimum of one letter, one number, and be a minimum of six characters in length.</span></div>
+
+<div id="loginError" class="errorMsg error-message">You could not be signed in to your account. Please check your username/email and password and try again.</div>
+
+*/
 
 async function login(requestInstance, username, password) {
   const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
@@ -72,7 +87,8 @@ async function login(requestInstance, username, password) {
   });
 
   if (isSuccessfulLogin(loginResponse.body)) {
-    console.log('login Cookies:', this.getCookies());
+    console.log('Status code:', loginResponse && loginResponse.statusCode);
+    console.log('Error:', loginResponse.error);
     return { success: true };
   }
 
@@ -83,20 +99,22 @@ async function login(requestInstance, username, password) {
   };
 }
 
-async function isLoggedIn(requestInstance, jar) {
-  const cj = jar || requestInstance.jar();
+async function checkLogin(requestInstance, cookieJar) {
+  if (!cookieJar || typeof cookieJar !== 'object') {
+    throw new Error('Cookie Jar data either missing or invalid.');
+  }
 
   try {
-    const resp = await requestInstance({ uri: API.dashboard, jar: cj });
+    const response = await requestInstance({ uri: API.dashboard, jar: cookieJar });
 
-    if (resp.statusCode !== 200) {
-      return false;
+    if (response.statusCode !== 200) {
+      throw new Error();
     }
 
     const dom = new JSDOM(resp.body);
     return dom.window.document.querySelectorAll('.signInSignOut').length > 0;
   } catch (err) {
-    return false;
+    return { status: 'failed', statusCode: err.statusCode };
   }
 }
 
@@ -109,6 +127,5 @@ module.exports = {
   isSuccessfulLogin,
   getCSRF,
   login,
-  isLoggedIn,
   INVALID_LOGIN
 };
