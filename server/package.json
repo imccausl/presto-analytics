@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon -e js -x node --inspect src/app.js",
     "test": "jest --testPathIgnorePatterns /data/ --watch",
+    "test:coverage": "jest --testPathIgnorePatterns /data/ --coverage",
     "test:csrf": "jest getCSRF.spec.js",
     "test:csrf:watch": "npm run test:csrf -- --testPathIgnorePatterns /data/ --watch",
     "test:presto": "jest presto.spec.js",
