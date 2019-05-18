@@ -2,15 +2,15 @@ const { promisify } = require('util');
 const nock = require('nock');
 const req = require('request');
 
-const API = require('../data/nockApiEndpoints');
-const Mock = require('../data/fakeServerResponses');
+const API = require('./data/nockApiEndpoints');
+const Mock = require('./data/fakeServerResponses');
 
 const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));
 const cj = request.jar();
 
-const { AuthError } = require('../../errors');
-const { getCSRF, checkLogin, isSuccessfulLogin, createCookieJar } = require('../../auth');
+const { AuthError } = require('../errors');
+const { getCSRF, checkLogin, isSuccessfulLogin, createCookieJar } = require('../auth');
 
 describe('CSRF scraping', () => {
   test('getCSRF throws AuthError if token not found', async () => {
