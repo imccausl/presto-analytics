@@ -5,6 +5,7 @@ const tough = require('tough-cookie');
 const paginationModel = require('./data/paginationModel.json');
 const API = require('./api_endpoints');
 const { getCSRF } = require('./auth');
+const { ParseError } = require('./errors');
 
 const { JSDOM } = jsdom;
 
@@ -22,26 +23,36 @@ function removeDuplicates(myArr, prop) {
 
 /**
  * Parses the Presto /dashboard page to retrieve card numbers and their balances.
- * @param  {Object} serverResponse The request response
+ * @param  {String} responseBody   The request response body (html)
  * @return {Array}                 An array containing all cards and their balances.
  */
-const getCardsAndBalances = serverResponse => {
-  const dom = new JSDOM(serverResponse.body);
+const getCardsAndBalances = responseBody => {
+  const dom = new JSDOM(responseBody);
   const scrapeCards = dom.window.document.querySelectorAll('a.fareMediaID');
+  const primaryCardNumber = dom.window.document.getElementById('cardNumber');
+  const primaryCardBalance = dom.window.document.querySelector('.dashboard__quantity');
+
   let cards = [];
 
-  if (scrapeCards) {
-    const data = [...scrapeCards]; // convert NodeList into Array
-    const cardsAndBalances = data.map(item => ({
-      cardNumber: item.dataset.visibleid,
-      balance: item.childNodes[2].textContent.trim()
-    }));
-    cards = removeDuplicates(cardsAndBalances, 'cardNumber');
+  if (!scrapeCards[0]) {
+    throw new ParseError('a.fareMediaID');
   }
 
+  if (!primaryCardNumber || !primaryCardBalance) {
+    throw new ParseError('#cardNumber and/or .dashboard__quantity');
+  }
+
+  const data = [...scrapeCards]; // convert NodeList into Array
+  const cardsAndBalances = data.map(item => ({
+    cardNumber: item.dataset.visibleid,
+    balance: item.childNodes[2].textContent.trim()
+  }));
+
+  cards = removeDuplicates(cardsAndBalances, 'cardNumber');
+
   cards.push({
-    cardNumber: dom.window.document.getElementById('cardNumber').textContent,
-    balance: dom.window.document.querySelector('.dashboard__quantity').textContent
+    cardNumber: primaryCardNumber.textContent,
+    balance: primaryCardBalance.textContent
   });
 
   return cards;
@@ -112,7 +123,7 @@ function getActivityRequestBody(selectedMonth) {
 /**
  * Initializes the cookie jar of the Presto object with Presto auth cookies.
  * @param  {Request}   requestInstance Request library dependency.
- * @param  {Object }   userCookies     Cookie data in JSON or Object form.
+ * @param  {Object}    userCookies     Cookie data in JSON or Object form.
  * @return {CookieJar}                 Cookiejar object with Presto auth cookies.
  */
 function setCookieJar(requestInstance, userCookies) {
@@ -186,7 +197,7 @@ async function setCard(requestInstance, cardNumber, jar) {
  */
 async function getBasicAccountInfo(requestInstance) {
   const accountResponse = await requestInstance({ uri: API.dashboard, jar: this.cookieJar });
-  const cardsAndBalances = getCardsAndBalances(accountResponse);
+  const cardsAndBalances = getCardsAndBalances(accountResponse.body);
 
   return cardsAndBalances;
 }
