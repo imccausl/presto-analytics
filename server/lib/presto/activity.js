@@ -270,5 +270,12 @@ module.exports = {
   getUsageReport,
   getBasicAccountInfo,
   getActivityByDateRange,
-  setCookieJar
+  setCookieJar,
+
+  /* exported for tests */
+  removeDuplicates,
+  getCardsAndBalances,
+  parseActivity,
+  getActivityRequestBody,
+  setCard
 };

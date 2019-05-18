@@ -108,6 +108,7 @@ function createCookieJar(requestInstance) {
 module.exports = {
   createCookieJar,
   checkLogin,
+  isSuccessfulLogin,
   getCSRF,
   login,
   INVALID_LOGIN
