@@ -3,7 +3,6 @@ const nock = require('nock');
 const API = require('./data/nockApiEndpoints');
 const Mock = require('./data/fakeServerResponses');
 
-const { AuthError } = require('../errors');
 const Presto = require('../../presto');
 
 describe('authenticate with presto', () => {

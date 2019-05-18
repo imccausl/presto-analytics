@@ -10,7 +10,7 @@ const request = promisify(req.defaults(options));
 const cj = request.jar();
 
 const { AuthError } = require('../errors');
-const { getCSRF, checkLogin, isSuccessfulLogin, createCookieJar } = require('../auth');
+const { getCSRF } = require('../auth');
 
 describe('CSRF scraping', () => {
   test('getCSRF throws AuthError if token not found', async () => {
