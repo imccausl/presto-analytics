@@ -17,6 +17,7 @@ class AuthError extends Error {
     this.name = 'AuthError';
     this.Result = 'failed';
     this.message = message;
+    this.statusCode = 200;
   }
 
   statusCode(code) {
@@ -34,4 +35,4 @@ function handleErrors(func) {
   };
 }
 
-module.export = { ConnectionError, AuthError, handleErrors };
+module.exports = { ConnectionError, AuthError, handleErrors };
