@@ -64,8 +64,8 @@ const getCardsAndBalances = responseBody => {
  * @param  {String} cardNumber     The card number the transactions belong to.
  * @return {Object}                An object with the transaction and card number data
  */
-function parseActivity(serverResponse, cardNumber) {
-  const dom = new JSDOM(serverResponse.body);
+function parseCardActivity(responseBody, cardNumber) {
+  const dom = new JSDOM(responseBody);
   const error = dom.window.document.getElementById('card-activity--error');
   const data = dom.window.document.querySelectorAll('table#tblTHR tbody tr');
   const transactions = [];
@@ -100,7 +100,7 @@ function parseActivity(serverResponse, cardNumber) {
     });
   });
 
-  return { status: 'success', transactions };
+  return transactions;
 }
 
 /**
@@ -224,7 +224,9 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
       json: getActivityRequestBody(dateRange),
       withCredentials: true
     });
-    return parseActivity(resp, cardNumber);
+    const transactions = parseCardActivity(resp.body, cardNumber);
+
+    return { success: true, transactions };
   } catch (error) {
     return { error };
   }
@@ -286,7 +288,7 @@ module.exports = {
   /* exported for tests */
   removeDuplicates,
   getCardsAndBalances,
-  parseActivity,
+  parseCardActivity,
   getActivityRequestBody,
   setCard
 };
