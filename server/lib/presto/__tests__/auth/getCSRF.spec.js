@@ -3,7 +3,7 @@ const nock = require('nock');
 const req = require('request');
 
 const API = require('../data/nockApiEndpoints');
-const Mock = require('../data/testServerResponses');
+const Mock = require('../data/fakeServerResponses');
 
 const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));

@@ -1,7 +1,7 @@
 const nock = require('nock');
 
 const API = require('./data/nockApiEndpoints');
-const Mock = require('./data/testServerResponses');
+const Mock = require('./data/fakeServerResponses');
 
 const { AuthError } = require('../errors');
 const Presto = require('../../presto');
