@@ -32,6 +32,8 @@ const dashboard = `
             <meta charset="utf-8">
         </head>
 
+        <a href="#" onclick="submitDetailsForm(this)" data-visibleid="31240105719720304" aria-label="Select PRESTO card Presto with a balance of ($1.25)" class="fareMediaID"></a>
+
         <body>
             <a class="signInSignOut signInright" href="/api/sitecore/AFMSAuthentication/Logout">
                 Sign Out
