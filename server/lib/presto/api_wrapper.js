@@ -28,7 +28,7 @@ module.exports = requestWrapper => ({
   getUsageReport(year, jar) {
     return getUsageReport.call(this, requestWrapper, year, jar);
   },
-  getActivityByDateRange(from, to, cardNumber) {
-    return getActivityByDateRange.call(this, requestWrapper, from, to, cardNumber);
+  getActivityByDateRange(cardNumber, from, to) {
+    return getActivityByDateRange.call(this, requestWrapper, cardNumber, from, to);
   }
 });

@@ -103,7 +103,7 @@ const routes = (Transaction, User) => {
         }
 
         console.log('/usage cookies:', userCookies.cookies);
-        const usage = await presto.getActivityByDateRange(from, to, cardNumber);
+        const usage = await presto.getActivityByDateRange(cardNumber, from, to);
         console.log(usage);
         if (usage.status === 'error') {
           throw new Error(usage.message);
