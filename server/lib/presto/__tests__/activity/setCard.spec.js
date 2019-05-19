@@ -1,9 +1,12 @@
 const { promisify } = require('util');
+
 const nock = require('nock');
 const req = require('request');
 
 const API = require('../data/nockApiEndpoints');
 const Mock = require('../data/fakeServerResponses');
+
+const { loadHtmlResponse } = Mock;
 
 const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));
@@ -13,30 +16,47 @@ const { setCard } = require('../../activity');
 
 describe('switch to different card with getCard', () => {
   test('getCard switches successfully', async () => {
+    const firstActivityResponse = await loadHtmlResponse('../data/pages/dashboard.html');
+    const otherCardDashboard = await loadHtmlResponse('../data/pages/dashboard-other-card.html');
+
+    // Fake CSRF
     nock(API.baseUrl)
       .get(API.dashboard)
-      .reply(200, 'FAIL TO LOAD CSRF TOKEN');
+      .reply(200, firstActivityResponse);
 
+    // switch card API
     nock(API.baseUrl)
       .post(API.switchCards)
-      .reply(200, 'FAIL TO LOAD CSRF TOKEN');
+      .reply(200);
 
-    const response = await setCard(request, '3139856309122658', cj);
+    // load dashboard check
+    nock(API.baseUrl)
+      .get(API.dashboard)
+      .reply(200, otherCardDashboard);
 
-    expect(response).toEqual('3139856309122658');
+    const response = await setCard(request, '31240105719720304', cj);
+
+    expect(response).toBe(true);
   });
 
-  test('throw error if getCard calls API successfully but card not switched', async () => {
+  test('return false if card does not switch', async () => {
+    const firstActivityResponse = await loadHtmlResponse('../data/pages/card-activity.html');
+
     nock(API.baseUrl)
       .get(API.dashboard)
-      .reply(200, Mock.badHomepage);
+      .reply(200, firstActivityResponse);
 
     nock(API.baseUrl)
       .post(API.switchCards)
-      .reply(200, 'FAIL TO LOAD CSRF TOKEN');
+      .reply(200, '');
 
-    const response = await setCard(request, '3139856309122658', cj);
+    // load dashboard check
+    nock(API.baseUrl)
+      .get(API.dashboard)
+      .reply(200, firstActivityResponse);
 
-    expect(response).toEqual('3139856309122658');
+    const response = await setCard(request, '31240105719720304', cj);
+
+    await expect(response).toBe(false);
   });
 });

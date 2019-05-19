@@ -1,3 +1,7 @@
+const { promisify } = require('util');
+const fs = require('fs');
+const path = require('path');
+
 const { INVALID_LOGIN } = require('../../auth');
 
 const homepage = `
@@ -88,11 +92,19 @@ const loginFailedPayload = {
   message: INVALID_LOGIN
 };
 
+async function loadHtmlResponse(htmlPath) {
+  const readFile = promisify(fs.readFile);
+  const filePath = path.join(__dirname, htmlPath);
+
+  return readFile(filePath, 'utf-8');
+}
+
 module.exports = {
   homepage,
   badHomepage,
   dashboard,
   loginRequestBody,
   loginSuccessPayload,
-  loginFailedPayload
+  loginFailedPayload,
+  loadHtmlResponse
 };
