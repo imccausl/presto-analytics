@@ -149,6 +149,6 @@ describe('return errors if not logged in when attempting to get data', () => {
 
   test('should return error if not logged in', async () => {
     const presto = new Presto();
-    await expect(presto.getActivityByDateRange()).rejects.toThrow(new AuthError('Not logged in.'));
+    await expect(presto.getActivityByDateRange()).rejects.toThrow(new AuthError('Not logged in'));
   });
 });

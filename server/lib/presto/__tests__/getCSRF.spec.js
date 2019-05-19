@@ -18,9 +18,7 @@ describe('CSRF scraping', () => {
       .get(API.homepage)
       .reply(200, 'FAIL TO LOAD CSRF TOKEN');
 
-    await expect(getCSRF(request, cj)).resolves.toThrow(
-      new AuthError('Could not retrieve CSRF token')
-    );
+    await expect(getCSRF(request, cj)).rejects.toThrow(new AuthError('Login CSRF token not found'));
   });
 
   test('getCSRF throws AuthError if input element exists but no value attr', async () => {
@@ -28,7 +26,7 @@ describe('CSRF scraping', () => {
       .get(API.homepage)
       .reply(200, Mock.badHomepage);
 
-    await expect(getCSRF(request, cj)).resolves.toThrow(
+    await expect(getCSRF(request, cj)).rejects.toThrow(
       new AuthError('Cannot find correct CSRF token')
     );
   });
