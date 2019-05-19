@@ -183,37 +183,33 @@ function setCookieJar(requestInstance, userCookies) {
  * @return {Object}                    The server's response.
  */
 async function setCard(requestInstance, cardNumber, jar) {
-  try {
-    const token = await getCSRF(
-      requestInstance,
-      jar,
-      API.dashboard,
-      `form[action='/${API.switchCards}']`
-    );
-    await requestInstance({
-      uri: API.switchCards,
-      jar,
-      method: 'POST',
-      form: {
-        setFareMediaSession: cardNumber,
-        __RequestVerificationToken: token.token
-      },
-      withCredentials: true,
-      followAllRedirects: true
-    });
-    const response = await requestInstance({
-      uri: API.dashboard,
-      jar,
-      method: 'GET',
-      withCredentials: true,
-      followAllRedirects: true
-    });
-    const frontmostCard = checkFrontmostCard(response.body);
+  const token = await getCSRF(
+    requestInstance,
+    jar,
+    API.dashboard,
+    `form[action='/${API.switchCards}']`
+  );
+  await requestInstance({
+    uri: API.switchCards,
+    jar,
+    method: 'POST',
+    form: {
+      setFareMediaSession: cardNumber,
+      __RequestVerificationToken: token.token
+    },
+    withCredentials: true,
+    followAllRedirects: true
+  });
+  const response = await requestInstance({
+    uri: API.dashboard,
+    jar,
+    method: 'GET',
+    withCredentials: true,
+    followAllRedirects: true
+  });
+  const frontmostCard = checkFrontmostCard(response.body);
 
-    return frontmostCard === cardNumber;
-  } catch (error) {
-    return error;
-  }
+  return frontmostCard === cardNumber;
 }
 
 /**
@@ -236,26 +232,29 @@ async function getBasicAccountInfo(requestInstance) {
  * @param  {String}  cardNumber      The card number you want the activity from.
  * @return {Object}                  The parsed activity for the specified card.
  */
-async function getActivityByDateRange(requestInstance, from, to = moment(), cardNumber) {
-  try {
-    const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
-    const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
-    const dateRange = `${fromFormatted} - ${toFormatted}`;
+async function getActivityByDateRange(requestInstance, cardNumber, from, to = moment()) {
+  const fromFormatted = moment(from, 'MM/DD/YYYY').format('MM/DD/YYYY');
+  const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
+  const dateRange = `${fromFormatted} - ${toFormatted}`;
 
-    const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
-    const resp = await requestInstance({
-      uri: API.activityEndpoint,
-      jar: this.cookieJar,
-      method: 'POST',
-      json: getActivityRequestBody(dateRange),
-      withCredentials: true
-    });
-    const transactions = parseCardActivity(resp.body, cardNumber);
+  const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
+  const resp = await requestInstance({
+    uri: API.activityEndpoint,
+    jar: this.cookieJar,
+    method: 'POST',
+    json: getActivityRequestBody(dateRange),
+    withCredentials: true
+  });
+  const transactions = parseCardActivity(resp.body, cardNumber);
 
-    return { success: true, transactions };
-  } catch (error) {
-    return { error };
+  if (!setC) {
+    return {
+      Result: 'failed',
+      message: 'Card was not changed'
+    };
   }
+
+  return { Result: 'success', transactions };
 }
 
 /** CURRENTLY NOT FUNCTIONAL
@@ -266,43 +265,38 @@ async function getActivityByDateRange(requestInstance, from, to = moment(), card
  * @param {String}  year            The year pertaining to the activity you want.
  */
 async function getUsageReport(requestInstance, year) {
-  try {
-    const token = await getCSRF(requestInstance, API.usageReport, 'TransitUsageReport');
-    const searchYear =
-      (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
-    const PAGE_SIZE = 1000;
-    const TransactionCategory = {
-      ALL: '0',
-      TRIPS: '1',
-      TRANSIT_PASS: '2'
-    };
+  const token = await getCSRF(requestInstance, API.usageReport, 'TransitUsageReport');
+  const searchYear =
+    (typeof year === 'number' ? year.toString() : year) || new Date().getFullYear().toString();
+  const PAGE_SIZE = 1000;
+  const TransactionCategory = {
+    ALL: '0',
+    TRIPS: '1',
+    TRANSIT_PASS: '2'
+  };
 
-    const resp = await requestInstance({
-      uri: API.usageEndpoint,
-      method: 'POST',
-      json: {
-        PageSize: PAGE_SIZE.toString(),
-        TransactionCateogryID: TransactionCategory.TRIPS,
-        Year: searchYear,
-        currentModel: ''
-      },
-      headers: {
-        __RequestVerificationToken: token.token,
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Content-Type': 'application/json; charset=utf-8',
-        Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
-        'User-Agent':
-          'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
-        'X-Requested-With': 'XMLHttpRequest',
-        Accept: '*/*',
-        Connection: 'keep-alive'
-      }
-    });
+  const resp = await requestInstance({
+    uri: API.usageEndpoint,
+    method: 'POST',
+    json: {
+      PageSize: PAGE_SIZE.toString(),
+      TransactionCateogryID: TransactionCategory.TRIPS,
+      Year: searchYear,
+      currentModel: ''
+    },
+    headers: {
+      __RequestVerificationToken: token.token,
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Content-Type': 'application/json; charset=utf-8',
+      Referrer: 'https://www.prestocard.ca/en/dashboard/card-activity',
+      'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+      'X-Requested-With': 'XMLHttpRequest',
+      Accept: '*/*',
+      Connection: 'keep-alive'
+    }
+  });
 
-    // return parseUsageReport(resp); //selector: #tblTUR
-  } catch (error) {
-    return { error };
-  }
+  // return parseUsageReport(resp); //selector: #tblTUR
 }
 
 module.exports = {
