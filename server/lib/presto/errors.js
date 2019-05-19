@@ -27,9 +27,21 @@ class AuthError extends Error {
 
 class ParseError extends Error {
   constructor(selector) {
-    super(`Could not find element with ${selector}`);
+    super(`Could not find element: ${selector}`);
 
     this.name = 'ParseError';
+  }
+
+  statusCode(selector) {
+    this.selector = selector;
+  }
+}
+
+class PrestoError extends Error {
+  constructor(message) {
+    super(message);
+
+    this.name = 'PrestoError';
   }
 
   statusCode(selector) {
@@ -47,4 +59,4 @@ function handleErrors(func) {
   };
 }
 
-module.exports = { ConnectionError, AuthError, ParseError, handleErrors };
+module.exports = { ConnectionError, AuthError, ParseError, PrestoError, handleErrors };
