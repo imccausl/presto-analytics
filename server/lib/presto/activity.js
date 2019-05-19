@@ -5,7 +5,7 @@ const tough = require('tough-cookie');
 const paginationModel = require('./data/paginationModel.json');
 const API = require('./api_endpoints');
 const { getCSRF } = require('./auth');
-const { ParseError } = require('./errors');
+const { ParseError, PrestoError } = require('./errors');
 
 const { JSDOM } = jsdom;
 
@@ -71,12 +71,11 @@ function parseCardActivity(responseBody, cardNumber) {
   const transactions = [];
 
   if (error) {
-    return {
-      status: 'error',
-      message:
-        "Sorry, but we don't have any transactions for your PRESTO card for the selected month.",
-      transactions
-    };
+    throw new PrestoError(error.textContent.trim());
+  }
+
+  if (data.length === 0) {
+    throw new ParseError('table#tblTHR tbody tr');
   }
 
   data.forEach(node => {
@@ -87,6 +86,10 @@ function parseCardActivity(responseBody, cardNumber) {
       items.push(item.textContent.trim());
     });
 
+    // In the event that the presto website changes
+    // or some other unforseen thing happens where
+    // there are less than 8 items in the items array,
+    // an error will occur.
     transactions.push({
       cardNumber,
       date: items[0],
@@ -114,7 +117,7 @@ function getActivityRequestBody(selectedMonth) {
   return {
     TransactionType: '0',
     Agency: '-1',
-    PageSize: `${PAGE_SIZE}`,
+    PageSize: PAGE_SIZE,
     selectedMonth,
     currentModel: paginationModel
   };
@@ -165,16 +168,15 @@ function setCookieJar(requestInstance, userCookies) {
  */
 async function setCard(requestInstance, cardNumber, jar) {
   try {
-    const cj = jar;
     const token = await getCSRF(
       requestInstance,
-      cj,
+      jar,
       API.dashboard,
       `form[action='/${API.switchCards}']`
     );
     const response = await requestInstance({
       uri: API.switchCards,
-      jar: cj,
+      jar,
       method: 'POST',
       form: {
         setFareMediaSession: cardNumber,
