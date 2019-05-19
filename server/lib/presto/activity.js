@@ -59,6 +59,22 @@ const getCardsAndBalances = responseBody => {
 };
 
 /**
+ * Parses the Presto /dashboard page to retrieve card numbers and their balances.
+ * @param  {String} responseBody   The request response body (html)
+ * @return {Array}                 An array containing all cards and their balances.
+ */
+const checkFrontmostCard = responseBody => {
+  const dom = new JSDOM(responseBody);
+  const primaryCardNumber = dom.window.document.getElementById('cardNumber');
+
+  if (!primaryCardNumber) {
+    throw new ParseError('#cardNumber');
+  }
+
+  return primaryCardNumber.textContent;
+};
+
+/**
  * Grabs the transactions associated with a specific card number from the Presto website.
  * @param  {Object} serverResponse The response from the request.
  * @param  {String} cardNumber     The card number the transactions belong to.
@@ -174,7 +190,7 @@ async function setCard(requestInstance, cardNumber, jar) {
       API.dashboard,
       `form[action='/${API.switchCards}']`
     );
-    const response = await requestInstance({
+    await requestInstance({
       uri: API.switchCards,
       jar,
       method: 'POST',
@@ -185,8 +201,16 @@ async function setCard(requestInstance, cardNumber, jar) {
       withCredentials: true,
       followAllRedirects: true
     });
+    const response = await requestInstance({
+      uri: API.dashboard,
+      jar,
+      method: 'GET',
+      withCredentials: true,
+      followAllRedirects: true
+    });
+    const frontmostCard = checkFrontmostCard(response.body);
 
-    return response;
+    return frontmostCard === cardNumber;
   } catch (error) {
     return error;
   }
