@@ -2,6 +2,7 @@ class ConnectionError extends Error {
   constructor(message) {
     super(message);
 
+    this.constructor = ConnectionError;
     this.name = 'ConnectionError';
   }
 
@@ -14,6 +15,7 @@ class AuthError extends Error {
   constructor(message) {
     super(message);
 
+    this.constructor = AuthError;
     this.name = 'AuthError';
     this.Result = 'failed';
     this.message = message;
@@ -29,6 +31,7 @@ class ParseError extends Error {
   constructor(selector) {
     super(`Could not find element: ${selector}`);
 
+    this.constructor = ParseError;
     this.name = 'ParseError';
   }
 
@@ -41,6 +44,7 @@ class PrestoError extends Error {
   constructor(message) {
     super(message);
 
+    this.constructor = PrestoError;
     this.name = 'PrestoError';
   }
 
