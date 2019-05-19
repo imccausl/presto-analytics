@@ -149,13 +149,6 @@ describe('return errors if not logged in when attempting to get data', () => {
 
   test('should return error if not logged in', async () => {
     const presto = new Presto();
-    await expect(presto.getActivityByDateRange()).rejects.toThrow(AuthError);
-  });
-
-  test('user is not logged in', async () => {
-    const presto = new Presto();
-    const response = await presto.getActivityByDateRange();
-
-    expect(response).toEqual({ Result: 'failed', message: 'Card was not successfully changed' });
+    await expect(presto.getActivityByDateRange()).rejects.toThrow(new AuthError('Not logged in.'));
   });
 });

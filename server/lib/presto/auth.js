@@ -27,7 +27,11 @@ const getCSRF = async (
   );
 
   if (!token) {
-    throw new AuthError('Could not retrieve CSRF token');
+    if (parent === '#signwithaccount') {
+      throw new AuthError('Login CSRF token not found.');
+    }
+
+    throw new AuthError('Not logged in.');
   }
 
   if (token && !token.hasAttribute('value')) {
