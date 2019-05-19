@@ -3,8 +3,8 @@ const { promisify } = require('util');
 const nock = require('nock');
 const req = require('request');
 
-const API = require('../data/nockApiEndpoints');
-const Mock = require('../data/fakeServerResponses');
+const API = require('./data/nockApiEndpoints');
+const Mock = require('./data/fakeServerResponses');
 
 const { loadHtmlResponse } = Mock;
 
@@ -12,7 +12,7 @@ const options = { baseUrl: API.baseUrl };
 const request = promisify(req.defaults(options));
 const cj = request.jar();
 
-const { setCard } = require('../../activity');
+const { setCard } = require('../activity');
 
 describe('switch to different card with getCard', () => {
   test('getCard switches successfully', async () => {
@@ -27,7 +27,7 @@ describe('switch to different card with getCard', () => {
     // switch card API
     nock(API.baseUrl)
       .post(API.switchCards)
-      .reply(200);
+      .reply(200); // Presto API actually returns 302 on success
 
     // load dashboard check
     nock(API.baseUrl)

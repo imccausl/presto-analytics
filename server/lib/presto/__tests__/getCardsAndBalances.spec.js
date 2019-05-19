@@ -2,14 +2,14 @@ const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
 
-const Mock = require('../data/fakeServerResponses');
+const Mock = require('./data/fakeServerResponses');
 
-const { ParseError } = require('../../errors');
-const { getCardsAndBalances } = require('../../activity');
+const { ParseError } = require('../errors');
+const { getCardsAndBalances } = require('../activity');
 
 describe('getCardsAndBalances()', () => {
   const readFile = promisify(fs.readFile);
-  const filePath = path.join(__dirname, '../data/pages/dashboard.html');
+  const filePath = path.join(__dirname, './data/pages/dashboard.html');
 
   test('return an array of all cards and balances', async () => {
     const html = await readFile(filePath, 'utf-8');

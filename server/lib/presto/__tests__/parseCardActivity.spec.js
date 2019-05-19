@@ -1,9 +1,9 @@
-const Mock = require('../data/fakeServerResponses');
+const Mock = require('./data/fakeServerResponses');
 
 const { loadHtmlResponse } = Mock;
 
-const { ParseError, PrestoError } = require('../../errors');
-const { parseCardActivity } = require('../../activity');
+const { ParseError, PrestoError } = require('../errors');
+const { parseCardActivity } = require('../activity');
 
 describe('parseCardActivity()', () => {
   test('return a JSON formatted object if all card activity on page', async () => {
