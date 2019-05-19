@@ -2,15 +2,7 @@ const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
 
-const nock = require('nock');
-const req = require('request');
-
-const API = require('../data/nockApiEndpoints');
 const Mock = require('../data/fakeServerResponses');
-
-const options = { baseUrl: API.baseUrl };
-const request = promisify(req.defaults(options));
-const cj = request.jar();
 
 const { ParseError } = require('../../errors');
 const { getCardsAndBalances } = require('../../activity');

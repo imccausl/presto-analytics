@@ -1,18 +1,14 @@
-const { promisify } = require('util');
-const fs = require('fs');
-const path = require('path');
-
 const Mock = require('../data/fakeServerResponses');
+
+const { loadHtmlResponse } = Mock;
 
 const { ParseError, PrestoError } = require('../../errors');
 const { parseCardActivity } = require('../../activity');
 
 describe('parseCardActivity()', () => {
-  const readFile = promisify(fs.readFile);
-  const filePath = path.join(__dirname, '../data/pages/card-activity.html');
-
   test('return a JSON formatted object if all card activity on page', async () => {
-    const html = await readFile(filePath, 'utf-8');
+    const html = await loadHtmlResponse('../data/pages/card-activity.html');
+
     const scrapedData = parseCardActivity(html, '3139856309122658');
     const expectedCardActivity = [
       {
@@ -131,8 +127,7 @@ describe('parseCardActivity()', () => {
   });
 
   test('throws PrestoError if error returned from presto', async () => {
-    const filePathOverride = path.join(__dirname, '../data/pages/card-activity-error.html');
-    const html = await readFile(filePathOverride, 'utf-8');
+    const html = await loadHtmlResponse('../data/pages/card-activity-error.html');
 
     const parseErrorTest = () => {
       parseCardActivity(html, '3139856309122658');
