@@ -18,7 +18,7 @@ describe('CSRF scraping', () => {
       .get(API.homepage)
       .reply(200, 'FAIL TO LOAD CSRF TOKEN');
 
-    await expect(getCSRF(request, cj)).rejects.toThrow(
+    await expect(getCSRF(request, cj)).resolves.toThrow(
       new AuthError('Could not retrieve CSRF token')
     );
   });
@@ -28,7 +28,7 @@ describe('CSRF scraping', () => {
       .get(API.homepage)
       .reply(200, Mock.badHomepage);
 
-    await expect(getCSRF(request, cj)).rejects.toThrow(
+    await expect(getCSRF(request, cj)).resolves.toThrow(
       new AuthError('Cannot find correct CSRF token')
     );
   });

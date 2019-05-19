@@ -74,6 +74,118 @@ const dashboard = `
         </body>
     </html>`;
 
+const expectedCardActivity = [
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '3.85',
+    cardNumber: '3139856309122658',
+    date: '4/30/2019 8:08:43 PM',
+    discount: '0.00',
+    location: 'BAY STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '6.95',
+    cardNumber: '3139856309122658',
+    date: '4/30/2019 7:29:56 AM',
+    discount: '0.00',
+    location: 'PAPE STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '10.05',
+    cardNumber: '3139856309122658',
+    date: '4/29/2019 5:28:57 PM',
+    discount: '0.00',
+    location: 'BAY STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '13.15',
+    cardNumber: '3139856309122658',
+    date: '4/29/2019 7:41:19 AM',
+    discount: '0.00',
+    location: 'PAPE STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '16.25',
+    cardNumber: '3139856309122658',
+    date: '4/27/2019 2:34:19 PM',
+    discount: '0.00',
+    location: 'ST CLAIR WEST STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '19.35',
+    cardNumber: '3139856309122658',
+    date: '4/27/2019 11:42:28 AM',
+    discount: '0.00',
+    location: 'PAPE STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '22.45',
+    cardNumber: '3139856309122658',
+    date: '4/26/2019 7:43:47 PM',
+    discount: '0.00',
+    location: 'BAY STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '25.55',
+    cardNumber: '3139856309122658',
+    date: '4/26/2019 7:31:55 AM',
+    discount: '0.00',
+    location: 'PAPE STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '3.10',
+    balance: '28.65',
+    cardNumber: '3139856309122658',
+    date: '4/25/2019 5:56:48 PM',
+    discount: '0.00',
+    location: 'BAY STATION',
+    serviceClass: 'Regular',
+    type: 'Fare Payment'
+  },
+  {
+    agency: 'Toronto Transit Commission',
+    amount: '30.00',
+    balance: '0.00',
+    cardNumber: '3139856309122658',
+    date: '4/25/2019 5:56:19 PM',
+    discount: '0.00',
+    location: 'BAY STATION',
+    serviceClass: '',
+    type: 'Payment By Credit'
+  }
+];
 const loginRequestBody = {
   anonymousOrderACard: false,
   custSecurity: {
@@ -89,8 +201,10 @@ const loginSuccessPayload = {
 
 const loginFailedPayload = {
   Result: 'failed',
-  message: INVALID_LOGIN
+  response: INVALID_LOGIN
 };
+
+const failedCardChange = { Result: 'failed', message: 'Card was not changed' };
 
 async function loadHtmlResponse(htmlPath) {
   const readFile = promisify(fs.readFile);
@@ -106,5 +220,7 @@ module.exports = {
   loginRequestBody,
   loginSuccessPayload,
   loginFailedPayload,
-  loadHtmlResponse
+  loadHtmlResponse,
+  expectedCardActivity,
+  failedCardChange
 };
