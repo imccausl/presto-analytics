@@ -14,6 +14,8 @@ const { JSDOM } = jsdom;
  * @param  {Array}  myArr An array of objects.
  * @param  {String} prop  Potentially duplicate object property to filter out.
  * @return {Array}        An array of objects without the duplicate properties.
+ *
+ * @private
  */
 function removeDuplicates(myArr, prop) {
   return myArr.filter(
@@ -25,6 +27,8 @@ function removeDuplicates(myArr, prop) {
  * Parses the Presto /dashboard page to retrieve card numbers and their balances.
  * @param  {String} responseBody   The request response body (html)
  * @return {Array}                 An array containing all cards and their balances.
+ *
+ * @private
  */
 const getCardsAndBalances = responseBody => {
   const dom = new JSDOM(responseBody);
@@ -62,6 +66,8 @@ const getCardsAndBalances = responseBody => {
  * Parses the Presto /dashboard page to retrieve card numbers and their balances.
  * @param  {String} responseBody   The request response body (html)
  * @return {Array}                 An array containing all cards and their balances.
+ *
+ * @private
  */
 const checkFrontmostCard = responseBody => {
   const dom = new JSDOM(responseBody);
@@ -79,6 +85,8 @@ const checkFrontmostCard = responseBody => {
  * @param  {Object} serverResponse The response from the request.
  * @param  {String} cardNumber     The card number the transactions belong to.
  * @return {Object}                An object with the transaction and card number data
+ *
+ * @private
  */
 function parseCardActivity(responseBody, cardNumber) {
   const dom = new JSDOM(responseBody);
@@ -126,6 +134,8 @@ function parseCardActivity(responseBody, cardNumber) {
  * Create the body of the Presto account activity request.
  * @param  {String} selectedMonth The date range to request from the Presto API.
  * @return {Object}               Formatted Object to send to Presto to request the data.
+ *
+ * @private
  */
 function getActivityRequestBody(selectedMonth) {
   const PAGE_SIZE = 2000;
@@ -181,6 +191,8 @@ function setCookieJar(requestInstance, userCookies) {
  * @param  {String}    cardNumber      The card number of the user to switch to.
  * @param  {CookieJar} jar             The cookie jar containing the necessary auth cookies.
  * @return {Object}                    The server's response.
+ *
+ * @private
  */
 async function setCard(requestInstance, cardNumber, jar) {
   const token = await getCSRF(
@@ -237,24 +249,28 @@ async function getActivityByDateRange(requestInstance, cardNumber, from, to = mo
   const toFormatted = moment(to, 'MM/DD/YYYY').format('MM/DD/YYYY');
   const dateRange = `${fromFormatted} - ${toFormatted}`;
 
-  const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
-  const resp = await requestInstance({
-    uri: API.activityEndpoint,
-    jar: this.cookieJar,
-    method: 'POST',
-    json: getActivityRequestBody(dateRange),
-    withCredentials: true
-  });
-  const transactions = parseCardActivity(resp.body, cardNumber);
+  try {
+    const setC = await setCard(requestInstance, cardNumber, this.cookieJar);
+    const resp = await requestInstance({
+      uri: API.activityEndpoint,
+      jar: this.cookieJar,
+      method: 'POST',
+      json: getActivityRequestBody(dateRange),
+      withCredentials: true
+    });
+    const transactions = parseCardActivity(resp.body, cardNumber);
 
-  if (!setC) {
-    return {
-      Result: 'failed',
-      message: 'Card was not changed'
-    };
+    if (!setC) {
+      return {
+        Result: 'failed',
+        message: 'Card was not changed'
+      };
+    }
+
+    return { Result: 'success', transactions };
+  } catch (err) {
+    throw err;
   }
-
-  return { Result: 'success', transactions };
 }
 
 /** CURRENTLY NOT FUNCTIONAL
