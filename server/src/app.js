@@ -8,7 +8,7 @@ const { Server } = require('http');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
 
-const dbConfig = require('./db/config');
+const dbConfig = require('./config/db.config');
 
 // set up express server
 const app = express();
@@ -17,16 +17,13 @@ const http = Server(app);
 // set up db interface
 const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
 
-// db models
-const User = require('./db/models/user')(sequelize, Sequelize);
-const Transaction = require('./db/models/transaction')(sequelize, Sequelize, User);
-const Budget = require('./db/models/budget')(sequelize, Sequelize, User);
-
 // routes
 const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
 const prestoRoutes = require('./resources/presto/presto.routes')(Transaction, User);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
+
+const { connect } = require('./utils/db');
 
 const PORT = process.env.SERVER_PORT || 3333;
 const corsOptions = {
@@ -34,12 +31,8 @@ const corsOptions = {
   credentials: true
 };
 
-User.hasMany(Transaction);
-
-sequelize
-  .sync()
-  .then(() => console.log('Database and tables created!'))
-  .catch(err => console.log('Error:', err));
+// setup db connection
+connect();
 
 // Middleware
 app.use(cors(corsOptions));
