@@ -7,10 +7,12 @@
     "dev": "nodemon -e js -x node --inspect src/app.js",
     "test": "jest --testPathIgnorePatterns /data/ --watch",
     "test:coverage": "jest --testPathIgnorePatterns /data/ --coverage",
-    "test:csrf": "jest getCSRF.spec.js",
-    "test:csrf:watch": "npm run test:csrf -- --testPathIgnorePatterns /data/ --watch",
-    "test:presto": "jest presto.spec.js",
-    "test:presto:watch": "npm run test:presto -- --testPathIgnorePatterns /data/ --watch"
+    "test:lib:presto:csrf": "jest getCSRF.spec.js",
+    "test:lib:presto:csrf:watch": "npm run test:csrf -- --testPathIgnorePatterns /data/ --watch",
+    "test:lib:presto": "jest presto.spec.js",
+    "test:lib:presto:watch": "npm run test:presto -- --testPathIgnorePatterns /data/ --watch",
+    "test:server:presto": "jest presto.*.spec.js",
+    "test:server:presto:watch": "npm run test:server:presto -- --watch"
   },
   "keywords": [
     "presto",
