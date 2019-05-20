@@ -116,9 +116,13 @@ async function login(requestInstance, username, password) {
       };
     }
 
-    return { Result: 'success' };
+    return { Result: 'success', cards: await this.getBasicAccountInfo() };
   } catch (err) {
-    throw err;
+    if (err.constructor === AuthError) {
+      throw err;
+    }
+
+    throw new AuthError(`Could not log in: ${err.message}`);
   }
 }
 

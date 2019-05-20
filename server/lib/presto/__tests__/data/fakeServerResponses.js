@@ -195,8 +195,14 @@ const loginRequestBody = {
   }
 };
 
+const cardsAndBalances = [
+  { balance: '($1.25)', cardNumber: '31240105719720304' },
+  { balance: '$20.65', cardNumber: '3139856309122658' }
+];
+
 const loginSuccess = {
-  Result: 'success'
+  Result: 'success',
+  cards: cardsAndBalances
 };
 
 const loginFailed = {
@@ -228,5 +234,6 @@ module.exports = {
   attemptLimitExceeded,
   loadHtmlResponse,
   expectedCardActivity,
-  failedCardChange
+  failedCardChange,
+  cardsAndBalances
 };

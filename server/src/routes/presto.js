@@ -21,26 +21,24 @@ const routes = (Transaction, User) => {
     }
 
     const presto = new Presto();
-    console.log(presto, Presto.prototype);
     const prestoLoginResp = await presto.login(
       prestoCredentials.username,
       prestoCredentials.password
     );
-    const accountInfo = await presto.getBasicAccountInfo();
     const user = await User.findOne({
       where: {
         id: req.userId
       }
     });
 
-    prestoLoginResp.accountInfo = accountInfo;
+    prestoLoginResp.accountInfo = prestoLoginResp.cards;
     console.log(prestoLoginResp);
     // refresh the cards when user logs into presto -- we need to always
     // check this and save, because they may have added a new card since the last time.
     // could add logic to only do this save if the accountInfo differs from last save,
     // but I don't see the point in going that far as yet.
     user.cookies = presto.getCookies();
-    user.cards = accountInfo;
+    user.cards = prestoLoginResp.cards;
     user.save();
 
     res.json(prestoLoginResp);

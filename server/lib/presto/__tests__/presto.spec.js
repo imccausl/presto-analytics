@@ -5,10 +5,14 @@ const Mock = require('./data/fakeServerResponses');
 
 const { authErrors } = require('../auth');
 const { AuthError } = require('../errors');
+
+const { loadHtmlResponse } = Mock;
 const Presto = require('../../presto');
 
 describe('authenticate with presto', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    const html = await loadHtmlResponse('./pages/dashboard.html');
+
     /* CSRF Scrape before the login request */
     nock(API.baseUrl)
       .defaultReplyHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
@@ -32,6 +36,10 @@ describe('authenticate with presto', () => {
 
         return authErrors.INVALID_LOGIN;
       });
+
+    nock(API.baseUrl)
+      .get(API.dashboard)
+      .reply(200, html);
   });
 
   afterEach(() => nock.cleanAll());
@@ -49,7 +57,9 @@ describe('authenticate with presto', () => {
 
     expect(response).toEqual(Mock.loginFailed);
   });
+});
 
+describe('check login status with checkLogin()', () => {
   test('user is logged in', async () => {
     nock(API.baseUrl)
       .get(API.dashboard)
@@ -74,8 +84,6 @@ describe('authenticate with presto', () => {
 });
 
 describe('get activity data for specified card and date range', () => {
-  const { loadHtmlResponse } = Mock;
-
   beforeEach(async () => {
     const html = await loadHtmlResponse('../data/pages/card-activity.html');
     /* CSRF Scrape before the getCard request */
