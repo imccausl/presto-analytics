@@ -57,43 +57,48 @@ async function checkLogin(requestInstance) {
 
     return { Result: result, message };
   } catch (err) {
-    return err;
+    throw err;
   }
 }
 
 async function login(requestInstance, username, password) {
-  const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
-  const loginResponse = await requestInstance({
-    uri: API.loginEndpoint,
-    jar: this.cookieJar,
-    method: 'POST',
-    json: {
-      anonymousOrderACard: false,
-      custSecurity: {
-        Login: username,
-        Password: password,
-        __RequestVerificationToken: CSRFResponse.token
+  try {
+    const CSRFResponse = await getCSRF(requestInstance, this.cookieJar);
+    const loginResponse = await requestInstance({
+      uri: API.loginEndpoint,
+      jar: this.cookieJar,
+      method: 'POST',
+      json: {
+        anonymousOrderACard: false,
+        custSecurity: {
+          Login: username,
+          Password: password,
+          __RequestVerificationToken: CSRFResponse.token
+        }
+      },
+      headers: {
+        __RequestVerificationToken: CSRFResponse.token,
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Content-Type': 'application/json; charset=utf-8',
+        Referrer: 'https://www.prestocard.ca/home',
+        'User-Agent':
+          'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+        'X-Requested-With': 'XMLHttpRequest',
+        Accept: '*/*',
+        Connection: 'keep-alive'
       }
-    },
-    headers: {
-      __RequestVerificationToken: CSRFResponse.token,
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Content-Type': 'application/json; charset=utf-8',
-      Referrer: 'https://www.prestocard.ca/home',
-      'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
-      'X-Requested-With': 'XMLHttpRequest',
-      Accept: '*/*',
-      Connection: 'keep-alive'
+    });
+
+    if (!isSuccessfulLogin(loginResponse.body)) {
+      return {
+        ...loginResponse.body
+      };
     }
-  });
 
-  if (!isSuccessfulLogin(loginResponse.body)) {
-    return {
-      ...loginResponse.body
-    };
+    return { Result: 'success' };
+  } catch (err) {
+    throw err;
   }
-
-  return { Result: 'success' };
 }
 
 function createCookieJar(requestInstance) {
