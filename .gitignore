@@ -6,3 +6,5 @@ server/src/test.js
 client/.next
 client/package-lock.json
 server/package-lock.json
+server/coverage
+client/coverage
