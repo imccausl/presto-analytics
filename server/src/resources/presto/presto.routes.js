@@ -1,7 +1,7 @@
 const express = require('express');
 const moment = require('moment');
 
-const Presto = require('../../lib/presto');
+const Presto = require('../../../lib/presto');
 
 const routes = (Transaction, User) => {
   const router = express.Router();

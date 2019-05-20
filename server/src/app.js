@@ -24,7 +24,7 @@ const Budget = require('./db/models/budget')(sequelize, Sequelize, User);
 
 // routes
 const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
-const prestoRoutes = require('./routes/presto')(Transaction, User);
+const prestoRoutes = require('./resources/presto/presto.routes')(Transaction, User);
 const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
 const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
 
