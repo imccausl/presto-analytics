@@ -3,6 +3,7 @@ const nock = require('nock');
 const API = require('./data/nockApiEndpoints');
 const Mock = require('./data/fakeServerResponses');
 
+const { authErrors } = require('../auth');
 const { AuthError } = require('../errors');
 const Presto = require('../../presto');
 
@@ -26,10 +27,10 @@ describe('authenticate with presto', () => {
           request.custSecurity.Login === TEST_USERNAME &&
           request.custSecurity.Password === TEST_PASSWORD
         ) {
-          return Mock.loginSuccessPayload;
+          return Mock.loginSuccess;
         }
 
-        return Mock.loginFailedPayload;
+        return authErrors.INVALID_LOGIN;
       });
   });
 
@@ -39,14 +40,14 @@ describe('authenticate with presto', () => {
     const presto = new Presto();
     const response = await presto.login('test', 'test');
 
-    expect(response).toEqual(Mock.loginSuccessPayload);
+    expect(response).toEqual(Mock.loginSuccess);
   });
 
   test('incorrect credentials should return failed message', async () => {
     const presto = new Presto();
     const response = await presto.login('test', 'wrong');
 
-    expect(response).toEqual(Mock.loginFailedPayload);
+    expect(response).toEqual(Mock.loginFailed);
   });
 
   test('user is logged in', async () => {

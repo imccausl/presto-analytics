@@ -2,7 +2,7 @@ const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
 
-const { INVALID_LOGIN } = require('../../auth');
+const { authErrors } = require('../../auth');
 
 const homepage = `
     <html lang="en">
@@ -195,13 +195,18 @@ const loginRequestBody = {
   }
 };
 
-const loginSuccessPayload = {
+const loginSuccess = {
   Result: 'success'
 };
 
-const loginFailedPayload = {
+const loginFailed = {
   Result: 'failed',
-  response: INVALID_LOGIN
+  message: 'INVALID_LOGIN'
+};
+
+const attemptLimitExceeded = {
+  Result: 'failed',
+  message: 'ATTEMPT_LIMIT_EXCEEDED'
 };
 
 const failedCardChange = { Result: 'failed', message: 'Card was not changed' };
@@ -218,8 +223,9 @@ module.exports = {
   badHomepage,
   dashboard,
   loginRequestBody,
-  loginSuccessPayload,
-  loginFailedPayload,
+  loginSuccess,
+  loginFailed,
+  attemptLimitExceeded,
   loadHtmlResponse,
   expectedCardActivity,
   failedCardChange

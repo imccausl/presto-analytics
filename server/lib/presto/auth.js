@@ -4,8 +4,28 @@ const { AuthError } = require('./errors');
 
 const { JSDOM } = jsdom;
 
-const INVALID_LOGIN =
-  'You could not be signed in to your account. Please check your username/email and password and try again.';
+const authErrors = {
+  INVALID_LOGIN:
+    'You could not be signed in to your account. Please check your username/email and password and try again.',
+  ATTEMPT_LIMIT_EXCEEDED:
+    'You have exceeded the number of available attempts to sign in. Please reset your password to access your account.'
+};
+
+const parseAuthError = error => {
+  let errorType = '';
+
+  if (typeof error !== 'string') {
+    throw new AuthError('An unexpected error occurred');
+  }
+
+  Object.keys(authErrors).forEach(key => {
+    if (authErrors[key] === error) {
+      errorType = key;
+    }
+  });
+
+  return errorType;
+};
 
 function isSuccessfulLogin(requestBody) {
   return (
@@ -91,7 +111,8 @@ async function login(requestInstance, username, password) {
 
     if (!isSuccessfulLogin(loginResponse.body)) {
       return {
-        ...loginResponse.body
+        Result: 'failed',
+        message: parseAuthError(loginResponse.body)
       };
     }
 
@@ -111,5 +132,5 @@ module.exports = {
   isSuccessfulLogin,
   getCSRF,
   login,
-  INVALID_LOGIN
+  authErrors
 };
