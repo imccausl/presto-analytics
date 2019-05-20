@@ -21,13 +21,18 @@ const login = async (req, res, next) => {
     const presto = new Presto();
     const prestoLoginResp = await presto.login(username, password);
 
+    if (prestoLoginResp.Result === 'failed') {
+      console.log('Login Error: ', prestoLoginResp.message);
+      throw new Error(prestoLoginResp.message);
+    }
+
     const user = await User.findOne({
       where: {
         id: req.userId
       }
     });
 
-    console.log(prestoLoginResp.body);
+    console.log(prestoLoginResp);
 
     prestoLoginResp.accountInfo = prestoLoginResp.cards;
     user.cookies = presto.getCookies();
