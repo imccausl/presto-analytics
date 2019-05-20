@@ -51,10 +51,10 @@ const routes = (Transaction, User) => {
 
   router.get('/check-login', async (req, res, next) => {
     const presto = new Presto();
-    const response = await presto.isLoggedIn();
+    const response = await presto.checkLogin();
     console.log(response);
 
-    if (response === 'true') {
+    if (response.Result === 'success') {
       res.json({ status: 'success', message: 'Logged in to Presto.' });
     } else {
       res.json({ status: 'error', message: 'Not logged in to Presto' });
