@@ -18,10 +18,10 @@ const http = Server(app);
 const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
 
 // routes
-const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
-const prestoRoutes = require('./resources/presto/presto.routes')(Transaction, User);
-const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
-const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
+// const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
+const prestoRoutes = require('./resources/presto/presto.routes');
+// const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
+// const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
 
 const { connect } = require('./utils/db');
 
@@ -54,10 +54,10 @@ app.use((req, res, next) => {
 });
 
 // routes
-app.use('/api/v1', userRoutes);
+// app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
-app.use('/api/v1/transactions', transactionRoutes);
-app.use('/api/v1/budget', budgetRoutes);
+// app.use('/api/v1/transactions', transactionRoutes);
+// app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json
 app.use((err, req, res, next) => {
