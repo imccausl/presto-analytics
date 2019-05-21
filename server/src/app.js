@@ -6,22 +6,16 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
-// const Sequelize = require('sequelize');
-
-// const dbConfig = require('./config/db.config');
 
 // set up express server
 const app = express();
 const http = Server(app);
 
-// set up db interface
-// const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
-
 // routes
 const userRoutes = require('./resources/user/user.routes');
 const prestoRoutes = require('./resources/presto/presto.routes');
 const transactionRoutes = require('./resources/transaction/transaction.routes');
-// const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
+const budgetRoutes = require('./resources/budget/budget.routes');
 
 const { connect } = require('./utils/db');
 
@@ -57,7 +51,7 @@ app.use((req, res, next) => {
 app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
-// app.use('/api/v1/budget', budgetRoutes);
+app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json
 app.use((err, req, res, next) => {
