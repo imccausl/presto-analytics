@@ -2,8 +2,7 @@ const moment = require('moment');
 
 const Presto = require('../../../lib/presto');
 
-const User = require('../user/user.model');
-const Transaction = require('../transaction/transaction.model');
+const { db } = require('../../utils/db');
 
 const login = async (req, res, next) => {
   try {
@@ -26,7 +25,7 @@ const login = async (req, res, next) => {
       throw new Error(prestoLoginResp.message);
     }
 
-    const user = await User.findOne({
+    const thisUser = await db.user.findOne({
       where: {
         id: req.userId
       }
@@ -35,9 +34,9 @@ const login = async (req, res, next) => {
     console.log(prestoLoginResp);
 
     prestoLoginResp.accountInfo = prestoLoginResp.cards;
-    user.cookies = presto.getCookies();
-    user.cards = prestoLoginResp.cards;
-    user.save();
+    thisUser.cookies = presto.getCookies();
+    thisUser.cards = prestoLoginResp.cards;
+    thisUser.save();
 
     res.json(prestoLoginResp);
   } catch (error) {
@@ -67,7 +66,7 @@ const usage = async (req, res, next) => {
     if (!req.userId) {
       throw new Error('No user logged in!');
     }
-    const userCookies = await User.findOne({
+    const userCookies = await db.user.findOne({
       where: {
         id: req.userId
       },
@@ -80,7 +79,7 @@ const usage = async (req, res, next) => {
       const cardNumber = cards[i];
 
       console.log('Getting from card number: ', cardNumber);
-      const lastTransactionDate = await Transaction.max('date', {
+      const lastTransactionDate = await db.transaction.max('date', {
         where: {
           userId: req.userId,
           cardNumber
@@ -111,7 +110,7 @@ const usage = async (req, res, next) => {
       // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
         usage.transactions.forEach(async item => {
-          const transactionDate = await Transaction.findOne({
+          const transactionDate = await db.transaction.findOne({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
               cardNumber,
@@ -123,7 +122,7 @@ const usage = async (req, res, next) => {
           if (!transactionDate) {
             console.log('Not dupe:', item);
             item.userId = req.userId;
-            transactions = Transaction.create(item);
+            transactions = db.transaction.create(item);
           }
         });
       } else {
@@ -131,7 +130,7 @@ const usage = async (req, res, next) => {
           item.userId = req.userId;
           return item;
         });
-        transactions = await Transaction.bulkCreate(updatedUsage);
+        transactions = await db.transaction.bulkCreate(updatedUsage);
       }
     }
 

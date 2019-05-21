@@ -45,6 +45,7 @@
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "glob": "^7.1.4",
     "jquery": "^3.4.1",
     "jsdom": "^13.1.0",
     "jsonwebtoken": "^8.4.0",

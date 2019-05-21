@@ -6,21 +6,21 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
 
-const dbConfig = require('./config/db.config');
+// const dbConfig = require('./config/db.config');
 
 // set up express server
 const app = express();
 const http = Server(app);
 
 // set up db interface
-const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
+// const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
 
 // routes
-// const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
+const userRoutes = require('./resources/user/user.routes');
 const prestoRoutes = require('./resources/presto/presto.routes');
-// const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
+const transactionRoutes = require('./resources/transaction/transaction.routes');
 // const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
 
 const { connect } = require('./utils/db');
@@ -54,9 +54,9 @@ app.use((req, res, next) => {
 });
 
 // routes
-// app.use('/api/v1', userRoutes);
+app.use('/api/v1', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
-// app.use('/api/v1/transactions', transactionRoutes);
+app.use('/api/v1/transactions', transactionRoutes);
 // app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json

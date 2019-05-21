@@ -1,7 +1,6 @@
 const express = require('express');
 
 const controllers = require('./presto.controllers');
-const User = require('../user/user.model');
 
 const router = express.Router();
 

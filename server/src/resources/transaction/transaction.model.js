@@ -1,45 +1,47 @@
-const { DataTypes } = require('sequelize');
-
-const { sequelize } = require('../../utils/db');
-const UserModel = require('../user/user.model');
-
-const Transaction = sequelize.define('transaction', {
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: UserModel,
-      key: 'id'
+module.exports = (sequelize, DataTypes) => {
+  const transactionModel = sequelize.define('transaction', {
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'user',
+        key: 'id'
+      },
+      field: 'user_id'
+    },
+    cardNumber: {
+      type: DataTypes.STRING,
+      field: 'card_number'
+    },
+    date: {
+      type: DataTypes.DATE
+    },
+    agency: {
+      type: DataTypes.STRING
+    },
+    location: {
+      type: DataTypes.STRING
+    },
+    type: {
+      type: DataTypes.STRING
+    },
+    serviceClass: {
+      type: DataTypes.STRING,
+      field: 'service_class'
+    },
+    discount: {
+      type: DataTypes.STRING
+    },
+    amount: {
+      type: DataTypes.STRING
+    },
+    balance: {
+      type: DataTypes.STRING
     }
-  },
-  cardNumber: {
-    type: DataTypes.STRING
-  },
-  date: {
-    type: DataTypes.DATE
-  },
-  agency: {
-    type: DataTypes.STRING
-  },
-  location: {
-    type: DataTypes.STRING
-  },
-  type: {
-    type: DataTypes.STRING
-  },
-  serviceClass: {
-    type: DataTypes.STRING
-  },
-  discount: {
-    type: DataTypes.STRING
-  },
-  amount: {
-    type: DataTypes.STRING
-  },
-  balance: {
-    type: DataTypes.STRING
-  }
-});
+  });
 
-Transaction.belongsTo(UserModel, {});
+  transactionModel.associate = models => {
+    transactionModel.belongsTo(models.user, { foreignKey: 'id', as: 'user' });
+  };
 
-module.exports = Transaction;
+  return transactionModel;
+};
