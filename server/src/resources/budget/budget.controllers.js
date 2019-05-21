@@ -1,5 +1,7 @@
 const { db } = require('../../utils/db');
 
+const { Budget } = db;
+
 const save = async (req, res, next) => {
   try {
     const { body } = req;
@@ -9,7 +11,7 @@ const save = async (req, res, next) => {
       throw new Error('You must be logged into to do that');
     }
 
-    const budget = await db.budget.findOne({
+    const budget = await Budget.findOne({
       where: {
         userId: req.userId
       }
@@ -18,7 +20,7 @@ const save = async (req, res, next) => {
     console.log(budget);
 
     if (!budget) {
-      const createdBudget = await db.budget.create({
+      const createdBudget = await Budget.create({
         userId: req.userId,
         monthlyPassCost,
         fareCost,
@@ -44,7 +46,7 @@ const read = async (req, res, next) => {
       throw new Error('You must be logged in to do that');
     }
 
-    const budget = await db.budget.findOne({
+    const budget = await Budget.findOne({
       where: {
         userId: req.userId
       }

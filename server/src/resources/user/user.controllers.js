@@ -5,7 +5,7 @@ const Presto = require('../../../lib/presto');
 const types = require('../../../lib/util/types');
 const { db } = require('../../utils/db');
 
-const { sequelize, Sequelize } = db;
+const { sequelize, Sequelize, User, Transaction } = db;
 
 const me = async (req, res, next) => {
   const thisYear = new Date().getFullYear();
@@ -23,7 +23,7 @@ const me = async (req, res, next) => {
       throw new Error('No user logged in');
     }
 
-    const user = await db.user.findOne({
+    const user = await User.findOne({
       where: {
         id: req.userId
       },
@@ -50,7 +50,7 @@ const me = async (req, res, next) => {
       }
     });
 
-    const currTransactions = await db.transaction.findAll({
+    const currTransactions = await Transaction.findAll({
       where: {
         userId: req.userId,
         type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
@@ -73,7 +73,7 @@ const me = async (req, res, next) => {
       .startOf('month')
       .format('DD/MM/YYYY');
 
-    const ytd = await db.transaction.findAll({
+    const ytd = await Transaction.findAll({
       where: {
         userId: req.userId,
         type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
@@ -124,7 +124,7 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await db.user.findOne({
+    const user = await User.findOne({
       where: {
         email
       }
@@ -174,7 +174,7 @@ const signup = async (req, res, next) => {
 
     body.email = body.email.toLowerCase();
 
-    const user = await db.user.create({
+    const user = await User.create({
       firstName,
       lastName,
       email: body.email,

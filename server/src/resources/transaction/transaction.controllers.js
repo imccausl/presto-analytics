@@ -4,7 +4,7 @@ const { getMonthName } = require('../../../lib/util/date');
 const types = require('../../../lib/util/types');
 const { db } = require('../../utils/db');
 
-const { sequelize, Sequelize } = db;
+const { sequelize, Sequelize, Transaction } = db;
 
 function serializeTransactions(transactions) {
   const serializedTransactions = {};
@@ -76,9 +76,9 @@ const monthly = async (req, res, next) => {
     }-01`;
     const searchDateMax =
       month === '12' ? `${parseInt(year, 10) + 1}-01-01` : `${year}-${parseInt(month, 10) + 1}-01`;
-    const transactions = await db.transaction.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: Sequelize.or(
           types.TRANSIT_FARE,
           types.TRANSIT_PASS,
@@ -120,9 +120,9 @@ const all = async (req, res, next) => {
       throw new Error('You must be logged in to access this');
     }
 
-    const transactions = await db.transaction.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: Sequelize.or(
           types.TRANSIT_FARE,
           types.TRANSIT_PASS,
@@ -158,9 +158,9 @@ const ytdData = async (req, res, next) => {
       .format('DD/MM/YYYY');
 
     console.log(today, yearBefore);
-    const transactions = await db.transaction.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: Sequelize.or(
           types.TRANSIT_FARE,
           types.TRANSIT_PASS,
@@ -191,9 +191,9 @@ const ytd = async (req, res, next) => {
       .subtract(1, 'years')
       .format('MM/YYYY');
 
-    const ytd = await db.transaction.findAll({
+    const ytd = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
         serviceClass: 'Regular',
         date: {

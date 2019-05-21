@@ -4,6 +4,8 @@ const Presto = require('../../../lib/presto');
 
 const { db } = require('../../utils/db');
 
+const { User, Transaction } = db;
+
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -25,7 +27,7 @@ const login = async (req, res, next) => {
       throw new Error(prestoLoginResp.message);
     }
 
-    const thisUser = await db.user.findOne({
+    const thisUser = await User.findOne({
       where: {
         id: req.userId
       }
@@ -66,22 +68,22 @@ const usage = async (req, res, next) => {
     if (!req.userId) {
       throw new Error('No user logged in!');
     }
-    const userCookies = await db.user.findOne({
+    const user = await User.findOne({
       where: {
         id: req.userId
       },
-      attributes: ['cookies']
+      attributes: ['cookies', 'id']
     });
 
-    const presto = new Presto(userCookies.cookies);
+    const presto = new Presto(user.cookies);
 
     for (let i = 0; i < cards.length; i++) {
       const cardNumber = cards[i];
 
       console.log('Getting from card number: ', cardNumber);
-      const lastTransactionDate = await db.transaction.max('date', {
+      const lastTransactionDate = await Transaction.max('date', {
         where: {
-          userId: req.userId,
+          user_id: req.userId,
           cardNumber
         }
       });
@@ -97,7 +99,7 @@ const usage = async (req, res, next) => {
         to = moment().format('MM/DD/YYYY');
       }
 
-      console.log('/usage cookies:', userCookies.cookies);
+      console.log('/usage cookies:', user.cookies);
       const usage = await presto.getActivityByDateRange(cardNumber, from, to);
       console.log(usage);
       if (usage.status === 'error') {
@@ -110,32 +112,28 @@ const usage = async (req, res, next) => {
       // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
         usage.transactions.forEach(async item => {
-          const transactionDate = await db.transaction.findOne({
+          const transactionDate = await Transaction.findOne({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
               cardNumber,
-              userId: req.userId
+              user_id: req.userId
             },
             attributes: ['date']
           });
 
           if (!transactionDate) {
             console.log('Not dupe:', item);
-            item.userId = req.userId;
-            transactions = db.transaction.create(item);
+            transactions = User.create({ transactions: { item } });
           }
         });
       } else {
-        const updatedUsage = usage.transactions.map(item => {
-          item.userId = req.userId;
-          return item;
-        });
-        transactions = await db.transaction.bulkCreate(updatedUsage);
+        transactions = await Transaction.bulkCreate({ user_id: req.userId, ...usage });
       }
     }
 
     res.json({ status: 'success', data: transactions });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };

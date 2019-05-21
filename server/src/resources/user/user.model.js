@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
-  const userModel = sequelize.define('user', {
+  const userModel = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -65,12 +65,16 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   userModel.associate = models => {
-    userModel.hasMany(models.transaction, {
+    userModel.hasMany(models.Transaction, {
       foreignKey: 'user_id',
       sourceKey: 'id',
       onDelete: 'CASCADE'
     });
-    userModel.hasOne(models.budget);
+    userModel.hasOne(models.Budget, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      onDelete: 'CASCADE'
+    });
   };
 
   return userModel;
