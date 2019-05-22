@@ -35,7 +35,6 @@ const login = async (req, res, next) => {
 
     console.log(prestoLoginResp);
 
-    prestoLoginResp.accountInfo = prestoLoginResp.cards;
     thisUser.cookies = presto.getCookies();
     thisUser.cards = prestoLoginResp.cards;
     thisUser.save();
@@ -62,7 +61,7 @@ const usage = async (req, res, next) => {
   try {
     let { from, to, cards } = req.body;
     let filterDateString = '';
-    let transactions = [];
+    const transactions = [];
     const filteredUsage = [];
     cards = typeof cards === 'string' ? JSON.parse(cards) : cards;
     if (!req.userId) {
@@ -101,7 +100,7 @@ const usage = async (req, res, next) => {
 
       console.log('/usage cookies:', user.cookies);
       const usage = await presto.getActivityByDateRange(cardNumber, from, to);
-      console.log(usage);
+
       if (usage.status === 'error') {
         throw new Error(usage.message);
       }
@@ -109,25 +108,37 @@ const usage = async (req, res, next) => {
 
       console.log(`Saving usage to db...`);
 
+      console.log('user_id:', user.id);
+      const associatedTransactions = usage.transactions.map(item => {
+        item.userId = user.id;
+        return item;
+      });
+
       // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
-        usage.transactions.forEach(async item => {
-          const transactionDate = await Transaction.findOne({
+        associatedTransactions.forEach(async item => {
+          const [record, created] = await Transaction.findOrCreate({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
               cardNumber,
               user_id: req.userId
             },
-            attributes: ['date']
+            defaults: item
           });
 
-          if (!transactionDate) {
-            console.log('Not dupe:', item);
-            transactions = User.create({ transactions: { item } });
-          }
+          console.log(
+            record.get({
+              plain: true
+            })
+          );
+          console.log('Created?', created);
         });
       } else {
-        transactions = await Transaction.bulkCreate({ user_id: req.userId, ...usage });
+        console.log(user.id);
+
+        const transactions = await Transaction.bulkCreate(associatedTransactions, {
+          updateOnDuplicate: []
+        });
       }
     }
 

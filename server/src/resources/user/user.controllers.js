@@ -1,3 +1,6 @@
+require('dotenv').config({ path: '../../../.env' });
+
+console.log(process.env.APP_SECRET);
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
@@ -5,7 +8,7 @@ const Presto = require('../../../lib/presto');
 const types = require('../../../lib/util/types');
 const { db } = require('../../utils/db');
 
-const { sequelize, Sequelize, User, Transaction } = db;
+const { sequelize, Sequelize, User, Transaction, Budget } = db;
 
 const me = async (req, res, next) => {
   const thisYear = new Date().getFullYear();
@@ -44,15 +47,15 @@ const me = async (req, res, next) => {
 
     console.log('Card Balance:', balance);
 
-    const budget = await db.budget.findOne({
+    const budget = await Budget.findOne({
       where: {
-        userId: req.userId
+        user_id: req.userId
       }
     });
 
     const currTransactions = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
         date: {
           [Sequelize.Op.gte]: new Date(searchDateMin),
@@ -75,7 +78,7 @@ const me = async (req, res, next) => {
 
     const ytd = await Transaction.findAll({
       where: {
-        userId: req.userId,
+        user_id: req.userId,
         type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
         serviceClass: 'Regular',
         date: {
