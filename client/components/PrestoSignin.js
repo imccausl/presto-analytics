@@ -114,9 +114,9 @@ export default class PrestoSignin extends Component {
                       });
                       const response = await requestApi.prestoLogin(username, password);
                       console.log(response);
-                      if (response.accountInfo) {
+                      if (response.cards) {
                         this.setState({
-                          cards: response.accountInfo,
+                          cards: response.cards,
                           inProgress: true,
                           progressMessage: 'Fetching PRESTO usage data...',
                         });
