@@ -1,5 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const transactionModel = sequelize.define('Transaction', {
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id'
+      },
+      field: 'user_id'
+    },
     cardNumber: {
       type: DataTypes.STRING,
       field: 'card_number'
@@ -30,10 +38,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     }
   });
-
-  transactionModel.associate = models => {
-    transactionModel.belongsTo(models.User, { foreignKey: 'id', as: 'user' });
-  };
 
   return transactionModel;
 };

@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
+      unique: true
     },
     firstName: {
       type: DataTypes.STRING,
@@ -65,11 +66,6 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   userModel.associate = models => {
-    userModel.hasMany(models.Transaction, {
-      foreignKey: 'user_id',
-      sourceKey: 'id',
-      onDelete: 'CASCADE'
-    });
     userModel.hasOne(models.Budget, {
       foreignKey: 'user_id',
       sourceKey: 'id',
