@@ -6,7 +6,9 @@ const router = express.Router();
 
 router
   .route('/')
+  .get(controllers.read)
   .post(controllers.save)
-  .get(controllers.read);
+  .put()
+  .delete();
 
 module.exports = router;
