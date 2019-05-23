@@ -50,6 +50,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+  /**
+   * HOOKS
+   */
   userModel.beforeCreate(async user => {
     try {
       const hashedPass = await bcrypt.hash(user.password, 10);
@@ -61,15 +64,31 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+  /**
+   * INSTANCE CLASSES
+   */
+
   userModel.prototype.validatePassword = async function validatePassword(password) {
     return bcrypt.compare(password, this.password);
   };
 
+  /**
+   * ASSOCIATIONS
+   */
+
   userModel.associate = models => {
+    userModel.hasMany(models.Transaction, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+      onDelete: 'CASCADE',
+      as: 'transactions'
+    });
+
     userModel.hasOne(models.Budget, {
       foreignKey: 'user_id',
       sourceKey: 'id',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      as: 'budget'
     });
   };
 
