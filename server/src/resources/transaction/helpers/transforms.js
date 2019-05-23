@@ -1,7 +1,22 @@
 const moment = require('moment');
 
-const { getMonthName } = require('../../lib/util/date');
-const types = require('../../lib/util/types');
+const { getMonthName } = require('../../../../lib/util/date');
+const types = require('../../../../lib/util/types');
+
+function formatMoney(amount) {
+  console.log('---> TYPEOF NUMBER:', typeof parseFloat(amount));
+  let cents = amount;
+
+  if (typeof amount !== 'number') {
+    if (typeof amount === 'string') {
+      cents = parseFloat(parseFloat(amount).toFixed(2));
+    } else {
+      throw new Error('formatMoney requires either a number or a string.');
+    }
+  }
+
+  return parseFloat(Math.round(cents));
+}
 
 function transform(transactions) {
   const data = {};
@@ -34,29 +49,27 @@ function transform(transactions) {
       month = getMonthName(moment(addMonth).month());
     }
 
-    // god this is a mess. I apologize to my future self
-    // that learns more about sequelize.
     if (data[year]) {
       if (data[year][month]) {
         if (item.type !== types.TRANSIT_PASS_LOAD) {
           data[year][month].transactions.push(item);
-          data[year][month].amount += parseFloat(item.amount);
+          data[year][month].amount += formatMoney(item.amount);
         } else {
-          data[year][month].transitPassAmount += parseFloat(item.amount);
+          data[year][month].transitPassAmount += formatMoney(item.amount);
         }
       } else {
         data[year][month] = {
           transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
-          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : formatMoney(item.amount),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? formatMoney(item.amount) : 0
         };
       }
     } else {
       data[year] = {
         [month]: {
           transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseFloat(item.amount),
-          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseFloat(item.amount) : 0
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : formatMoney(item.amount),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? formatMoney(item.amount) : 0
         }
       };
     }

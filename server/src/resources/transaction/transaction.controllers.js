@@ -3,7 +3,7 @@ const moment = require('moment');
 const { getMonthName } = require('../../../lib/util/date');
 const types = require('../../../lib/util/types');
 const { db } = require('../../utils/db');
-const { transform } = require('../../utils/transactionTransform');
+const { transform } = require('./helpers/transforms');
 
 const { sequelize, Sequelize, Transaction } = db;
 
