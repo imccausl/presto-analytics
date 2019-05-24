@@ -143,7 +143,7 @@ const ytd = async (req, res, next) => {
       },
       attributes: [
         'type',
-        [sequelize.literal("SUM(CAST(COALESCE(amount, '0') as float))"), 'total'],
+        [sequelize.literal("SUM(COALESCE(amount, '0'))"), 'total'],
         [sequelize.literal('COUNT(type)'), 'count']
       ],
       group: ['type']
