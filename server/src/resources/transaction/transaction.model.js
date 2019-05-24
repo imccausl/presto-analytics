@@ -1,3 +1,11 @@
+function convertToCents(dollars) {
+  if (typeof dollars !== 'string' || typeof dollars !== 'number') {
+    throw new Error(`Invalid input: ${typeof dollars}`);
+  }
+
+  return parseInt(parseFloat(dollars) * 100, 10);
+}
+
 module.exports = (sequelize, DataTypes) => {
   const transactionModel = sequelize.define('Transaction', {
     userId: {
@@ -29,15 +37,22 @@ module.exports = (sequelize, DataTypes) => {
       field: 'service_class'
     },
     discount: {
-      type: DataTypes.STRING
+      type: DataTypes.INTEGER,
+      set(discount) {
+        convertToCents(discount);
+      }
     },
     amount: {
-      type: DataTypes.STRING
+      type: DataTypes.INTEGER,
+      set(amount) {
+        convertToCents(amount);
+      }
     },
     balance: {
-      type: DataTypes.STRING
+      type: DataTypes.INTEGER,
+      set(balance) {
+        convertToCents(balance);
+      }
     }
   });
-
-  return transactionModel;
 };
