@@ -1,10 +1,11 @@
 const express = require('express');
 
 const controllers = require('./transaction.controllers');
+const requireSignin = require('../../utils/protect');
 
 const router = express.Router();
 
-router.route('/monthly/:year/:month').get(controllers.monthly);
+router.route('/monthly/:year/:month').get(requireSignin(controllers.monthly));
 
 router.route('/all').get(controllers.all);
 

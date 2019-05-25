@@ -1,4 +1,4 @@
-module.export = controller => (req, res, next) => {
+module.exports = controller => (req, res, next) => {
   try {
     const { userId } = req;
 
