@@ -70,10 +70,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  //   transactionModel.beforeCreate((record, options) => {
-  //     record.userId = options.user.id;
-  //   });
-
   /**
    * SCOPES
    */
