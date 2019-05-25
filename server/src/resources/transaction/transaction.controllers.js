@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const { getMonthName } = require('../../../lib/util/date');
+const { successResponse } = require('../../utils/response');
 const types = require('../../../lib/util/types');
 const { db } = require('../../utils/db');
 const { transform } = require('./helpers/transforms');
@@ -50,17 +50,16 @@ const monthly = async (req, res, next) => {
     const transactions = await Taps.findAll({ order: sequelize.literal('date DESC') });
     const totalAmount = await Fares.sum('amount');
 
-    res.json({
-      status: 'success',
-      data: {
-        transactions,
-        count: {
-          fares,
-          transfers
-        },
-        totalAmount
-      }
-    });
+    const payload = {
+      transactions,
+      count: {
+        fares,
+        transfers
+      },
+      totalAmount
+    };
+
+    res.json(successResponse(payload));
   } catch (err) {
     console.error(err.stack);
     next(err);
@@ -87,7 +86,7 @@ const all = async (req, res, next) => {
 
     const transformedData = transform(transactions);
 
-    res.json({ status: 'success', data: transformedData });
+    res.json(successResponse(transformedData));
   } catch (err) {
     next(err);
   }
@@ -124,7 +123,7 @@ const ytdData = async (req, res, next) => {
 
     const transformedData = transform(transactions);
 
-    res.json({ status: 'success', data: transformedData });
+    res.json(successResponse(transformedData));
   } catch (error) {
     next(error);
   }
@@ -155,7 +154,7 @@ const ytd = async (req, res, next) => {
       group: ['type']
     });
 
-    res.json({ status: 'success', data: ytd });
+    res.json(successResponse(ytd));
   } catch (error) {
     next({ status: 'error', error });
   }
