@@ -13,7 +13,7 @@ const monthly = async (req, res, next) => {
 
     const Transfers = Transaction.scope(
       {
-        method: ['transfers', parseInt(month, 10), parseInt(year, 10)]
+        method: ['taps', parseInt(month, 10), parseInt(year, 10), [types.TRANSFER]]
       },
       {
         method: ['currentUser', req.userId]
@@ -24,7 +24,12 @@ const monthly = async (req, res, next) => {
         method: ['currentUser', req.userId]
       },
       {
-        method: ['taps', parseInt(month, 10), parseInt(year, 10)]
+        method: [
+          'taps',
+          parseInt(month, 10),
+          parseInt(year, 10),
+          [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]
+        ]
       }
     );
     const Fares = Transaction.scope(
@@ -32,7 +37,12 @@ const monthly = async (req, res, next) => {
         method: ['currentUser', req.userId]
       },
       {
-        method: ['fares', parseInt(month, 10), parseInt(year, 10)]
+        method: [
+          'taps',
+          parseInt(month, 10),
+          parseInt(year, 10),
+          [types.TRANSIT_FARE, types.TRANSIT_PASS]
+        ]
       }
     );
 

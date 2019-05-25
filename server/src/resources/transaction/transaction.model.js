@@ -1,7 +1,5 @@
 const Sequelize = require('sequelize');
 
-const types = require('../../../lib/util/types');
-
 function convertToCents(dollars) {
   if (typeof dollars !== 'string') {
     throw new Error(`Invalid input: ${typeof dollars}`);
@@ -80,38 +78,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }));
 
-  transactionModel.addScope('transfers', (month, year) => ({
-    where: sequelize.and(
-      sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), year),
-      sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), month),
-      {
-        type: types.TRANSFER
-      }
-    )
-  }));
-
-  transactionModel.addScope('taps', (month, year) => ({
+  transactionModel.addScope('taps', (month, year, types) => ({
     where: sequelize.and(
       sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), year),
       sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), month),
       {
         type: {
-          [Sequelize.Op.in]: [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]
+          [Sequelize.Op.in]: types
         }
       }
     ),
     attributes: ['date', 'agency', 'location', 'type', 'amount', 'balance'],
     order: sequelize.literal('date DESC')
-  }));
-
-  transactionModel.addScope('fares', (month, year) => ({
-    where: sequelize.and(
-      sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), year),
-      sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), month),
-      {
-        type: { [Sequelize.Op.in]: [types.TRANSIT_FARE, types.TRANSIT_PASS] }
-      }
-    )
   }));
 
   return transactionModel;
