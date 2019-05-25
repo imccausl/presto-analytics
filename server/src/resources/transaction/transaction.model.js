@@ -85,6 +85,15 @@ module.exports = (sequelize, DataTypes) => {
     )
   }));
 
+  transactionModel.addScope('dateRange', (from, to) => ({
+    where: {
+      date: {
+        [Sequelize.Op.gte]: from,
+        [Sequelize.Op.lte]: to
+      }
+    }
+  }));
+
   transactionModel.addScope('types', types => ({
     where: {
       type: {

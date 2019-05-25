@@ -3,21 +3,6 @@ const moment = require('moment');
 const { getMonthName } = require('../../../../lib/util/date');
 const types = require('../../../../lib/util/types');
 
-function formatMoney(amount) {
-  console.log('---> TYPEOF NUMBER:', typeof parseFloat(amount));
-  let cents = amount;
-
-  if (typeof amount !== 'number') {
-    if (typeof amount === 'string') {
-      cents = parseFloat(parseFloat(amount).toFixed(2));
-    } else {
-      throw new Error('formatMoney requires either a number or a string.');
-    }
-  }
-
-  return parseFloat(Math.round(cents));
-}
-
 function transform(transactions) {
   const data = {};
 
@@ -53,23 +38,23 @@ function transform(transactions) {
       if (data[year][month]) {
         if (item.type !== types.TRANSIT_PASS_LOAD) {
           data[year][month].transactions.push(item);
-          data[year][month].amount += formatMoney(item.amount);
+          data[year][month].amount += parseInt(item.amount, 10);
         } else {
-          data[year][month].transitPassAmount += formatMoney(item.amount);
+          data[year][month].transitPassAmount += parseInt(item.amount, 10);
         }
       } else {
         data[year][month] = {
           transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : formatMoney(item.amount),
-          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? formatMoney(item.amount) : 0
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseInt(item.amount, 10),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseInt(item.amount, 10) : 0
         };
       }
     } else {
       data[year] = {
         [month]: {
           transactions: item.type === types.TRANSIT_PASS_LOAD ? [] : [item],
-          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : formatMoney(item.amount),
-          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? formatMoney(item.amount) : 0
+          amount: item.type === types.TRANSIT_PASS_LOAD ? 0 : parseInt(item.amount, 10),
+          transitPassAmount: item.type === types.TRANSIT_PASS_LOAD ? parseInt(item.amount, 10) : 0
         }
       };
     }

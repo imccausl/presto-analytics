@@ -85,7 +85,6 @@ const all = async (req, res, next) => {
       order: sequelize.literal('date DESC')
     });
 
-    console.log('raw transactions:', transactions);
     const transformedData = transform(transactions);
 
     res.json({ status: 'success', data: transformedData });
@@ -96,10 +95,6 @@ const all = async (req, res, next) => {
 
 const ytdData = async (req, res, next) => {
   try {
-    if (!req.userId) {
-      throw new Error('You must be logged in to access this');
-    }
-
     const today = moment()
       .endOf('month')
       .format('DD/MM/YYYY');
@@ -108,27 +103,27 @@ const ytdData = async (req, res, next) => {
       .startOf('month')
       .format('DD/MM/YYYY');
 
-    console.log(today, yearBefore);
-    const transactions = await Transaction.findAll({
-      where: {
-        userId: req.userId,
-        type: Sequelize.or(
-          types.TRANSIT_FARE,
-          types.TRANSIT_PASS,
-          types.TRANSFER,
-          types.TRANSIT_PASS_LOAD
-        ),
-        date: {
-          [Sequelize.Op.gte]: moment(yearBefore, 'DD/MM/YYYY'),
-          [Sequelize.Op.lte]: moment(today, 'DD/MM/YYYY')
-        }
+    const YTDFares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
       },
-      attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
+      {
+        method: ['dateRange', moment(yearBefore, 'DD/MM/YYYY'), moment(today, 'DD/MM/YYYY')]
+      },
+      {
+        method: [
+          'types',
+          [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD]
+        ]
+      }
+    );
+
+    const transactions = await YTDFares.findAll({
       order: sequelize.literal('date ASC')
     });
 
     const transformedData = transform(transactions);
-    console.log(transformedData);
+
     res.json({ status: 'success', data: transformedData });
   } catch (error) {
     next(error);
