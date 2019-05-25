@@ -109,14 +109,9 @@ const usage = async (req, res, next) => {
       console.log(`Saving usage to db...`);
 
       console.log('user_id:', user.id);
-      const associatedTransactions = usage.transactions.map(item => {
-        item.userId = user.id;
-        return item;
-      });
 
-      // res.json({ status: 'success', usage: filteredUsage });
       if (lastTransactionDate) {
-        associatedTransactions.forEach(async item => {
+        usage.transactions.forEach(async item => {
           const [record, created] = await Transaction.findOrCreate({
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
@@ -136,7 +131,7 @@ const usage = async (req, res, next) => {
       } else {
         console.log(user.id);
 
-        const transactions = await Transaction.bulkCreate(associatedTransactions);
+        const transactions = await Transaction.bulkCreate(usage.transactions, { user });
       }
     }
 

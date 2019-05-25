@@ -61,6 +61,20 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   /**
+   * HOOKS
+   */
+
+  transactionModel.beforeBulkCreate((records, options) => {
+    for (const record of records) {
+      record.userId = options.user.id;
+    }
+  });
+
+  //   transactionModel.beforeCreate((record, options) => {
+  //     record.userId = options.user.id;
+  //   });
+
+  /**
    * SCOPES
    */
 
