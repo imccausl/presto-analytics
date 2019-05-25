@@ -30,7 +30,7 @@ const me = async (req, res, next) => {
       where: {
         id: req.userId
       },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'cards', 'permission']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'cards', 'permissions']
     });
 
     const balance = user.cards.reduce((sum, curr) => {
@@ -189,7 +189,7 @@ const signup = async (req, res, next) => {
       email: body.email,
       password,
       cards: [{}],
-      permission: ['USER']
+      permissions: ['USER']
     });
 
     // create JWT token for logged in user

@@ -38,18 +38,18 @@ const monthly = async (req, res, next) => {
 
     const fares = await Fares.count();
     const transfers = await Transfers.count();
-    const taps = await Taps.findAll();
+    const transactions = await Taps.findAll();
 
-    // const totalAmount = await Transaction.sum('amount', {
-    //   where: sequelize.and(
-    //     sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), parseInt(year)),
-    //     sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), parseInt(month)),
-    //     {
-    //       user_id: req.userId,
-    //       type: Sequelize.or(types.TRANSIT_FARE)
-    //     }
-    //   )
-    // });
+    const totalAmount = await Transaction.sum('amount', {
+      where: sequelize.and(
+        sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), parseInt(year)),
+        sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), parseInt(month)),
+        {
+          user_id: req.userId,
+          type: Sequelize.or(types.TRANSIT_FARE)
+        }
+      )
+    });
 
     // const transformedData = transform(transactions);
     // const totalAmount =
@@ -60,12 +60,12 @@ const monthly = async (req, res, next) => {
     res.json({
       status: 'success',
       data: {
-        taps,
+        transactions,
         count: {
           fares,
           transfers
-        }
-        // totalAmount
+        },
+        totalAmount
       }
     });
   } catch (err) {
