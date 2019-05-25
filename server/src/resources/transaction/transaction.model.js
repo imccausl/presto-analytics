@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const types = require('../../../lib/util/types');
 
 function convertToCents(dollars) {
-  if (typeof dollars !== 'string' || typeof dollars !== 'number') {
+  if (typeof dollars !== 'string') {
     throw new Error(`Invalid input: ${typeof dollars}`);
   }
 
@@ -12,12 +12,12 @@ function convertToCents(dollars) {
 
 module.exports = (sequelize, DataTypes) => {
   const transactionModel = sequelize.define(
-    'Transaction',
+    'transaction',
     {
       userId: {
         type: DataTypes.INTEGER,
         references: {
-          model: 'Users',
+          model: 'users',
           key: 'id'
         },
         field: 'user_id'
@@ -45,19 +45,19 @@ module.exports = (sequelize, DataTypes) => {
       discount: {
         type: DataTypes.INTEGER,
         set(discount) {
-          convertToCents(discount);
+          this.setDataValue('discount', convertToCents(discount));
         }
       },
       amount: {
         type: DataTypes.INTEGER,
         set(amount) {
-          convertToCents(amount);
+          this.setDataValue('amount', convertToCents(amount));
         }
       },
       balance: {
         type: DataTypes.INTEGER,
         set(balance) {
-          convertToCents(balance);
+          this.setDataValue('balance', convertToCents(balance));
         }
       }
     },

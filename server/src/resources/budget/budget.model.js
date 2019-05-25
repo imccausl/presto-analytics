@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const budgetModel = sequelize.define('Budget', {
+  const budgetModel = sequelize.define('budget', {
     agency: {
       type: DataTypes.STRING
     },
@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   budgetModel.associate = models => {
-    budgetModel.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+    budgetModel.belongsTo(models.user, {
+      foreignKey: { name: 'userId', field: 'user_id' },
+      as: 'user'
+    });
   };
 
   return budgetModel;

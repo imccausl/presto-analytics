@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
-  const userModel = sequelize.define('User', {
+  const userModel = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('cards', JSON.stringify(cards));
       }
     },
-    permission: {
+    permissions: {
       type: DataTypes.ARRAY(DataTypes.TEXT)
     },
     cookies: {
@@ -77,15 +77,21 @@ module.exports = (sequelize, DataTypes) => {
    */
 
   userModel.associate = models => {
-    userModel.hasMany(models.Transaction, {
-      foreignKey: 'user_id',
+    userModel.hasMany(models.transaction, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id'
+      },
       sourceKey: 'id',
       onDelete: 'CASCADE',
       as: 'transactions'
     });
 
-    userModel.hasOne(models.Budget, {
-      foreignKey: 'user_id',
+    userModel.hasOne(models.budget, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id'
+      },
       sourceKey: 'id',
       onDelete: 'CASCADE',
       as: 'budget'

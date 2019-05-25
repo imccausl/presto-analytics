@@ -121,7 +121,7 @@ const usage = async (req, res, next) => {
             where: {
               date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
               cardNumber,
-              user_id: req.userId
+              userId: req.userId
             },
             defaults: item
           });
@@ -136,9 +136,7 @@ const usage = async (req, res, next) => {
       } else {
         console.log(user.id);
 
-        const transactions = await Transaction.bulkCreate(associatedTransactions, {
-          updateOnDuplicate: []
-        });
+        const transactions = await Transaction.bulkCreate(associatedTransactions);
       }
     }
 

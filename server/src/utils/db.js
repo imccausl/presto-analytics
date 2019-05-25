@@ -32,12 +32,20 @@ const connect = (force = false) => {
     .catch(err => console.log('Error:', err));
 };
 
+const capitalizeModelNames = key => {
+  if (!key.match(/[s]equelize/i)) {
+    db[key[0].toUpperCase() + key.substring(1)] = db[key];
+    delete db[key];
+  }
+};
+
 glob
   .sync(path.join(__dirname, '../resources/**/*.model.js'))
   .filter(onlyModels)
   .forEach(importModel);
 
 Object.keys(db).forEach(associate);
+Object.keys(db).forEach(capitalizeModelNames);
 Object.keys(db).forEach(item => console.log(item));
 
 module.exports = { connect, db };
