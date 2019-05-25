@@ -1,6 +1,5 @@
 require('dotenv').config({ path: '../../../.env' });
 
-console.log(process.env.APP_SECRET);
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
