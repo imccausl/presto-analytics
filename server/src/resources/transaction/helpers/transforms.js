@@ -23,7 +23,9 @@ function transform(transactions) {
     // move it to the next month because it was for that month that it was
     // purchased.
 
-    // There is a bug here: amount sometimes reverts to 0.
+    // There is a bug here: amount sometimes reverts to 0. The reason is that if
+    // a transit pass was purchased in April for May, for example, but the YTD dataset no longer
+    // includes April, then the transit pass purchase is missing.
 
     if (item.type === types.TRANSIT_PASS_LOAD && transitPassPurchasePeriod) {
       const addMonth = moment(itemDate, 'M').add(1, 'months');
