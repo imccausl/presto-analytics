@@ -45,7 +45,7 @@ const monthly = async (req, res, next) => {
         sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), parseInt(year)),
         sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), parseInt(month)),
         {
-          user_id: req.userId,
+          userId: req.userId,
           type: Sequelize.or(types.TRANSIT_FARE)
         }
       )
@@ -82,7 +82,7 @@ const all = async (req, res, next) => {
 
     const transactions = await Transaction.findAll({
       where: {
-        user_id: req.userId,
+        userId: req.userId,
         type: Sequelize.or(
           types.TRANSIT_FARE,
           types.TRANSIT_PASS,
@@ -120,7 +120,7 @@ const ytdData = async (req, res, next) => {
     console.log(today, yearBefore);
     const transactions = await Transaction.findAll({
       where: {
-        user_id: req.userId,
+        userId: req.userId,
         type: Sequelize.or(
           types.TRANSIT_FARE,
           types.TRANSIT_PASS,
@@ -153,7 +153,7 @@ const ytd = async (req, res, next) => {
 
     const ytd = await Transaction.findAll({
       where: {
-        user_id: req.userId,
+        userId: req.userId,
         type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
         serviceClass: 'Regular',
         date: {

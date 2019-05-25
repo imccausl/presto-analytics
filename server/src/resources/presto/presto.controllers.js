@@ -82,7 +82,7 @@ const usage = async (req, res, next) => {
       console.log('Getting from card number: ', cardNumber);
       const lastTransactionDate = await Transaction.max('date', {
         where: {
-          user_id: req.userId,
+          userId: req.userId,
           cardNumber
         }
       });
@@ -107,8 +107,6 @@ const usage = async (req, res, next) => {
       console.log('Checking for duplicates...');
 
       console.log(`Saving usage to db...`);
-
-      console.log('user_id:', user.id);
 
       if (lastTransactionDate) {
         usage.transactions.forEach(async item => {

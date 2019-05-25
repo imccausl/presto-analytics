@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
 
   transactionModel.addScope('currentUser', userId => ({
     where: {
-      user_id: userId
+      userId
     }
   }));
 

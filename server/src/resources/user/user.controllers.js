@@ -49,13 +49,13 @@ const me = async (req, res, next) => {
 
     const budget = await Budget.findOne({
       where: {
-        user_id: req.userId
+        userId: req.userId
       }
     });
 
     const currTransactions = await Transaction.findAll({
       where: {
-        user_id: req.userId,
+        userId: req.userId,
         type: Sequelize.or('Fare Payment', 'Transit Pass Payment', 'Transfer'),
         date: {
           [Sequelize.Op.gte]: new Date(searchDateMin),
@@ -78,7 +78,7 @@ const me = async (req, res, next) => {
 
     const ytd = await Transaction.findAll({
       where: {
-        user_id: req.userId,
+        userId: req.userId,
         type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
         serviceClass: 'Regular',
         date: {
