@@ -78,18 +78,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }));
 
-  transactionModel.addScope('taps', (month, year, types) => ({
+  transactionModel.addScope('yearAndMonth', (year, month) => ({
     where: sequelize.and(
       sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), year),
-      sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), month),
-      {
-        type: {
-          [Sequelize.Op.in]: types
-        }
+      sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), month)
+    )
+  }));
+
+  transactionModel.addScope('types', types => ({
+    where: {
+      type: {
+        [Sequelize.Op.in]: types
       }
-    ),
-    attributes: ['date', 'agency', 'location', 'type', 'amount', 'balance'],
-    order: sequelize.literal('date DESC')
+    }
   }));
 
   return transactionModel;

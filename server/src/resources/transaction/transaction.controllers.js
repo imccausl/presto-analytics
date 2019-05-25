@@ -13,7 +13,10 @@ const monthly = async (req, res, next) => {
 
     const Transfers = Transaction.scope(
       {
-        method: ['taps', parseInt(month, 10), parseInt(year, 10), [types.TRANSFER]]
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
       },
       {
         method: ['currentUser', req.userId]
@@ -24,12 +27,10 @@ const monthly = async (req, res, next) => {
         method: ['currentUser', req.userId]
       },
       {
-        method: [
-          'taps',
-          parseInt(month, 10),
-          parseInt(year, 10),
-          [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]
-        ]
+        method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
       }
     );
     const Fares = Transaction.scope(
@@ -37,35 +38,17 @@ const monthly = async (req, res, next) => {
         method: ['currentUser', req.userId]
       },
       {
-        method: [
-          'taps',
-          parseInt(month, 10),
-          parseInt(year, 10),
-          [types.TRANSIT_FARE, types.TRANSIT_PASS]
-        ]
+        method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
       }
     );
 
     const fares = await Fares.count();
     const transfers = await Transfers.count();
-    const transactions = await Taps.findAll();
-
-    const totalAmount = await Transaction.sum('amount', {
-      where: sequelize.and(
-        sequelize.where(sequelize.literal(`EXTRACT(YEAR FROM date)`), parseInt(year)),
-        sequelize.where(sequelize.literal(`EXTRACT(MONTH FROM date)`), parseInt(month)),
-        {
-          userId: req.userId,
-          type: Sequelize.or(types.TRANSIT_FARE)
-        }
-      )
-    });
-
-    // const transformedData = transform(transactions);
-    // const totalAmount =
-    //   transformedData[year][getMonthName(month - 1)].amount +
-    //   transformedData[year][getMonthName(month - 1)].transitPassAmount;
-    // const totalTrips = transformedData[year][getMonthName(month - 1)].transactions.length;
+    const transactions = await Taps.findAll({ order: sequelize.literal('date DESC') });
+    const totalAmount = await Fares.sum('amount');
 
     res.json({
       status: 'success',
@@ -86,21 +69,19 @@ const monthly = async (req, res, next) => {
 
 const all = async (req, res, next) => {
   try {
-    if (!req.userId) {
-      throw new Error('You must be logged in to access this');
-    }
-
-    const transactions = await Transaction.findAll({
-      where: {
-        userId: req.userId,
-        type: Sequelize.or(
-          types.TRANSIT_FARE,
-          types.TRANSIT_PASS,
-          types.TRANSFER,
-          types.TRANSIT_PASS_LOAD
-        )
+    const Taps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
       },
-      attributes: ['id', 'date', 'agency', 'location', 'type', 'amount'],
+      {
+        method: [
+          'types',
+          [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER, types.TRANSIT_PASS_LOAD]
+        ]
+      }
+    );
+
+    const transactions = await Taps.findAll({
       order: sequelize.literal('date DESC')
     });
 
