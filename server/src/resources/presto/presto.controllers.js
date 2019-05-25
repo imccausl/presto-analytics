@@ -6,6 +6,15 @@ const { db } = require('../../utils/db');
 
 const { User, Transaction } = db;
 
+/**
+ * USES CASES FOR INTERFACING WITH PRESTO:
+ *  - Resync all: delete all transactions belonging to a user and re-sync them from scratch
+ *  - Sync usage per card /usage/:cardNumber
+ *  - Resync usage per card /usage/:cardNumber
+ *
+ * - Other consideration: would it possibly make more sense to do the presto-library related stuff on the front end?
+ */
+
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
