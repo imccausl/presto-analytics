@@ -1,10 +1,6 @@
 const Sequelize = require('sequelize');
 
 function convertToCents(dollars) {
-  if (typeof dollars !== 'string') {
-    throw new Error(`Invalid input: ${typeof dollars}`);
-  }
-
   return parseInt(parseFloat(dollars) * 100, 10);
 }
 
@@ -62,9 +58,19 @@ module.exports = (sequelize, DataTypes) => {
    * HOOKS
    */
 
-  transactionModel.beforeBulkCreate((records, options) => {
+  transactionModel.beforeBulkCreate(async (records, options) => {
     for (const record of records) {
       record.userId = options.user.id;
+      const dup = await transactionModel.findOne({
+        where: {
+          date: record.date,
+          userId: options.user.id
+        }
+      });
+
+      if (dup) {
+        record.id = dup.id;
+      }
     }
   });
 
