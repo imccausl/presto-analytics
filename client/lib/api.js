@@ -24,7 +24,7 @@ const API = {
 
   currentUser: {
     method: 'GET',
-    endpoint: '/me',
+    endpoint: '/v1/user/me',
   },
   login: '/login',
   logout: {
@@ -42,19 +42,19 @@ const API = {
       searchMonth = year;
     }
 
-    return `/v1/transactions/monthly/${searchYear}/${searchMonth}`;
+    return `/v1/transaction/monthly/${searchYear}/${searchMonth}`;
   },
   allTransactions: {
     method: 'GET',
-    endpoint: '/v1/transactions/all',
+    endpoint: '/v1/transaction',
   },
   yearToDate: {
     method: 'GET',
-    endpoint: '/v1/transactions/ytd',
+    endpoint: '/v1/transaction/ytd',
   },
   yearToDateData: {
     method: 'GET',
-    endpoint: '/v1/transactions/ytd/data',
+    endpoint: '/v1/transaction/ytd/data',
   },
   updateBudget: {
     method: 'POST',
