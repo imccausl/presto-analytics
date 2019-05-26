@@ -117,29 +117,32 @@ const usage = async (req, res, next) => {
 
       console.log(`Saving usage to db...`);
 
-      if (lastTransactionDate) {
-        usage.transactions.forEach(async item => {
-          const [record, created] = await Transaction.findOrCreate({
-            where: {
-              date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
-              cardNumber,
-              userId: req.userId
-            },
-            defaults: item
-          });
+      //   if (lastTransactionDate) {
+      //     usage.transactions.forEach(async item => {
+      //       const [record, created] = await Transaction.findOrCreate({
+      //         where: {
+      //           date: moment(item.date, 'MM/DD/YYYY hh:mm:ss A'),
+      //           cardNumber,
+      //           userId: req.userId
+      //         },
+      //         defaults: item
+      //       });
 
-          console.log(
-            record.get({
-              plain: true
-            })
-          );
-          console.log('Created?', created);
-        });
-      } else {
-        console.log(user.id);
+      //       console.log(
+      //         record.get({
+      //           plain: true
+      //         })
+      //       );
+      //       console.log('Created?', created);
+      //     });
+      //   } else {
+      console.log(user.id);
 
-        const transactions = await Transaction.bulkCreate(usage.transactions, { user });
-      }
+      const transactions = await Transaction.bulkCreate(usage.transactions, {
+        user,
+        ignoreDuplicates: true
+      });
+      //   }
     }
 
     res.json({ status: 'success', data: transactions });
