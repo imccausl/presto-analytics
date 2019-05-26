@@ -16,6 +16,7 @@ const userRoutes = require('./resources/user/user.routes');
 const prestoRoutes = require('./resources/presto/presto.routes');
 const transactionRoutes = require('./resources/transaction/transaction.routes');
 const budgetRoutes = require('./resources/budget/budget.routes');
+const authControllers = require('./utils/auth');
 
 const { connect, db } = require('./utils/db');
 
@@ -60,9 +61,13 @@ app.use('/api/v1', async (req, res, next) => {
 });
 
 // routes
-app.use('/api', userRoutes);
+app.use('/api/login', authControllers.login);
+app.use('/api/logout', authControllers.logout);
+app.use('/api/signup', authControllers.signup);
+
+app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
-app.use('/api/v1/transactions', transactionRoutes);
+app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json
