@@ -87,7 +87,7 @@ export default props => {
           <YAxis
             type="number"
             tickMargin={20}
-            dataKey="costPerTapIfPass"
+            dataKey="costPerTap"
             tickLine={false}
             axisLine={false}
             stroke="#C4C4C4"
