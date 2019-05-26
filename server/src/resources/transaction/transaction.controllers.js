@@ -86,9 +86,9 @@ const getAll = async (req, res, next) => {
       order: sequelize.literal('date DESC')
     });
 
-    // const transformedData = transform(transactions);
+    const transformedData = transform(transactions);
 
-    res.json(successResponse(transactions));
+    res.json(successResponse(transformedData));
   } catch (err) {
     next(err);
   }
