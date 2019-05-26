@@ -35,22 +35,19 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '15360mb', type: 'application/json' }));
 app.use(
   bodyParser.urlencoded({
-    extended: true,
-    limit: '15360mb',
-    type: 'application/json',
-    parameterLimit: 5000000
+    extended: true
   })
 );
 app.use(cookieParser());
 
 // decode the userId on incoming requests
 // if the jwt exists
-app.use(async (req, res, next) => {
-  const { auth } = req.cookies;
-
+app.use('/api/v1', async (req, res, next) => {
   try {
+    const { auth } = req.cookies;
+    const { userId } = jwt.verify(auth, process.env.APP_SECRET);
+
     if (auth) {
-      const { userId } = jwt.verify(auth, process.env.APP_SECRET);
       const user = await User.findByPk(userId);
       req.user = user;
       req.userId = userId;
@@ -58,12 +55,12 @@ app.use(async (req, res, next) => {
       next();
     }
   } catch (err) {
-    next(err);
+    next();
   }
 });
 
 // routes
-app.use('/api/v1', userRoutes);
+app.use('/api', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
 app.use('/api/v1/transactions', transactionRoutes);
 app.use('/api/v1/budget', budgetRoutes);
