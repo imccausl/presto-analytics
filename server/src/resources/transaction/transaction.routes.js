@@ -7,8 +7,8 @@ const router = express.Router();
 
 /**
  * USE CASES FOR Transaction ROUTES:
- *  - delete all
- *  - create all (if we go the presto library on the front-end route)
+ *  - delete all [done]
+ *  - create all (if we go the presto library on the front-end route) [done]
  *  - update all (?)
  *
  *  - delete all belonging to a card
@@ -27,6 +27,12 @@ router
   .get(requireSignin(controllers.getAll))
   .post(requireSignin(controllers.postAll))
   .delete(requireSignin(controllers.deleteAll));
+
+router
+  .route('/:cardNumber')
+  .get()
+  .post()
+  .delete();
 
 router.route('/ytd/data').get(requireSignin(controllers.ytdData));
 
