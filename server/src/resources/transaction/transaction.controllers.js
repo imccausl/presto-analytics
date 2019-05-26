@@ -66,11 +66,13 @@ const monthly = async (req, res, next) => {
   }
 };
 
-const all = async (req, res, next) => {
+const getAll = async (req, res, next) => {
+  const { user } = req;
+
   try {
     const Taps = Transaction.scope(
       {
-        method: ['currentUser', req.userId]
+        method: ['currentUser', user.id]
       },
       {
         method: [
@@ -84,11 +86,30 @@ const all = async (req, res, next) => {
       order: sequelize.literal('date DESC')
     });
 
-    const transformedData = transform(transactions);
+    // const transformedData = transform(transactions);
 
-    res.json(successResponse(transformedData));
+    res.json(successResponse(transactions));
   } catch (err) {
     next(err);
+  }
+};
+
+const postAll = async (req, res, next) => {
+  try {
+    const transactions = req.body;
+    const { user } = req;
+    const transactionsToJSON =
+      typeof transactions === 'string' ? JSON.parse(transactions) : transactions;
+
+    const create = await Transaction.bulkCreate(transactionsToJSON, {
+      user,
+      ignoreDuplicates: true
+    });
+
+    res.json(successResponse(create));
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 };
 
@@ -160,4 +181,4 @@ const ytd = async (req, res, next) => {
   }
 };
 
-module.exports = { monthly, all, ytdData, ytd };
+module.exports = { postAll, getAll, monthly, ytdData, ytd };

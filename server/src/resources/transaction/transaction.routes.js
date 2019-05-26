@@ -22,7 +22,10 @@ const router = express.Router();
 
 router.route('/monthly/:year/:month').get(requireSignin(controllers.monthly));
 
-router.route('/all').get(requireSignin(controllers.all));
+router
+  .route('/')
+  .get(requireSignin(controllers.getAll))
+  .post(requireSignin(controllers.postAll));
 
 router.route('/ytd/data').get(requireSignin(controllers.ytdData));
 
