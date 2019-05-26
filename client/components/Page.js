@@ -122,6 +122,7 @@ export default class Page extends Component {
                 user, balance, currentMonth, ytd,
               },
             } = data;
+            const yearToDateBalance = ytd.reduce((count, curr) => count + curr.total, 0);
 
             const trigger = (
               <span>
@@ -184,18 +185,20 @@ export default class Page extends Component {
                         }}
                       >
                         <FlexRow>
-                          <Statistic label="Total Balance" value={balance} />
+                          <Statistic label="Total Balance" value={`$${balance}`} />
                           <Statistic
                             label="Last Charge"
                             value={`$${
                               currentMonth.currTransactions.length === 0
-                                ? 0
-                                : currentMonth.currTransactions[0].amount
+                                ? 'N/A'
+                                : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
                             }`}
                           />
                           <Statistic
                             label="Year To Date"
-                            value={`$${ytd.reduce((count, curr) => count + curr.total, 0) || 0}`}
+                            value={`$${
+                              yearToDateBalance === 0 ? 0 : (yearToDateBalance / 100).toFixed(2)
+                            }`}
                           />
                           <Statistic
                             label="Last Update"

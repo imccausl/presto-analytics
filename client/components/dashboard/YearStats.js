@@ -12,7 +12,7 @@ import {
 
 import { FlexRow } from '../Page';
 
-export default (props) => {
+export default props => {
   console.log(props);
   const {
     dataset,
@@ -33,7 +33,7 @@ export default (props) => {
           {'Year to Month'}
         </h3>
         <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
-          {`$${dataset.totalAmount} Total`}
+          {`$${(dataset.totalAmount / 100).toFixed(2)} Total`}
         </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>
@@ -94,9 +94,13 @@ export default (props) => {
           />
           <XAxis dataKey="date" tickMargin={5} tickLine={false} axisLine={false} stroke="#C4C4C4" />
 
-          <ReferenceLine y={parseFloat(monthlyPassCost)} label="Transit Pass Cost" stroke="red" />
           <ReferenceLine
-            y={parseFloat(monthlyPassCost) / parseFloat(fareCost)}
+            y={parseFloat(monthlyPassCost / 100).toFixed(2)}
+            label="Transit Pass Cost"
+            stroke="red"
+          />
+          <ReferenceLine
+            y={(parseFloat(monthlyPassCost) / parseFloat(fareCost) / 100).toFixed(2)}
             label="Transit Pass Break-even"
             stroke="red"
           />
