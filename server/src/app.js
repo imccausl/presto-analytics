@@ -17,7 +17,9 @@ const prestoRoutes = require('./resources/presto/presto.routes');
 const transactionRoutes = require('./resources/transaction/transaction.routes');
 const budgetRoutes = require('./resources/budget/budget.routes');
 
-const { connect } = require('./utils/db');
+const { connect, db } = require('./utils/db');
+
+const { User } = db;
 
 const PORT = process.env.SERVER_PORT || 3333;
 const corsOptions = {
@@ -30,21 +32,34 @@ connect();
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '15360mb', type: 'application/json' }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    limit: '15360mb',
+    type: 'application/json',
+    parameterLimit: 5000000
+  })
+);
 app.use(cookieParser());
 
 // decode the userId on incoming requests
 // if the jwt exists
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   const { auth } = req.cookies;
 
-  if (auth) {
-    const { userId } = jwt.verify(auth, process.env.APP_SECRET);
-    req.userId = userId;
-  }
+  try {
+    if (auth) {
+      const { userId } = jwt.verify(auth, process.env.APP_SECRET);
+      const user = await User.findByPk(userId);
+      req.user = user;
+      req.userId = userId;
 
-  next();
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 // routes
