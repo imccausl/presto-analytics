@@ -25,7 +25,8 @@ router.route('/monthly/:year/:month').get(requireSignin(controllers.monthly));
 router
   .route('/')
   .get(requireSignin(controllers.getAll))
-  .post(requireSignin(controllers.postAll));
+  .post(requireSignin(controllers.postAll))
+  .delete(requireSignin(controllers.deleteAll));
 
 router.route('/ytd/data').get(requireSignin(controllers.ytdData));
 

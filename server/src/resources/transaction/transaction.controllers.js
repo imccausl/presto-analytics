@@ -113,6 +113,22 @@ const postAll = async (req, res, next) => {
   }
 };
 
+const deleteAll = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const Transactions = Transaction.scope({
+      method: ['currentUser', user.id]
+    });
+
+    const destroy = await Transactions.destroy();
+
+    res.json(successResponse(destroy));
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 const ytdData = async (req, res, next) => {
   try {
     const today = moment()
@@ -181,4 +197,4 @@ const ytd = async (req, res, next) => {
   }
 };
 
-module.exports = { postAll, getAll, monthly, ytdData, ytd };
+module.exports = { postAll, getAll, deleteAll, monthly, ytdData, ytd };
