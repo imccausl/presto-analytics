@@ -6,27 +6,21 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
-const Sequelize = require('sequelize');
-
-const dbConfig = require('./db/config');
 
 // set up express server
 const app = express();
 const http = Server(app);
 
-// set up db interface
-const sequelize = new Sequelize('analytics', 'analytics', 'postgres', dbConfig);
-
-// db models
-const User = require('./db/models/user')(sequelize, Sequelize);
-const Transaction = require('./db/models/transaction')(sequelize, Sequelize, User);
-const Budget = require('./db/models/budget')(sequelize, Sequelize, User);
-
 // routes
-const userRoutes = require('./routes/users')(User, Budget, Transaction, sequelize, Sequelize);
-const prestoRoutes = require('./routes/presto')(Transaction, User);
-const transactionRoutes = require('./routes/transactions')(Transaction, sequelize, Sequelize);
-const budgetRoutes = require('./routes/budget')(Budget, sequelize, Sequelize);
+const userRoutes = require('./resources/user/user.routes');
+const prestoRoutes = require('./resources/presto/presto.routes');
+const transactionRoutes = require('./resources/transaction/transaction.routes');
+const budgetRoutes = require('./resources/budget/budget.routes');
+const authControllers = require('./utils/auth');
+
+const { connect, db } = require('./utils/db');
+
+const { User } = db;
 
 const PORT = process.env.SERVER_PORT || 3333;
 const corsOptions = {
@@ -34,36 +28,46 @@ const corsOptions = {
   credentials: true
 };
 
-User.hasMany(Transaction);
-
-sequelize
-  .sync()
-  .then(() => console.log('Database and tables created!'))
-  .catch(err => console.log('Error:', err));
+// setup db connection
+connect();
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '15360mb', type: 'application/json' }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 app.use(cookieParser());
 
 // decode the userId on incoming requests
 // if the jwt exists
-app.use((req, res, next) => {
-  const { auth } = req.cookies;
-
-  if (auth) {
+app.use('/api/v1', async (req, res, next) => {
+  try {
+    const { auth } = req.cookies;
     const { userId } = jwt.verify(auth, process.env.APP_SECRET);
-    req.userId = userId;
-  }
 
-  next();
+    if (auth) {
+      const user = await User.findByPk(userId);
+      req.user = user;
+      req.userId = userId;
+
+      next();
+    }
+  } catch (err) {
+    next();
+  }
 });
 
 // routes
-app.use('/api/v1', userRoutes);
+app.use('/api/login', authControllers.login);
+app.use('/api/logout', authControllers.logout);
+app.use('/api/signup', authControllers.signup);
+
+app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/presto', prestoRoutes);
-app.use('/api/v1/transactions', transactionRoutes);
+app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/budget', budgetRoutes);
 
 // handle errors as json

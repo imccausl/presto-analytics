@@ -1,22 +1,22 @@
 const bcrypt = require('bcryptjs');
-const tough = require('tough-cookie');
 
 module.exports = (sequelize, DataTypes) => {
-  // const permissions = DataTypes.ENUM('ADMIN', 'USER');
-
-  const User = sequelize.define('user', {
+  const userModel = sequelize.define('user', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
+      unique: true
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      field: 'first_name'
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      field: 'last_name'
     },
     password: {
       type: DataTypes.STRING,
@@ -37,22 +37,23 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('cards', JSON.stringify(cards));
       }
     },
-    permission: {
+    permissions: {
       type: DataTypes.ARRAY(DataTypes.TEXT)
     },
     cookies: {
       type: DataTypes.TEXT,
       allowNull: true,
-      // get() {
-      //   return tough.toJSON(this.getDataValue('cookies'));
-      // },
+
       set(cookies) {
         this.setDataValue('cookies', JSON.stringify(cookies));
       }
     }
   });
 
-  User.beforeCreate(async user => {
+  /**
+   * HOOKS
+   */
+  userModel.beforeCreate(async user => {
     try {
       const hashedPass = await bcrypt.hash(user.password, 10);
       user.password = hashedPass; // eslint-disable-line
@@ -63,9 +64,39 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  User.prototype.validatePassword = async function validatePassword(password) {
+  /**
+   * INSTANCE CLASSES
+   */
+
+  userModel.prototype.validatePassword = async function validatePassword(password) {
     return bcrypt.compare(password, this.password);
   };
 
-  return User;
+  /**
+   * ASSOCIATIONS
+   */
+
+  userModel.associate = models => {
+    userModel.hasMany(models.transaction, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id'
+      },
+      sourceKey: 'id',
+      onDelete: 'CASCADE',
+      as: 'transactions'
+    });
+
+    userModel.hasOne(models.budget, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id'
+      },
+      sourceKey: 'id',
+      onDelete: 'CASCADE',
+      as: 'budget'
+    });
+  };
+
+  return userModel;
 };

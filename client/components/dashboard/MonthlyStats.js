@@ -14,7 +14,7 @@ import { FlexRow } from '../Page';
 
 import { totalDailyTransactionBreakdown } from '../../lib/transactions';
 
-export default (props) => {
+export default props => {
   const { data, month, year } = props;
 
   const { transactions, totalAmount } = data;
@@ -35,7 +35,7 @@ export default (props) => {
           {`${month} ${year}`}
         </h3>
         <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
-          {`$${totalAmount} Total`}
+          {`$${(totalAmount / 100).toFixed(2)} Total`}
         </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>

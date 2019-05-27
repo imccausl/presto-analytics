@@ -1,5 +1,5 @@
 const API = {
-  root: 'http://localhost:3333/api/v1',
+  root: 'http://localhost:3333/api',
   send: (body, method = 'POST') => {
     let reqMethod = method;
 
@@ -24,7 +24,7 @@ const API = {
 
   currentUser: {
     method: 'GET',
-    endpoint: '/me',
+    endpoint: '/v1/user/me',
   },
   login: '/login',
   logout: {
@@ -42,27 +42,27 @@ const API = {
       searchMonth = year;
     }
 
-    return `/transactions/monthly/${searchYear}/${searchMonth}`;
+    return `/v1/transaction/monthly/${searchYear}/${searchMonth}`;
   },
   allTransactions: {
     method: 'GET',
-    endpoint: '/transactions/all',
+    endpoint: '/v1/transaction',
   },
   yearToDate: {
     method: 'GET',
-    endpoint: '/transactions/ytd',
+    endpoint: '/v1/transaction/ytd',
   },
   yearToDateData: {
     method: 'GET',
-    endpoint: '/transactions/ytd/data',
+    endpoint: '/v1/transaction/ytd/data',
   },
   updateBudget: {
     method: 'POST',
-    endpoint: '/budget/save',
+    endpoint: '/v1/budget/save',
   },
-  prestoUsage: '/presto/usage',
-  prestoLogin: { endpoint: '/presto/login', method: 'POST' },
-  prestoCheckLogin: { endpoint: '/presto/check-login', method: 'GET' },
+  prestoUsage: '/v1/presto/usage',
+  prestoLogin: { endpoint: '/v1/presto/login', method: 'POST' },
+  prestoCheckLogin: { endpoint: '/v1/presto/check-login', method: 'GET' },
 };
 
 export default API;

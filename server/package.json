@@ -4,13 +4,15 @@
   "description": "Scrape data from presto account to report some usage statistics",
   "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon -e js -x node --inspect src/app.js",
+    "dev": "nodemon -e js -x node --inspect=0.0.0.0:9229 src/app.js",
     "test": "jest --testPathIgnorePatterns /data/ --watch",
     "test:coverage": "jest --testPathIgnorePatterns /data/ --coverage",
-    "test:csrf": "jest getCSRF.spec.js",
-    "test:csrf:watch": "npm run test:csrf -- --testPathIgnorePatterns /data/ --watch",
-    "test:presto": "jest presto.spec.js",
-    "test:presto:watch": "npm run test:presto -- --testPathIgnorePatterns /data/ --watch"
+    "test:lib:presto:csrf": "jest getCSRF.spec.js",
+    "test:lib:presto:csrf:watch": "npm run test:csrf -- --testPathIgnorePatterns /data/ --watch",
+    "test:lib:presto": "jest presto.spec.js",
+    "test:lib:presto:watch": "npm run test:presto -- --testPathIgnorePatterns /data/ --watch",
+    "test:server:presto": "jest presto.*.spec.js",
+    "test:server:presto:watch": "npm run test:server:presto -- --watch"
   },
   "keywords": [
     "presto",
@@ -43,6 +45,7 @@
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "glob": "^7.1.4",
     "jquery": "^3.4.1",
     "jsdom": "^13.1.0",
     "jsonwebtoken": "^8.4.0",

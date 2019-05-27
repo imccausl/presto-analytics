@@ -16,7 +16,7 @@ export default class PrestoSignin extends Component {
     cards: [],
   };
 
-  handleTextEntry = (e) => {
+  handleTextEntry = e => {
     const { name, value } = e.target;
     // console.log(name, value);
     this.setState({ [name]: value });
@@ -26,7 +26,7 @@ export default class PrestoSignin extends Component {
     const {
       username, password, cards, inProgress, progressMessage,
     } = this.state;
-    const { incrementSteps } = this.props;
+    const { incrementSteps, update, closeModal } = this.props;
 
     if (cards) {
       console.log(cards.map(card => card.cardNumber));
@@ -43,7 +43,12 @@ export default class PrestoSignin extends Component {
           console.log(data);
           if (!loading && data) {
             this.setState({ inProgress: false, progressMessage: 'Complete!' });
-            incrementSteps();
+
+            if (update) {
+              closeModal();
+            } else {
+              incrementSteps();
+            }
           }
 
           const showHeader = () => {
@@ -101,7 +106,10 @@ export default class PrestoSignin extends Component {
                   content="Next"
                   disabled={loading || inProgress || !username || !password}
                   onClick={async () => {
-                    this.setState({ inProgress: true, progressMessage: 'Logging into PRESTO...' });
+                    this.setState({
+                      inProgress: true,
+                      progressMessage: 'Logging into PRESTO...',
+                    });
                     const isLoggedIn = await requestApi.prestoIsLoggedIn();
                     console.log(isLoggedIn);
                     if (
@@ -114,9 +122,9 @@ export default class PrestoSignin extends Component {
                       });
                       const response = await requestApi.prestoLogin(username, password);
                       console.log(response);
-                      if (response.accountInfo) {
+                      if (response.cards) {
                         this.setState({
-                          cards: response.accountInfo,
+                          cards: response.cards,
                           inProgress: true,
                           progressMessage: 'Fetching PRESTO usage data...',
                         });
@@ -129,8 +137,28 @@ export default class PrestoSignin extends Component {
                   }}
                 >
                   <Icon name="checkmark" />
-                  {' Next'}
+                  {`${
+                    update
+                      ? inProgress && progressMessage === 'Complete!'
+                        ? ' Close'
+                        : ' Update'
+                      : ' Next'
+                  }`}
                 </Button>
+                {update && (
+                  <Button
+                    labelPosition="right"
+                    content="Cancel"
+                    disabled={inProgress}
+                    style={{ marginLeft: '10px' }}
+                    onClick={() => {
+                      closeModal();
+                    }}
+                  >
+                    <Icon name="times" />
+                    {' Cancel'}
+                  </Button>
+                )}
               </Form>
             </div>
           );

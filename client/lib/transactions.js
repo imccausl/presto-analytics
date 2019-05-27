@@ -16,7 +16,7 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
     dataset[dateString] = { amount: 0, trips: 0 };
   }
 
-  transactions.forEach((item) => {
+  transactions.forEach(item => {
     const date = moment(item.date)
       .utcOffset(0)
       .format('DD/MM/YYYY');
@@ -26,19 +26,19 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
     dataset[date].trips += 1;
   });
 
-  const breakdown = Object.keys(dataset).map((key) => {
+  const breakdown = Object.keys(dataset).map(key => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const currDate = moment(key, 'DD/MM/YYYY');
 
     if (includeAmountInDomain) {
-      domain[1] = domain[1] < dataset[key].amount ? dataset[key].amount : domain[1];
+      domain[1] = domain[1] < dataset[key].amount ? (dataset[key].amount / 100).toFixed(2) : domain[1];
     }
     domain[1] = domain[1] < dataset[key].trips ? dataset[key].trips : domain[1];
 
     return {
       date: currDate.format('DD'),
       dayOfWeek: days[currDate.day()],
-      amount: dataset[key].amount,
+      amount: (dataset[key].amount / 100).toFixed(2),
       trips: dataset[key].trips,
     };
   });

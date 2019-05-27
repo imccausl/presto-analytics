@@ -23,9 +23,11 @@ export default props => {
       totalMonthlyPassCost = monthlyPassCost;
     }
 
-    item.costPerTapIfPass = Math.round(
-      (parseFloat(totalMonthlyPassCost) / (item.paymentTaps + item.transferTaps)) * 100,
-    ) / 100;
+    item.costPerTapIfPass = (
+      Math.round(parseFloat(totalMonthlyPassCost) / (item.paymentTaps + item.transferTaps)) / 100
+    ).toFixed(2);
+    item.costPerTap = (Math.round(item.costPerTap) / 100).toFixed(2);
+    item.amount = (Math.round(item.amount) / 100).toFixed(2);
   });
 
   return (
@@ -42,7 +44,7 @@ export default props => {
           {'Cost Per Tap'}
         </h3>
         <h3 style={{ marginTop: '0', marginRight: '30px', color: '#3BB4E9' }}>
-          {`$${dataset.costPerTap} / Tap`}
+          {`$${(dataset.costPerTap / 100).toFixed(2)} / Tap`}
         </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>
@@ -85,7 +87,7 @@ export default props => {
           <YAxis
             type="number"
             tickMargin={20}
-            dataKey="costPerTapIfPass"
+            dataKey="costPerTap"
             tickLine={false}
             axisLine={false}
             stroke="#C4C4C4"

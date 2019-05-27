@@ -9,6 +9,7 @@ services:
       - postgres
     expose:
       - ${SERVER_PORT}
+      - "9229"
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
       - "9229:9229"
