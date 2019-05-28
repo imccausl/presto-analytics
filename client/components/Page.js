@@ -197,8 +197,9 @@ export default class Page extends Component {
                               ? 'Never'
                               : moment(currentMonth.currTransactions[0].date).fromNow()
                           }
-                          iconName="credit card alternative"
-                          iconColor="olive"
+                          iconName="fa-4x fas fa-wallet"
+                          isFontAwesome
+                          iconColor="rgb(17, 187, 129)"
                         />
                         <Statistic
                           label="Last Charge"
@@ -230,9 +231,14 @@ export default class Page extends Component {
                             <Statistic
                               key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
                               label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              iconName="map outline"
-                              iconColor="#5558c8"
+                              iconName={
+                                item.type === 'Fare Payment'
+                                  ? 'fa-4x fas fa-road'
+                                  : 'fa-4x fas fa-map-signs'
+                              }
+                              iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
                               value={item.count}
+                              isFontAwesome
                               extra="Since last year"
                             />
                           ))}

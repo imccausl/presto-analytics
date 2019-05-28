@@ -3,7 +3,7 @@ import { Card, Icon, Grid } from 'semantic-ui-react';
 
 export default props => {
   const {
-    label, value, extra, iconName, iconColor,
+    label, value, extra, iconName, iconColor, isFontAwesome,
   } = props;
 
   return (
@@ -21,7 +21,11 @@ export default props => {
           <Grid columns={2} verticalAlign="middle">
             <Grid.Row>
               <Grid.Column>
-                <Icon name={iconName} size="huge" color={iconColor} />
+                {isFontAwesome ? (
+                  <i style={{ color: iconColor }} className={iconName} />
+                ) : (
+                  <Icon className={iconName} size="huge" color={iconColor} />
+                )}
               </Grid.Column>
               <Grid.Column style={{ textAlign: 'right', lineHeight: '1.2' }}>
                 <Grid.Row>

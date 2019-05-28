@@ -1,5 +1,6 @@
-import '../css/semantic.min.css';
-import 'nprogress/nprogress.css';
+import '../static/custom-semantic-ui/semantic.min.css';
+// import '../static/fontawesome-free-5.8.2-web/css/all.css';
+// import 'nprogress/nprogress.css';
 
 import React from 'react';
 import App, { Container } from 'next/app';
