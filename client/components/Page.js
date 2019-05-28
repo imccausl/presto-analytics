@@ -136,7 +136,15 @@ export default class Page extends Component {
               <>
                 <Meta />
                 <SideBar />
-                <Grid columns={1} style={{ backgroundColor: '#f4f3ef' }}>
+                <Grid
+                  columns={1}
+                  style={{
+                    backgroundColor: '#f4f3ef',
+                    marginLeft: '80px',
+                    padding: '30px',
+                    boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
+                  }}
+                >
                   <Grid.Column>
                     {/* <Grid.Row>
                       <Menu attached="top" style={{ textAlign: 'right' }}>
@@ -175,63 +183,61 @@ export default class Page extends Component {
                         </Dropdown>
                       </Menu>
                     </Grid.Row> */}
-                    <div style={{ marginLeft: '210px', padding: '10px' }}>
-                      <Grid.Row style={{ marginBottom: '20px' }}>
-                        <Card.Group centered>
-                          <Statistic
-                            label="Balance"
-                            value={`$${Math.round(balance)}`}
-                            extra={
-                              currentMonth.currTransactions.length === 0
-                                ? 'Never'
-                                : moment(currentMonth.currTransactions[0].date).fromNow()
-                            }
-                            iconName="credit card alternative"
-                            iconColor="olive"
-                          />
-                          <Statistic
-                            label="Last Charge"
-                            value={`$${
-                              currentMonth.currTransactions.length === 0
-                                ? 'N/A'
-                                : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
-                            }`}
-                            extra={
-                              currentMonth.currTransactions.length === 0
-                                ? 'Never'
-                                : moment(currentMonth.currTransactions[0].date).fromNow()
-                            }
-                            iconName="subway"
-                            iconColor="yellow"
-                          />
-                          <Statistic
-                            label="Spent"
-                            value={`$${
-                              yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                            }`}
-                            extra="Since May 2018"
-                            iconName="fire"
-                            iconColor="orange"
-                          />
-                          <Statistic
-                            label="Trips"
-                            value={`${
-                              yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                            }`}
-                            extra="Since January 2018"
-                            iconName="map outline"
-                            iconColor="green"
-                          />
-                        </Card.Group>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <UserContext.Provider
-                          value={{ user: data.data.user, budget: data.data.budget }}
-                        >
-                          {children}
-                        </UserContext.Provider>
-                      </Grid.Row>
-                    </div>
+                    <Grid.Row style={{ marginBottom: '20px' }}>
+                      <Card.Group centered>
+                        <Statistic
+                          label="Balance"
+                          value={`$${Math.round(balance)}`}
+                          extra={
+                            currentMonth.currTransactions.length === 0
+                              ? 'Never'
+                              : moment(currentMonth.currTransactions[0].date).fromNow()
+                          }
+                          iconName="credit card alternative"
+                          iconColor="olive"
+                        />
+                        <Statistic
+                          label="Last Charge"
+                          value={`$${
+                            currentMonth.currTransactions.length === 0
+                              ? 'N/A'
+                              : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
+                          }`}
+                          extra={
+                            currentMonth.currTransactions.length === 0
+                              ? 'Never'
+                              : moment(currentMonth.currTransactions[0].date).fromNow()
+                          }
+                          iconName="subway"
+                          iconColor="yellow"
+                        />
+                        <Statistic
+                          label="Spent"
+                          value={`$${
+                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
+                          }`}
+                          extra="Since May 2018"
+                          iconName="fire"
+                          iconColor="orange"
+                        />
+                        <Statistic
+                          label="Trips"
+                          value={`${
+                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
+                          }`}
+                          extra="Since January 2018"
+                          iconName="map outline"
+                          iconColor="green"
+                        />
+                      </Card.Group>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <UserContext.Provider
+                        value={{ user: data.data.user, budget: data.data.budget }}
+                      >
+                        {children}
+                      </UserContext.Provider>
+                    </Grid.Row>
                   </Grid.Column>
                 </Grid>
               </>

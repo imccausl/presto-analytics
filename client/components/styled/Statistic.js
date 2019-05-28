@@ -24,17 +24,17 @@ export default props => {
               </Grid.Column>
               <Grid.Column style={{ textAlign: 'right', lineHeight: '1.2' }}>
                 <Grid.Row>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '200' }}>{label}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '300' }}>{label}</div>
                 </Grid.Row>
                 <Grid.Row>
-                  <div style={{ fontWeight: '500', fontSize: '2.5rem' }}>{value}</div>
+                  <div style={{ fontWeight: '600', fontSize: '2.5rem' }}>{value}</div>
                 </Grid.Row>
               </Grid.Column>
             </Grid.Row>
           </Grid>
         </Card.Description>
       </Card.Content>
-      <Card.Content extra style={{ margin: '0 15px' }}>
+      <Card.Content extra style={{ margin: '0 15px', paddingLeft: '0' }}>
         {extra}
       </Card.Content>
     </Card>
