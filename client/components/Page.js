@@ -135,11 +135,10 @@ export default class Page extends Component {
             return (
               <>
                 <Meta />
-                <Grid columns={1}>
-                  <SideBar />
-
+                <SideBar />
+                <Grid columns={1} style={{ backgroundColor: '#f4f3ef' }}>
                   <Grid.Column>
-                    <Grid.Row>
+                    {/* <Grid.Row>
                       <Menu attached="top" style={{ textAlign: 'right' }}>
                         <Dropdown
                           trigger={trigger}
@@ -175,9 +174,9 @@ export default class Page extends Component {
                           </Dropdown.Menu>
                         </Dropdown>
                       </Menu>
-                    </Grid.Row>
+                    </Grid.Row> */}
                     <div style={{ marginLeft: '210px', padding: '10px' }}>
-                      <Grid.Row>
+                      <Grid.Row style={{ marginBottom: '20px' }}>
                         <Card.Group centered>
                           <Statistic
                             label="Balance"
@@ -220,8 +219,8 @@ export default class Page extends Component {
                               yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
                             }`}
                             extra="Since January 2018"
-                            iconName="fire"
-                            iconColor="orange"
+                            iconName="map outline"
+                            iconColor="green"
                           />
                         </Card.Group>
                       </Grid.Row>
