@@ -78,7 +78,7 @@ const me = async (req, res, next) => {
     const ytd = await Transaction.findAll({
       where: {
         userId: req.userId,
-        type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE),
+        type: sequelize.or(types.TRANSIT_PASS_LOAD, types.TRANSIT_FARE, types.TRANSFER),
         serviceClass: 'Regular',
         date: {
           [Sequelize.Op.gte]: moment(lastYear, 'DD/MM/YYYY'),

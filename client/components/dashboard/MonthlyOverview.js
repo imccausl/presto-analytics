@@ -19,22 +19,16 @@ const panes = [
 ];
 
 function getFareTypeCount(data) {
-  const sortedData = {};
+  const fareTypeCount = Object.keys(data.count).map(key => {
+    const typeName = key;
 
-  data.forEach((item) => {
-    if (!sortedData[item.type]) {
-      sortedData[item.type] = 1;
-    } else {
-      sortedData[item.type] += 1;
-    }
+    return {
+      name: typeName[0].toUpperCase() + typeName.substring(1),
+      count: data.count[typeName],
+    };
   });
 
-  const chartData = Object.keys(sortedData).map(key => ({
-    name: sortedData[key] === 1 ? key : `${key}s`,
-    value: sortedData[key],
-  }));
-
-  return chartData;
+  return fareTypeCount;
 }
 
 export default class MonthlyOverview extends Component {
@@ -68,7 +62,7 @@ export default class MonthlyOverview extends Component {
           url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
           options={API.send('GET')}
         >
-          {(payload) => {
+          {payload => {
             console.log(payload);
 
             return (
@@ -115,7 +109,7 @@ export default class MonthlyOverview extends Component {
                     <Message error>{payload.error.message}</Message>
                   )}
                 </Segment>
-                {!payload.loading && (
+                {/* {!payload.loading && (
                   <Header as="div" attached="bottom" style={{ minHeight: '80px' }}>
                     <FlexRow justify="space-around">
                       {!payload.error && (
@@ -128,17 +122,17 @@ export default class MonthlyOverview extends Component {
 
                       {payload.error
                         ? ''
-                        : getFareTypeCount(payload.data.data.transactions).map(item => (
+                        : getFareTypeCount(payload.data.data).map(item => (
                           <Statistic
                             key={item.name}
                             label={item.name}
                             labelColor="#5558c8"
-                            value={item.value}
+                            value={item.count}
                           />
                         ))}
                     </FlexRow>
                   </Header>
-                )}
+                )} */}
               </>
             );
           }}

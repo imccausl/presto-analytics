@@ -9,10 +9,11 @@ export default props => {
   return (
     <Card
       style={{
-        maxWidth: '260px',
         border: 'none',
         boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
         borderRadius: '6px',
+        flex: '1',
+        minWidth: '258px',
       }}
     >
       <Card.Content style={{ paddingLeft: '20px', paddingRight: '20px' }}>

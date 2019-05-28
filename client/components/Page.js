@@ -123,8 +123,9 @@ export default class Page extends Component {
                 user, balance, currentMonth, ytd,
               },
             } = data;
-            const yearToDateBalance = ytd.reduce((count, curr) => count + curr.total, 0);
 
+            console.log('Page:', data);
+            const yearToDateBalance = ytd.reduce((count, curr) => count + curr.total, 0);
             const trigger = (
               <span>
                 <Icon name="user" />
@@ -184,7 +185,10 @@ export default class Page extends Component {
                       </Menu>
                     </Grid.Row> */}
                     <Grid.Row style={{ marginBottom: '20px' }}>
-                      <Card.Group centered>
+                      <Card.Group
+                        centered
+                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
+                      >
                         <Statistic
                           label="Balance"
                           value={`$${Math.round(balance)}`}
@@ -220,15 +224,18 @@ export default class Page extends Component {
                           iconName="fire"
                           iconColor="orange"
                         />
-                        <Statistic
-                          label="Trips"
-                          value={`${
-                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                          }`}
-                          extra="Since January 2018"
-                          iconName="map outline"
-                          iconColor="green"
-                        />
+
+                        {ytd
+                          && ytd.map(item => (
+                            <Statistic
+                              key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                              label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                              iconName="map outline"
+                              iconColor="#5558c8"
+                              value={item.count}
+                              extra="Since last year"
+                            />
+                          ))}
                       </Card.Group>
                     </Grid.Row>
                     <Grid.Row>
