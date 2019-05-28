@@ -25230,7 +25230,6 @@ Floated Menu / Item
 }
 
 .ui.inverted.pointing.menu .active.item:after {
-  background: #3D3E3F !important;
   margin: 0em !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;

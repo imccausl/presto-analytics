@@ -39,7 +39,7 @@ export default props => {
           </Grid>
         </Card.Description>
       </Card.Content>
-      <Card.Content extra style={{ margin: '0 15px', paddingLeft: '0' }}>
+      <Card.Content extra style={{ margin: '0 15px', paddingLeft: '0', fontWeight: '200' }}>
         {extra}
       </Card.Content>
     </Card>

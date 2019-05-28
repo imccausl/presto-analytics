@@ -12,6 +12,8 @@ import {
   Message,
   Grid,
   Container,
+  Segment,
+  Header,
 } from 'semantic-ui-react';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
@@ -136,18 +138,42 @@ export default class Page extends Component {
             return (
               <>
                 <Meta />
-                <SideBar />
+                <Grid padded>
+                  <Menu
+                    size="massive"
+                    pointing
+                    fluid
+                    secondary
+                    style={{ backgroundColor: 'rgb(244, 243, 239)', paddingLeft: '100px' }}
+                  >
+                    <Menu.Item header>Dashboard</Menu.Item>
+                    <Menu.Item active name="home" onClick={this.handleItemClick} />
+                    <Menu.Item name="day" onClick={this.handleItemClick} />
+                    <Menu.Item name="month" onClick={this.handleItemClick} />
+                    <Menu.Item name="year" onClick={this.handleItemClick} />
+                    <Menu.Item name="all time" onClick={this.handleItemClick} />
+
+                    <Menu.Menu position="right">
+                      <Menu.Item name="logout" onClick={this.handleItemClick} />
+                    </Menu.Menu>
+                  </Menu>
+                </Grid>
+
+                <div style={{ position: 'relative' }}>
+                  <SideBar />
+                </div>
+
                 <Grid
                   columns={1}
                   style={{
                     backgroundColor: '#f4f3ef',
-                    marginLeft: '80px',
-                    padding: '30px',
+                    paddingLeft: '130px',
+                    paddingRight: '30px',
                     boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
                   }}
                 >
-                  <Grid.Column>
-                    {/* <Grid.Row>
+                  <Grid.Row>
+                    {/* <Container>
                       <Menu attached="top" style={{ textAlign: 'right' }}>
                         <Dropdown
                           trigger={trigger}
@@ -183,75 +209,82 @@ export default class Page extends Component {
                           </Dropdown.Menu>
                         </Dropdown>
                       </Menu>
-                    </Grid.Row> */}
-                    <Grid.Row style={{ marginBottom: '20px' }}>
-                      <Card.Group
-                        centered
-                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
-                      >
-                        <Statistic
-                          label="Balance"
-                          value={`$${Math.round(balance)}`}
-                          extra={
-                            currentMonth.currTransactions.length === 0
-                              ? 'Never'
-                              : moment(currentMonth.currTransactions[0].date).fromNow()
-                          }
-                          iconName="fa-4x fas fa-wallet"
-                          isFontAwesome
-                          iconColor="rgb(17, 187, 129)"
-                        />
-                        <Statistic
-                          label="Last Charge"
-                          value={`$${
-                            currentMonth.currTransactions.length === 0
-                              ? 'N/A'
-                              : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
-                          }`}
-                          extra={
-                            currentMonth.currTransactions.length === 0
-                              ? 'Never'
-                              : moment(currentMonth.currTransactions[0].date).fromNow()
-                          }
-                          iconName="subway"
-                          iconColor="yellow"
-                        />
-                        <Statistic
-                          label="Spent"
-                          value={`$${
-                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                          }`}
-                          extra="Since May 2018"
-                          iconName="fire"
-                          iconColor="orange"
-                        />
+                    </Container> */}
+                  </Grid.Row>
+                  <Grid.Row columns={1}>
+                    <Grid.Column>
+                      {/* <Grid.Row>
 
-                        {ytd
-                          && ytd.map(item => (
-                            <Statistic
-                              key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              iconName={
-                                item.type === 'Fare Payment'
-                                  ? 'fa-4x fas fa-road'
-                                  : 'fa-4x fas fa-map-signs'
-                              }
-                              iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
-                              value={item.count}
-                              isFontAwesome
-                              extra="Since last year"
-                            />
-                          ))}
-                      </Card.Group>
-                    </Grid.Row>
-                    <Grid.Row>
-                      <UserContext.Provider
-                        value={{ user: data.data.user, budget: data.data.budget }}
-                      >
-                        {children}
-                      </UserContext.Provider>
-                    </Grid.Row>
-                  </Grid.Column>
+                    </Grid.Row> */}
+                      <Grid.Row style={{ marginBottom: '20px' }}>
+                        <Card.Group
+                          centered
+                          style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
+                        >
+                          <Statistic
+                            label="Balance"
+                            value={`$${Math.round(balance)}`}
+                            extra={
+                              currentMonth.currTransactions.length === 0
+                                ? 'Never'
+                                : moment(currentMonth.currTransactions[0].date).fromNow()
+                            }
+                            iconName="fa-4x fas fa-wallet"
+                            isFontAwesome
+                            iconColor="rgb(17, 187, 129)"
+                          />
+                          <Statistic
+                            label="Last Charge"
+                            value={`$${
+                              currentMonth.currTransactions.length === 0
+                                ? 'N/A'
+                                : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
+                            }`}
+                            extra={
+                              currentMonth.currTransactions.length === 0
+                                ? 'Never'
+                                : moment(currentMonth.currTransactions[0].date).fromNow()
+                            }
+                            iconName="subway"
+                            iconColor="yellow"
+                          />
+                          <Statistic
+                            label="Spent"
+                            value={`$${
+                              yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
+                            }`}
+                            extra="Since May 2018"
+                            iconName="fire"
+                            iconColor="orange"
+                          />
+
+                          {ytd
+                            && ytd.map(item => (
+                              <Statistic
+                                key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                                label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                                iconName={
+                                  item.type === 'Fare Payment'
+                                    ? 'fa-4x fas fa-road'
+                                    : 'fa-4x fas fa-map-signs'
+                                }
+                                iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
+                                value={item.count}
+                                isFontAwesome
+                                extra="Since last year"
+                              />
+                            ))}
+                        </Card.Group>
+                      </Grid.Row>
+                      <Grid.Row>
+                        <UserContext.Provider
+                          value={{ user: data.data.user, budget: data.data.budget }}
+                        >
+                          {children}
+                        </UserContext.Provider>
+                      </Grid.Row>
+                    </Grid.Column>
+                  </Grid.Row>
                 </Grid>
               </>
             );
