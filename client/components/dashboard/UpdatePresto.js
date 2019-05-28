@@ -36,7 +36,7 @@ export default class UpdatePresto extends Component {
           Update Presto Data
         </Dropdown.Item>
 
-        <Modal open={open}>
+        <Modal open={open} size="tiny">
           <PrestoSignin
             update
             closeModal={() => {

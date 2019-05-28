@@ -99,66 +99,66 @@ export default class PrestoSignin extends Component {
                     value={password}
                   />
                 </Form.Group>
-                <Button
-                  positive
-                  labelPosition="right"
-                  icon="chevron circle right"
-                  content="Next"
-                  disabled={loading || inProgress || !username || !password}
-                  onClick={async () => {
-                    this.setState({
-                      inProgress: true,
-                      progressMessage: 'Logging into PRESTO...',
-                    });
-                    const isLoggedIn = await requestApi.prestoIsLoggedIn();
-                    console.log(isLoggedIn);
-                    if (
-                      isLoggedIn.status === 'error'
-                      && isLoggedIn.message === 'Not logged in to Presto'
-                    ) {
+                <div>
+                  <Button
+                    positive
+                    labelPosition="right"
+                    icon="chevron circle right"
+                    content="Next"
+                    disabled={loading || inProgress || !username || !password}
+                    onClick={async () => {
                       this.setState({
                         inProgress: true,
-                        progressMessage: 'Getting account data...',
+                        progressMessage: 'Logging into PRESTO...',
                       });
-                      const response = await requestApi.prestoLogin(username, password);
-                      console.log(response);
-                      if (response.cards) {
+                      const isLoggedIn = await requestApi.prestoIsLoggedIn();
+                      console.log(isLoggedIn);
+                      if (
+                        isLoggedIn.status === 'error'
+                        && isLoggedIn.message === 'Not logged in to Presto'
+                      ) {
                         this.setState({
-                          cards: response.cards,
                           inProgress: true,
-                          progressMessage: 'Fetching PRESTO usage data...',
+                          progressMessage: 'Getting account data...',
                         });
+                        const response = await requestApi.prestoLogin(username, password);
+                        console.log(response);
+                        if (response.cards) {
+                          this.setState({
+                            cards: response.cards,
+                            inProgress: true,
+                            progressMessage: 'Fetching PRESTO usage data...',
+                          });
 
-                        fetch();
+                          fetch();
+                        }
+                      } else if (isLoggedIn.status === 'success') {
+                        // fetch();
                       }
-                    } else if (isLoggedIn.status === 'success') {
-                      // fetch();
-                    }
-                  }}
-                >
-                  <Icon name="checkmark" />
-                  {`${
-                    update
-                      ? inProgress && progressMessage === 'Complete!'
-                        ? ' Close'
-                        : ' Update'
-                      : ' Next'
-                  }`}
-                </Button>
-                {update && (
-                  <Button
-                    labelPosition="right"
-                    content="Cancel"
-                    disabled={inProgress}
-                    style={{ marginLeft: '10px' }}
-                    onClick={() => {
-                      closeModal();
                     }}
                   >
-                    <Icon name="times" />
-                    {' Cancel'}
+                    <Icon name="checkmark" />
+                    {`${
+                      update
+                        ? inProgress && progressMessage === 'Complete!'
+                          ? ' Close'
+                          : ' Update'
+                        : ' Next'
+                    }`}
                   </Button>
-                )}
+                  {update && (
+                    <Button
+                      negative
+                      content="Cancel"
+                      disabled={inProgress}
+                      onClick={() => {
+                        closeModal();
+                      }}
+                    >
+                      {' Cancel'}
+                    </Button>
+                  )}
+                </div>
               </Form>
             </div>
           );

@@ -1,37 +1,35 @@
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import { Card, Icon, Grid } from 'semantic-ui-react';
 
-const Label = styled.h3`
-  font-size: 1.1em;
-  text-transform: capitalize;
-  color: ${props => props.labelColor || '#9ec0ff'};
-  margin: 0;
-`;
-
-const Container = styled.div`
-  text-align: center;
-  border-radius: 0.25em;
-  margin-right: 0;
-  margin-left: 50px;
-`;
-
-const Content = styled.h2`
-  font-size: 2em;
-  margin: 0;
-`;
-
-const Footer = styled.h3`
-  font-size: 1em;
-  margin: 0;
-`;
-
-export default (props) => {
-  const { label, value, labelColor } = props;
+export default props => {
+  const {
+    label, value, extra, iconName, iconColor,
+  } = props;
 
   return (
-    <Container>
-      <Content>{value}</Content>
-      <Label labelColor={labelColor}>{label}</Label>
-    </Container>
+    <Card raised style={{ maxWidth: '260px' }}>
+      <Card.Content>
+        <Card.Description>
+          <Grid columns={2} verticalAlign="middle">
+            <Grid.Row>
+              <Grid.Column>
+                <Icon name={iconName} size="big" circular inverted color={iconColor} />
+              </Grid.Column>
+              <Grid.Column style={{ textAlign: 'right', lineHeight: '1.2' }}>
+                <Grid.Row>
+                  <div style={{ fontSize: '1.3rem' }}>{label}</div>
+                </Grid.Row>
+                <Grid.Row>
+                  <div style={{ fontWeight: '500', fontSize: '2.5rem' }}>{value}</div>
+                </Grid.Row>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra style={{ margin: '0 15px' }}>
+        {extra}
+      </Card.Content>
+    </Card>
   );
 };
