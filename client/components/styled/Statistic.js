@@ -9,18 +9,16 @@ export default props => {
   return (
     <Card
       style={{
-        border: 'none',
-        boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
-        borderRadius: '6px',
         flex: '1',
-        minWidth: '258px',
+        minWidth: '230px',
+        maxWidth: '250px',
       }}
     >
       <Card.Content style={{ paddingLeft: '20px', paddingRight: '20px' }}>
         <Card.Description>
-          <Grid columns={2} verticalAlign="middle">
-            <Grid.Row>
-              <Grid.Column>
+          <Grid columns={1} verticalAlign="middle">
+            <Grid.Row verticalAlign="center" columns={2}>
+              <Grid.Column style={{ alignItems: 'flex-end' }}>
                 {isFontAwesome ? (
                   <i style={{ color: iconColor }} className={iconName} />
                 ) : (
@@ -29,10 +27,10 @@ export default props => {
               </Grid.Column>
               <Grid.Column style={{ textAlign: 'right', lineHeight: '1.2' }}>
                 <Grid.Row>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '300' }}>{label}</div>
+                  <div style={{ fontSize: '1rem', fontWeight: '300' }}>{label}</div>
                 </Grid.Row>
                 <Grid.Row>
-                  <div style={{ fontWeight: '600', fontSize: '2.5rem' }}>{value}</div>
+                  <div style={{ fontWeight: '600', fontSize: '2rem' }}>{value}</div>
                 </Grid.Row>
               </Grid.Column>
             </Grid.Row>
