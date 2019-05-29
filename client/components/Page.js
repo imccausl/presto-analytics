@@ -18,14 +18,13 @@ import {
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
 
-import AccountSettings from './AccountSettings';
 import Index from './Index';
 import AuthUser from './AuthUser';
 import Login from './Login';
 import Meta from './Meta';
 import SideBar from './SideBar';
 import Statistic from './styled/Statistic';
-import UpdatePresto from './dashboard/UpdatePresto';
+import User from './dashboard/User';
 
 import requestApi from '../lib/requestApi';
 
@@ -67,10 +66,6 @@ export default class Page extends Component {
     updatePrestoOpen: false,
     accountSettingsOpen: false,
     redirect: false,
-  };
-
-  handleMenuSelect = (e, { name, value }) => {
-    console.log(name, value);
   };
 
   render() {
@@ -134,29 +129,14 @@ export default class Page extends Component {
                 {`Hello, ${user.firstName}`}
               </span>
             );
-
+            // rgb(244, 243, 239)
             return (
               <>
                 <Meta />
                 <Grid padded>
-                  <Menu
-                    size="massive"
-                    pointing
-                    fluid
-                    secondary
-                    style={{ backgroundColor: 'rgb(244, 243, 239)', paddingLeft: '100px' }}
-                  >
-                    <Menu.Item header>Dashboard</Menu.Item>
-                    <Menu.Item active name="home" onClick={this.handleItemClick} />
-                    <Menu.Item name="day" onClick={this.handleItemClick} />
-                    <Menu.Item name="month" onClick={this.handleItemClick} />
-                    <Menu.Item name="year" onClick={this.handleItemClick} />
-                    <Menu.Item name="all time" onClick={this.handleItemClick} />
-
-                    <Menu.Menu position="right">
-                      <Menu.Item name="logout" onClick={this.handleItemClick} />
-                    </Menu.Menu>
-                  </Menu>
+                  <Grid.Row>
+                    <User />
+                  </Grid.Row>
                 </Grid>
 
                 <div style={{ position: 'relative' }}>
@@ -169,54 +149,13 @@ export default class Page extends Component {
                     backgroundColor: '#f4f3ef',
                     paddingLeft: '130px',
                     paddingRight: '30px',
-                    boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
+                    // boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
                   }}
                 >
-                  <Grid.Row>
-                    {/* <Container>
-                      <Menu attached="top" style={{ textAlign: 'right' }}>
-                        <Dropdown
-                          trigger={trigger}
-                          pointing="top left"
-                          direction="left"
-                          icon={null}
-                          name="user"
-                          onClick={this.handleMenuSelect}
-                        >
-                          <Dropdown.Menu>
-                            <Dropdown.Item disabled>
-                              <span>
-                                Signed in as
-                                {' '}
-                                <strong>{`${user.firstName} ${user.lastName}`}</strong>
-                              </span>
-                            </Dropdown.Item>
-                            <AccountSettings
-                              open={accountSettingsOpen}
-                              user={data.data.user}
-                              budget={data.data.budget || {}}
-                            />
-                            <UpdatePresto open={this.state.updatePrestoOpen} />
-                            <Dropdown.Divider />
-                            <Dropdown.Item
-                              onClick={async () => {
-                                requestApi.logout();
-                                window.location.href = '/login';
-                              }}
-                            >
-                              Log out
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </Menu>
-                    </Container> */}
-                  </Grid.Row>
+                  <Grid.Row />
                   <Grid.Row columns={1}>
                     <Grid.Column>
-                      {/* <Grid.Row>
-
-                    </Grid.Row> */}
-                      <Grid.Row style={{ marginBottom: '20px' }}>
+                      <Segment vertical>
                         <Card.Group
                           centered
                           style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
@@ -275,14 +214,14 @@ export default class Page extends Component {
                               />
                             ))}
                         </Card.Group>
-                      </Grid.Row>
-                      <Grid.Row>
+                      </Segment>
+                      <Segment vertical>
                         <UserContext.Provider
                           value={{ user: data.data.user, budget: data.data.budget }}
                         >
                           {children}
                         </UserContext.Provider>
-                      </Grid.Row>
+                      </Segment>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
