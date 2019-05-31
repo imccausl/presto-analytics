@@ -155,66 +155,64 @@ export default class Page extends Component {
                   <Grid.Row />
                   <Grid.Row columns={1}>
                     <Grid.Column>
-                      <Segment vertical>
-                        <Card.Group
-                          centered
-                          style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
-                        >
-                          <Statistic
-                            label="Balance"
-                            value={`$${Math.round(balance)}`}
-                            extra={
-                              currentMonth.currTransactions.length === 0
-                                ? 'Never'
-                                : moment(currentMonth.currTransactions[0].date).fromNow()
-                            }
-                            iconName="fa-4x fas fa-wallet"
-                            isFontAwesome
-                            iconColor="rgb(17, 187, 129)"
-                          />
-                          <Statistic
-                            label="Last Charge"
-                            value={`$${
-                              currentMonth.currTransactions.length === 0
-                                ? 'N/A'
-                                : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
-                            }`}
-                            extra={
-                              currentMonth.currTransactions.length === 0
-                                ? 'Never'
-                                : moment(currentMonth.currTransactions[0].date).fromNow()
-                            }
-                            iconName="subway"
-                            iconColor="yellow"
-                          />
-                          <Statistic
-                            label="Spent"
-                            value={`$${
-                              yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                            }`}
-                            extra="Since May 2018"
-                            iconName="fire"
-                            iconColor="orange"
-                          />
+                      <Card.Group
+                        centered
+                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
+                      >
+                        <Statistic
+                          label="Balance"
+                          value={`$${Math.round(balance)}`}
+                          extra={
+                            currentMonth.currTransactions.length === 0
+                              ? 'Never'
+                              : moment(currentMonth.currTransactions[0].date).fromNow()
+                          }
+                          iconName="fa-4x fas fa-wallet"
+                          isFontAwesome
+                          iconColor="rgb(17, 187, 129)"
+                        />
+                        <Statistic
+                          label="Last Charge"
+                          value={`$${
+                            currentMonth.currTransactions.length === 0
+                              ? 'N/A'
+                              : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
+                          }`}
+                          extra={
+                            currentMonth.currTransactions.length === 0
+                              ? 'Never'
+                              : moment(currentMonth.currTransactions[0].date).fromNow()
+                          }
+                          iconName="bus"
+                          iconColor="yellow"
+                        />
+                        <Statistic
+                          label="Spent"
+                          value={`$${
+                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
+                          }`}
+                          extra="Since May 2018"
+                          iconName="fire"
+                          iconColor="orange"
+                        />
 
-                          {ytd
-                            && ytd.map(item => (
-                              <Statistic
-                                key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                                label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                                iconName={
-                                  item.type === 'Fare Payment'
-                                    ? 'fa-4x fas fa-road'
-                                    : 'fa-4x fas fa-map-signs'
-                                }
-                                iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
-                                value={item.count}
-                                isFontAwesome
-                                extra="Since last year"
-                              />
-                            ))}
-                        </Card.Group>
-                      </Segment>
+                        {ytd
+                          && ytd.map(item => (
+                            <Statistic
+                              key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                              label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                              iconName={
+                                item.type === 'Fare Payment'
+                                  ? 'fa-4x fas fa-road'
+                                  : 'fa-4x fas fa-map-signs'
+                              }
+                              iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
+                              value={item.count}
+                              isFontAwesome
+                              extra="Since last year"
+                            />
+                          ))}
+                      </Card.Group>
                       <Segment vertical>
                         <UserContext.Provider
                           value={{ user: data.data.user, budget: data.data.budget }}

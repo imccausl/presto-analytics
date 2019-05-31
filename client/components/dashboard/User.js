@@ -17,23 +17,28 @@ export default class User extends React.Component {
   }
 
   render() {
+    const options = [
+      { key: 1, text: 'All Cards', value: 'all' },
+      { key: 2, text: 'Card 1', value: 'Card 1' },
+      { key: 3, text: 'Card 2', value: 'Card 2' },
+    ];
+
     return (
       <>
         <Container>
           <Grid>
             <Grid.Row>
-              <Header as="h2" textAlign="left">
-                <Icon name="users" circular />
-                <Header.Content>Ian McCausland</Header.Content>
+              <Header as="h2" style={{ fontWeight: 200 }}>
+                Hey, Ian
               </Header>
             </Grid.Row>
 
             <Grid.Row>
-              <Menu size="large" fluid secondary style={{ paddingBottom: '10px' }}>
-                <Menu.Item active name="home" onClick={this.handleItemClick} />
-                <Menu.Item name="day" onClick={this.handleItemClick} />
-                <Menu.Item name="month" onClick={this.handleItemClick} />
-                <Menu.Item name="year" onClick={this.handleItemClick} />
+              <Menu size="large" secondary text style={{ paddingBottom: '10px' }}>
+                <Dropdown item inline options={options} defaultValue={options[0].value} />
+                <Menu.Item name="this month" active onClick={this.handleItemClick} />
+                <Menu.Item name="last month" onClick={this.handleItemClick} />
+                <Menu.Item name="this year" onClick={this.handleItemClick} />
                 <Menu.Item name="all time" onClick={this.handleItemClick} />
 
                 {/* <Menu.Menu position="right">

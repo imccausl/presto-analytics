@@ -12,6 +12,9 @@ export default props => {
         flex: '1',
         minWidth: '230px',
         maxWidth: '250px',
+        border: 'none',
+        borderRadius: '6px',
+        boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
       }}
     >
       <Card.Content style={{ paddingLeft: '20px', paddingRight: '20px' }}>
