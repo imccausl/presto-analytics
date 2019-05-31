@@ -135,7 +135,16 @@ export default class Page extends Component {
                 <Meta />
                 <Grid padded>
                   <Grid.Row>
-                    <User />
+                    <User
+                      firstName={user.firstName}
+                      cards={user.cards}
+                      lastTap={
+                        currentMonth.currTransactions.length === 0
+                          ? { amount: 'Never', location: 'N/A', date: 'Never' }
+                          : currentMonth.currTransactions[0]
+                      }
+                      balance={balance}
+                    />
                   </Grid.Row>
                 </Grid>
 
@@ -167,8 +176,8 @@ export default class Page extends Component {
                               ? 'Never'
                               : moment(currentMonth.currTransactions[0].date).fromNow()
                           }
-                          iconName="fa-4x fas fa-wallet"
-                          isFontAwesome
+                          iconName="ti-wallet"
+                          isCustomIcon
                           iconColor="rgb(17, 187, 129)"
                         />
                         <Statistic
@@ -192,7 +201,8 @@ export default class Page extends Component {
                             yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
                           }`}
                           extra="Since May 2018"
-                          iconName="fire"
+                          isCustomIcon
+                          iconName="ti-credit-card"
                           iconColor="orange"
                         />
 
@@ -201,14 +211,10 @@ export default class Page extends Component {
                             <Statistic
                               key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
                               label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              iconName={
-                                item.type === 'Fare Payment'
-                                  ? 'fa-4x fas fa-road'
-                                  : 'fa-4x fas fa-map-signs'
-                              }
+                              iconName={item.type === 'Fare Payment' ? 'ti-ticket' : 'ti-vector'}
                               iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
                               value={item.count}
-                              isFontAwesome
+                              isCustomIcon
                               extra="Since last year"
                             />
                           ))}
