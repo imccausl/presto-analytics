@@ -7,8 +7,8 @@ const propTypes = {};
 function makeCardMenuData(cards) {
   const options = cards.map((card, index) => ({
     key: cards.length > 1 ? index + 2 : index + 1,
-    text: card.cardNumber,
-    value: card.cardNumber,
+    text: card,
+    value: card,
   }));
 
   if (cards.length > 1) {
