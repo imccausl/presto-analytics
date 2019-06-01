@@ -1,20 +1,7 @@
 import moment from 'moment';
 import React, { Component } from 'react';
 import Router from 'next/router';
-import {
-  Dropdown,
-  Icon,
-  Dimmer,
-  Loader,
-  Button,
-  Card,
-  Menu,
-  Message,
-  Grid,
-  Container,
-  Segment,
-  Header,
-} from 'semantic-ui-react';
+import { Message, Container } from 'semantic-ui-react';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import PropTypes from 'prop-types';
 
@@ -22,9 +9,6 @@ import Index from './Index';
 import AuthUser from './AuthUser';
 import Login from './Login';
 import Meta from './Meta';
-import SideBar from './SideBar';
-import Statistic from './styled/Statistic';
-import User from './dashboard/User';
 
 import requestApi from '../lib/requestApi';
 
@@ -115,120 +99,17 @@ export default class Page extends Component {
           }
 
           if (!loading && data && data.status === 'success') {
-            const {
-              data: {
-                user, balance, currentMonth, ytd,
-              },
-            } = data;
-
-            console.log('Page:', data);
-            const yearToDateBalance = ytd.reduce((count, curr) => count + curr.total, 0);
-            const trigger = (
-              <span>
-                <Icon name="user" />
-                {`Hello, ${user.firstName}`}
-              </span>
-            );
             // rgb(244, 243, 239)
             return (
               <>
                 <Meta />
-                <Grid padded>
-                  <Grid.Row>
-                    <User
-                      firstName={user.firstName}
-                      cards={user.cards}
-                      lastTap={
-                        currentMonth.currTransactions.length === 0
-                          ? { amount: 'Never', location: 'N/A', date: 'Never' }
-                          : currentMonth.currTransactions[0]
-                      }
-                      balance={balance}
-                    />
-                  </Grid.Row>
-                </Grid>
-
-                <div style={{ position: 'relative' }}>
-                  <SideBar />
-                </div>
-
-                <Grid
-                  columns={1}
-                  style={{
-                    backgroundColor: '#f4f3ef',
-                    paddingLeft: '130px',
-                    paddingRight: '30px',
-                    // boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
+                <UserContext.Provider
+                  value={{
+                    data: data.data,
                   }}
                 >
-                  <Grid.Row />
-                  <Grid.Row columns={1}>
-                    <Grid.Column>
-                      <Card.Group
-                        centered
-                        style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
-                      >
-                        <Statistic
-                          label="Balance"
-                          value={`$${Math.round(balance)}`}
-                          extra={
-                            currentMonth.currTransactions.length === 0
-                              ? 'Never'
-                              : moment(currentMonth.currTransactions[0].date).fromNow()
-                          }
-                          iconName="ti-wallet"
-                          isCustomIcon
-                          iconColor="rgb(17, 187, 129)"
-                        />
-                        <Statistic
-                          label="Last Charge"
-                          value={`$${
-                            currentMonth.currTransactions.length === 0
-                              ? 'N/A'
-                              : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
-                          }`}
-                          extra={
-                            currentMonth.currTransactions.length === 0
-                              ? 'Never'
-                              : moment(currentMonth.currTransactions[0].date).fromNow()
-                          }
-                          iconName="bus"
-                          iconColor="yellow"
-                        />
-                        <Statistic
-                          label="Spent"
-                          value={`$${
-                            yearToDateBalance === 0 ? 0 : Math.round(yearToDateBalance / 100)
-                          }`}
-                          extra="Since May 2018"
-                          isCustomIcon
-                          iconName="ti-credit-card"
-                          iconColor="orange"
-                        />
-
-                        {ytd
-                          && ytd.map(item => (
-                            <Statistic
-                              key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                              iconName={item.type === 'Fare Payment' ? 'ti-ticket' : 'ti-vector'}
-                              iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
-                              value={item.count}
-                              isCustomIcon
-                              extra="Since last year"
-                            />
-                          ))}
-                      </Card.Group>
-                      <Segment vertical>
-                        <UserContext.Provider
-                          value={{ user: data.data.user, budget: data.data.budget }}
-                        >
-                          {children}
-                        </UserContext.Provider>
-                      </Segment>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
+                  {children}
+                </UserContext.Provider>
               </>
             );
           }

@@ -1,18 +1,123 @@
-import { Segment } from 'semantic-ui-react';
+import moment from 'moment';
+import { Segment, Grid, Card } from 'semantic-ui-react';
 
 import MonthlyOverview from './dashboard/MonthlyOverview';
+import SideBar from './SideBar';
+import Statistic from './styled/Statistic';
+import User from './dashboard/User';
 import YearOverview from './dashboard/YearOverview';
 
 const Dashboard = props => {
-  const { budget } = props.props;
-  console.log('Dasboard: ', props.props);
+  const {
+    props: {
+      data: {
+        user,
+        balance,
+        budget,
+        lastActivity,
+        spent: { amount, since },
+      },
+    },
+  } = props;
 
   return (
     <>
-      <MonthlyOverview budget={budget || {}} />
-      <Segment vertical>
-        <YearOverview budget={budget || {}} />
-      </Segment>
+      <div style={{ position: 'relative' }}>
+        <SideBar />
+      </div>
+      <Grid padded>
+        <Grid.Row>
+          <User
+            firstName={user.firstName}
+            cards={user.cards}
+            balance={balance}
+            budget={budget}
+            amount={since ? amount : 'N/A'}
+            since={since || 'Never'}
+            lastActivity={
+              lastActivity.length === 0
+                ? { amount: 'Never', location: 'N/A', date: 'Never' }
+                : lastActivity[0]
+            }
+          />
+        </Grid.Row>
+      </Grid>
+
+      {/* <Grid
+        columns={1}
+        style={{
+          backgroundColor: '#f4f3ef',
+          paddingLeft: '130px',
+          paddingRight: '30px',
+          // boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
+        }}
+      >
+        <Grid.Row columns={1}>
+          <Grid.Column>
+            <Card.Group
+              centered
+              style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
+            >
+              <Statistic
+                label="Balance"
+                value={`$${Math.round(balance)}`}
+                extra={
+                  currentMonth.currTransactions.length === 0
+                    ? 'Never'
+                    : moment(currentMonth.currTransactions[0].date).fromNow()
+                }
+                iconName="ti-wallet"
+                isCustomIcon
+                iconColor="rgb(17, 187, 129)"
+              />
+              <Statistic
+                label="Last Charge"
+                value={`$${
+                  currentMonth.currTransactions.length === 0
+                    ? 'N/A'
+                    : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
+                }`}
+                extra={
+                  currentMonth.currTransactions.length === 0
+                    ? 'Never'
+                    : moment(currentMonth.currTransactions[0].date).fromNow()
+                }
+                iconName="bus"
+                iconColor="yellow"
+              />
+              <Statistic
+                label="Spent"
+                value={`$${
+                  yearToDateBalance(ytd) === 0 ? 0 : Math.round(yearToDateBalance(ytd) / 100)
+                }`}
+                extra="Since May 2018"
+                isCustomIcon
+                iconName="ti-credit-card"
+                iconColor="orange"
+              />
+
+              {ytd
+                && ytd.map(item => (
+                  <Statistic
+                    key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                    label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
+                    iconName={item.type === 'Fare Payment' ? 'ti-ticket' : 'ti-vector'}
+                    iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
+                    value={item.count}
+                    isCustomIcon
+                    extra="Since last year"
+                  />
+                ))}
+            </Card.Group>
+            <Segment vertical>
+              <MonthlyOverview budget={budget || {}} />
+            </Segment>
+            <Segment vertical>
+              <YearOverview budget={budget || {}} />
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid> */}
     </>
   );
 };

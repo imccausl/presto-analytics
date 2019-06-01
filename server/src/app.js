@@ -75,7 +75,7 @@ app.use((err, req, res, next) => {
   res.status(401).send({
     error: 'error',
     message: err.message,
-    body: err // for debugging
+    body: err.stacktrace // for debugging
   });
 });
 

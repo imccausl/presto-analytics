@@ -100,6 +100,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }));
 
+  transactionModel.addScope('interval', interval => ({
+    where: {
+      date: {
+        [Sequelize.Op.gte]: sequelize.literal(`NOW() - INTERVAL '${interval} days'`)
+      }
+    }
+  }));
+
   transactionModel.addScope('types', types => ({
     where: {
       type: {

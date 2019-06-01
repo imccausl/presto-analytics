@@ -1,6 +1,19 @@
 import moment from 'moment';
 
 function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = false) {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  if (transactions.length === 0) {
+    const currDate = moment();
+
+    return {
+      date: currDate.format('DD'),
+      dayOfWeek: days[currDate.day()],
+      amount: '0.00',
+      trips: 0,
+    };
+  }
+
   const dataset = {};
   const domain = [0, 0];
   const currYear = new Date(transactions[0].date).getFullYear();
@@ -27,7 +40,6 @@ function totalDailyTransactionBreakdown(transactions, includeAmountInDomain = fa
   });
 
   const breakdown = Object.keys(dataset).map(key => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const currDate = moment(key, 'DD/MM/YYYY');
 
     if (includeAmountInDomain) {

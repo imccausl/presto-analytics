@@ -1,48 +1,23 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import {
-  Segment, Header, Container, Grid, Icon, Menu, Dropdown,
-} from 'semantic-ui-react';
+import { Header, Container, Grid } from 'semantic-ui-react';
 
-import AccountSettings from '../AccountSettings';
+import DataFilter from './DataFilter';
 import SmallStatistic from '../styled/SmallStatistic';
-import UpdatePresto from './UpdatePresto';
 
 const propTypes = {};
-
 const defaultProps = {};
 
-function makeCardMenuData(cards) {
-  const options = cards.map((card, index) => ({
-    key: cards.length > 1 ? index + 2 : index + 1,
-    text: card.cardNumber,
-    value: card.cardNumber,
-  }));
-
-  if (cards.length > 1) {
-    options.unshift({ key: 1, text: 'All Cards', value: 'all' });
-  }
-
-  return options;
-}
 export default class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = { activeSelection: 'this month' };
-
-    this.handleItemClick = this.handleItemClick.bind(this);
-  }
-
-  handleItemClick(event) {
-    this.setState({ activeSelection: event.target.textContent.toLowerCase() });
   }
 
   render() {
-    const { activeSelection } = this.state;
     const {
-      firstName, cards, lastTap, balance,
+      firstName, cards, balance, budget, lastActivity, amount, since,
     } = this.props;
-    const options = makeCardMenuData(cards);
 
     return (
       <>
@@ -64,41 +39,34 @@ export default class User extends React.Component {
                   width: '100%',
                 }}
               >
-                <SmallStatistic label="Balance" value={`$${Math.round(balance)}`} />
                 <SmallStatistic
-                  label="Last Charge"
-                  value={`$${parseFloat(lastTap.amount / 100).toFixed(2)}`}
+                  header="Balance"
+                  body={`$${(Math.round(balance * 100) / 100).toFixed(2)}`}
+                  footer={`over ${cards.length} card${cards.length !== 1 ? 's' : ''}`}
                 />
-                <SmallStatistic label="Charged" value={moment(lastTap.date).fromNow()} />
-                <SmallStatistic label="Location" value={lastTap.location} />
+                <SmallStatistic
+                  header="Spent"
+                  body={`$${Math.round(amount / 100)}`}
+                  footer={`since ${moment(since).format('MMM YYYY')}`}
+                />
+                <SmallStatistic
+                  header="Last Charge"
+                  body={`$${parseFloat(lastActivity.amount / 100).toFixed(2)}`}
+                  footer={`${moment(lastActivity.date).fromNow()}`}
+                />
+                <SmallStatistic
+                  header="Location"
+                  body={lastActivity.location}
+                  footer={`${moment(lastActivity.date).fromNow()}`}
+                />
+                <SmallStatistic header="Updated" body={moment(lastActivity.updated_at).fromNow()} />
               </div>
             </Grid.Row>
 
             <Grid.Row>
-              <Menu size="large" secondary text style={{ paddingBottom: '10px' }}>
-                <Dropdown item inline options={options} defaultValue={options[0].value} />
-                <Menu.Item
-                  name="this month"
-                  active={activeSelection === 'this month'}
-                  onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                  name="last month"
-                  active={activeSelection === 'last month'}
-                  onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                  name="this year"
-                  active={activeSelection === 'this year'}
-                  onClick={this.handleItemClick}
-                />
-                <Menu.Item
-                  name="all time"
-                  active={activeSelection === 'all time'}
-                  onClick={this.handleItemClick}
-                />
+              <DataFilter cards={cards} />
 
-                {/* activeIndex={activeIndex}
+              {/* activeIndex={activeIndex}
                         panes={panes}
                         onTabChange={(e, tab) => {
                           if (tab.activeIndex === 0) {
@@ -117,7 +85,7 @@ export default class User extends React.Component {
 
                           this.setState({ activeIndex: tab.activeIndex }); */}
 
-                {/* <Menu.Menu position="right">
+              {/* <Menu.Menu position="right">
               <Dropdown>
                 <Dropdown.Menu
                   trigger={trigger}
@@ -152,7 +120,6 @@ export default class User extends React.Component {
                 </Dropdown.Menu>
               </Dropdown>
             </Menu.Menu> */}
-              </Menu>
             </Grid.Row>
           </Grid>
         </Container>
