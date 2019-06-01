@@ -42,7 +42,7 @@ export default class DataFilter extends React.Component {
 
   render() {
     const { selectedCard } = this.state;
-
+    console.log('** SELECTED CARD:', selectedCard);
     return (
       <Menu size="large" secondary text style={{ paddingBottom: '10px' }}>
         <CardMenu

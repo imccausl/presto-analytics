@@ -1,8 +1,7 @@
-import moment from 'moment';
 import React, { Component } from 'react';
 import Router from 'next/router';
 import { Message, Container } from 'semantic-ui-react';
-import styled, { ThemeProvider, injectGlobal } from 'styled-components';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import Index from './Index';
