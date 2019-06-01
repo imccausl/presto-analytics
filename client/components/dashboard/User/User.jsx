@@ -2,8 +2,8 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Header, Container, Grid } from 'semantic-ui-react';
 
-import DataFilter from './DataFilter';
-import SmallStatistic from '../styled/SmallStatistic';
+import DataFilter from '../DataFilter';
+import SmallStatistic from '../../styled/SmallStatistic';
 
 const propTypes = {};
 const defaultProps = {};
