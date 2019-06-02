@@ -49,17 +49,16 @@ const Dashboard = props => {
                 console.log(data);
                 return (
                   <>
-                    <FilteredStats
-                      data={data}
-                      error={error}
-                      loading={loading}
-                    />
-
                     <MonthlyOverview
                       data={data}
                       error={error}
                       loading={loading}
                       budget={budget || {}}
+                    />
+                    <FilteredStats
+                      data={data}
+                      error={error}
+                      loading={loading}
                     />
                   </>
                 );
