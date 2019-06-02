@@ -2,9 +2,9 @@ import React from "react";
 import { Grid, Container, Segment } from "semantic-ui-react";
 
 import DataFilter from "./dashboard/DataFilter";
+import FilteredStats from "./dashboard/FilteredStats";
 import MonthlyOverview from "./dashboard/MonthlyOverview";
 import SideBar from "./SideBar";
-import Statistic from "./styled/Statistic";
 import User from "./dashboard/User";
 import YearOverview from "./dashboard/YearOverview";
 
@@ -45,14 +45,25 @@ const Dashboard = props => {
           </Grid.Row>
           <Grid.Row>
             <DataFilter cards={user.cards}>
-              {({ data, error, loading }) => (
-                <MonthlyOverview
-                  data={data}
-                  error={error}
-                  loading={loading}
-                  budget={budget || {}}
-                />
-              )}
+              {({ data, error, loading }) => {
+                console.log(data);
+                return (
+                  <>
+                    <FilteredStats
+                      data={data}
+                      error={error}
+                      loading={loading}
+                    />
+
+                    <MonthlyOverview
+                      data={data}
+                      error={error}
+                      loading={loading}
+                      budget={budget || {}}
+                    />
+                  </>
+                );
+              }}
             </DataFilter>
 
             {/* <Menu.Menu position="right">
@@ -105,61 +116,7 @@ const Dashboard = props => {
       >
         <Grid.Row columns={1}>
           <Grid.Column>
-            <Card.Group
-              centered
-              style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}
-            >
-              <Statistic
-                label="Balance"
-                value={`$${Math.round(balance)}`}
-                extra={
-                  currentMonth.currTransactions.length === 0
-                    ? 'Never'
-                    : moment(currentMonth.currTransactions[0].date).fromNow()
-                }
-                iconName="ti-wallet"
-                isCustomIcon
-                iconColor="rgb(17, 187, 129)"
-              />
-              <Statistic
-                label="Last Charge"
-                value={`$${
-                  currentMonth.currTransactions.length === 0
-                    ? 'N/A'
-                    : (currentMonth.currTransactions[0].amount / 100).toFixed(2)
-                }`}
-                extra={
-                  currentMonth.currTransactions.length === 0
-                    ? 'Never'
-                    : moment(currentMonth.currTransactions[0].date).fromNow()
-                }
-                iconName="bus"
-                iconColor="yellow"
-              />
-              <Statistic
-                label="Spent"
-                value={`$${
-                  yearToDateBalance(ytd) === 0 ? 0 : Math.round(yearToDateBalance(ytd) / 100)
-                }`}
-                extra="Since May 2018"
-                isCustomIcon
-                iconName="ti-credit-card"
-                iconColor="orange"
-              />
 
-              {ytd
-                && ytd.map(item => (
-                  <Statistic
-                    key={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                    label={item.type === 'Fare Payment' ? 'Fares' : 'Transfers'}
-                    iconName={item.type === 'Fare Payment' ? 'ti-ticket' : 'ti-vector'}
-                    iconColor={item.type === 'Fare Payment' ? '#3BB4E9' : '#5558c8'}
-                    value={item.count}
-                    isCustomIcon
-                    extra="Since last year"
-                  />
-                ))}
-            </Card.Group>
 
             <Segment vertical>
               <YearOverview budget={budget || {}} />

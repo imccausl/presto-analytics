@@ -34,7 +34,7 @@ export default class DataFilter extends React.Component {
     modalOpen: false,
     selectedMonth: thisMonth,
     selectedYear: thisYear,
-    url: `${API.root}${API.monthlyTransactions(2019, 4)}`
+    url: ""
   };
 
   optionsMap = {
@@ -166,6 +166,7 @@ export default class DataFilter extends React.Component {
               <Modal.Actions>
                 <Button
                   negative
+                  content="No"
                   onclick={() => this.setState({ modalOpen: false })}>
                   No
                 </Button>
@@ -183,7 +184,6 @@ export default class DataFilter extends React.Component {
                       )}`,
                       modalOpen: false
                     });
-                    fetch();
                   }}
                 />
               </Modal.Actions>
