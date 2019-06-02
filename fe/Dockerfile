@@ -1,12 +1,14 @@
 FROM node:10-alpine
 
-WORKDIR /app
 
-ADD yarn.lock ./
-ADD package.json ./
+ADD yarn.lock /yarn.lock
+ADD package.json /package.json
 
+ENV NODE_PATH=/node_modules
+ENV PATH=$PATH:/node_modules/.bin
 RUN yarn
 
+WORKDIR /app
 ADD . /app
 
 EXPOSE 3000
