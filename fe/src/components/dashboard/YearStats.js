@@ -15,10 +15,7 @@ import { FlexRow } from "../Page";
 
 export default props => {
   console.log(props);
-  const {
-    dataset,
-    budget: { fareCost, monthlyPassCost }
-  } = props;
+  const { dataset } = props;
 
   return (
     <div>
@@ -100,14 +97,18 @@ export default props => {
           />
 
           <ReferenceLine
-            y={parseFloat(monthlyPassCost / 100).toFixed(2)}
+            y={
+              dataset.monthlyPassCost
+                ? parseFloat(dataset.monthlyPassCost / 100).toFixed(2)
+                : null
+            }
             label="Transit Pass Cost"
             stroke="red"
           />
           <ReferenceLine
             y={(
-              parseFloat(monthlyPassCost) /
-              parseFloat(fareCost) /
+              parseFloat(dataset.monthlyPassCost) /
+              parseFloat(dataset.fareCost) /
               100
             ).toFixed(2)}
             label="Transit Pass Break-even"

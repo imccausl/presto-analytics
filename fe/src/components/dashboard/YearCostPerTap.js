@@ -12,27 +12,22 @@ import {
 import { FlexRow } from "../Page";
 
 export default props => {
-  const {
-    dataset,
-    budget: { monthlyPassCost }
-  } = props;
+  const { dataset, budget } = props;
 
   dataset.data.forEach(item => {
     let totalMonthlyPassCost = 0;
 
-    if (monthlyPassCost) {
-      totalMonthlyPassCost = monthlyPassCost;
+    if (budget) {
+      totalMonthlyPassCost = budget.monthlyPassCost;
     }
 
     item.costPerTapIfPass = (
-      Math.round(
-        parseFloat(totalMonthlyPassCost) /
-          (item.paymentTaps + item.transferTaps)
-      ) / 100
+      parseFloat(totalMonthlyPassCost) /
+      (item.paymentTaps + item.transferTaps)
     ).toFixed(2);
-    item.costPerTap = (Math.round(item.costPerTap) / 100).toFixed(2);
-    item.amount = (Math.round(item.amount) / 100).toFixed(2);
   });
+
+  console.log(dataset);
 
   return (
     <div>
@@ -47,7 +42,7 @@ export default props => {
           {"Cost Per Tap"}
         </h3>
         <h3 style={{ marginTop: "0", marginRight: "30px", color: "#3BB4E9" }}>
-          {`$${(dataset.costPerTap / 100).toFixed(2)} / Tap`}
+          {`$${dataset.costPerTap.toFixed(2)} / Tap`}
         </h3>
       </FlexRow>
       <ResponsiveContainer height={200}>
