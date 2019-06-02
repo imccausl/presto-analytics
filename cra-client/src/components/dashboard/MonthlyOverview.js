@@ -1,20 +1,14 @@
-import React, { Component } from 'react';
-import Fetch from 'react-fetch-component';
-import {
-  Tab, Modal, Button, Segment, Header, Message,
-} from 'semantic-ui-react';
+import React from "react";
+import { Segment, Message } from "semantic-ui-react";
 
-import Statistic from '../styled/Statistic';
-import MonthlyStats from './MonthlyStats';
-import { FlexRow } from '../Page';
+import MonthlyStats from "./MonthlyStats";
 
-import API from '../../lib/api';
-import { getMonthNameFromNum } from '../../lib/date';
+import { getMonthNameFromNum } from "../../lib/date";
 
 const panes = [
-  { menuItem: 'This Month' },
-  { menuItem: 'Last Month' },
-  { menuItem: { icon: 'calendar alternate outline' } },
+  { menuItem: "This Month" },
+  { menuItem: "Last Month" },
+  { menuItem: { icon: "calendar alternate outline" } }
 ];
 
 function getFareTypeCount(data) {
@@ -23,47 +17,28 @@ function getFareTypeCount(data) {
 
     return {
       name: typeName[0].toUpperCase() + typeName.substring(1),
-      count: data.count[typeName],
+      count: data.count[typeName]
     };
   });
 
   return fareTypeCount;
 }
 
-export default class MonthlyOverview extends Component {
-  render() {
-    const { year, month } = this.props;
+export default function MonthlyOverview(props) {
+  const { year, month, data, error, loading } = props;
 
-    console.log('monthlyOverview:', this.props);
-
-    return (
-      <>
-        <Fetch
-          url={`${API.root}${API.monthlyTransactions(year, month + 1)}`}
-          options={API.send('GET')}
-        >
-          {payload => {
-            console.log(payload);
-
-            return (
-              <>
-                <Segment style={{ minHeight: '250px' }} loading={payload.loading}>
-                  {!payload.loading && !payload.error && (
-                    <MonthlyStats
-                      month={getMonthNameFromNum(month)}
-                      year={year}
-                      data={payload.data.data}
-                    />
-                  )}
-                  {!payload.loading && payload.error && (
-                    <Message error>{payload.error.message}</Message>
-                  )}
-                </Segment>
-              </>
-            );
-          }}
-        </Fetch>
-      </>
-    );
-  }
+  return (
+    <>
+      <Segment style={{ minHeight: "250px" }} loading={loading}>
+        {!loading && !error && (
+          <MonthlyStats
+            month={getMonthNameFromNum(month)}
+            year={year}
+            data={data.data}
+          />
+        )}
+        {!loading && error && <Message error>{error.message}</Message>}
+      </Segment>
+    </>
+  );
 }

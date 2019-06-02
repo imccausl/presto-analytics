@@ -1,13 +1,10 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import Router from 'next/router';
+import PropTypes from 'prop-types';
 
 let globalUser = null;
 
-function withAuth(
-  BaseComponent,
-  { loginRequired = true, logoutRequired = false } = {}
-) {
+function withAuth(BaseComponent, { loginRequired = true, logoutRequired = false } = {}) {
   class App extends Component {
     static propTypes = {
       user: PropTypes.shape({
@@ -17,12 +14,12 @@ function withAuth(
         email: PropTypes.string,
         cardNumber: PropTypes.string,
         balance: PropTypes.string,
-        permisson: PropTypes.array
-      })
+        permisson: PropTypes.array,
+      }),
     };
 
     static defaultProps = {
-      user: null
+      user: null,
     };
 
     componentDidMount() {
@@ -33,15 +30,13 @@ function withAuth(
       }
 
       if (loginRequired && !logoutRequired && !user) {
-        Router.push("/login");
+        Router.push('/login');
       }
     }
 
     static async getInitialProps(ctx) {
       const isFromServer = !!ctx.req;
-      const user = ctx.req
-        ? ctx.req.user && ctx.req.user.toObject()
-        : globalUser;
+      const user = ctx.req ? ctx.req.user && ctx.req.user.toObject() : globalUser;
       const props = { user, isFromServer };
 
       console.log(ctx);

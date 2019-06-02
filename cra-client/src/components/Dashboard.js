@@ -45,27 +45,15 @@ const Dashboard = props => {
           </Grid.Row>
           <Grid.Row>
             <DataFilter cards={user.cards}>
-              <MonthlyOverview year="2019" month={4} budget={budget || {}} />
+              {({ data, error, loading }) => (
+                <MonthlyOverview
+                  data={data}
+                  error={error}
+                  loading={loading}
+                  budget={budget || {}}
+                />
+              )}
             </DataFilter>
-
-            {/* activeIndex={activeIndex}
-                        panes={panes}
-                        onTabChange={(e, tab) => {
-                          if (tab.activeIndex === 0) {
-                            this.setState({
-                              month: thisMonth,
-                              year: thisYear,
-                            });
-                          } else if (tab.activeIndex === 1) {
-                            this.setState({
-                              month: thisMonth === 0 ? 11 : thisMonth - 1,
-                              year: thisMonth === 0 ? thisYear - 1 : thisYear,
-                            });
-                          } else if (tab.activeIndex === 2) {
-                            this.setState({ open: true });
-                          }
-
-                          this.setState({ activeIndex: tab.activeIndex }); */}
 
             {/* <Menu.Menu position="right">
               <Dropdown>

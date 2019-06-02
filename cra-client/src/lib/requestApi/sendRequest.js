@@ -28,7 +28,7 @@ async function sendRequest(fetchHandler, path, method, opts = {}) {
   return data;
 }
 
-const sendRequestWrapper = () => (path, method, opts) =>
-  sendRequest(fetch, path, method, opts);
+const sendRequestWrapper = fetchHandler => (path, method, opts) =>
+  sendRequest(fetchHandler, path, method, opts);
 
 export default sendRequestWrapper(fetch);
