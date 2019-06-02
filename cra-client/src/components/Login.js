@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Router, Link } from "react-router-dom";
+import { BrowserRouter as Router, Link, Redirect } from "react-router-dom";
 import { Input, Icon, Button, Form, Message } from "semantic-ui-react";
 import Fetch from "react-fetch-component";
 
@@ -34,9 +34,9 @@ export default class Login extends Component {
               {({ fetch, data, loading, error }) => {
                 if (
                   (data && data.status === "success") ||
-                  (ctx.data && ctx.data.data.user)
+                  (ctx.data && ctx.data.user)
                 ) {
-                  return Router.push("/dashboard");
+                  return <Redirect to="/dashboard" />;
                 }
 
                 return (

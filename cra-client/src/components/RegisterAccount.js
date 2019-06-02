@@ -1,31 +1,27 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import NProgress from 'nprogress';
-import {
-  Button, Message, Form, Icon,
-} from 'semantic-ui-react';
-import Fetch from 'react-fetch-component';
-import Link from 'next/link';
+import NProgress from "nprogress";
+import { Button, Message, Form, Icon } from "semantic-ui-react";
+import Fetch from "react-fetch-component";
+import { Link } from "react-router-dom";
 
-import API from '../lib/api';
+import API from "../lib/api";
 
 export default class Register extends Component {
   state = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    passwordAgain: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    passwordAgain: ""
   };
 
-  saveToState = (e) => {
+  saveToState = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   render() {
-    const {
-      firstName, lastName, email, password, passwordAgain,
-    } = this.state;
+    const { firstName, lastName, email, password, passwordAgain } = this.state;
     const { incrementSteps } = this.props;
 
     return (
@@ -37,12 +33,9 @@ export default class Register extends Component {
           lastName,
           email,
           password,
-          passwordAgain,
-        })}
-      >
-        {({
-          fetch, loading, data, error,
-        }) => {
+          passwordAgain
+        })}>
+        {({ fetch, loading, data, error }) => {
           if (data) {
             NProgress.done();
             if (incrementSteps) {
@@ -61,7 +54,7 @@ export default class Register extends Component {
           };
 
           return (
-            <div style={{ minWidth: '50%' }}>
+            <div style={{ minWidth: "50%" }}>
               <Message
                 attached
                 header="Register"
@@ -134,13 +127,13 @@ export default class Register extends Component {
                   icon="chevron circle right"
                   content="Next"
                   disabled={
-                    loading
-                    || (!firstName
-                      || !lastName
-                      || !email
-                      || !password
-                      || !passwordAgain
-                      || password !== passwordAgain)
+                    loading ||
+                    (!firstName ||
+                      !lastName ||
+                      !email ||
+                      !password ||
+                      !passwordAgain ||
+                      password !== passwordAgain)
                   }
                   loading={loading}
                   onClick={() => {
@@ -148,11 +141,11 @@ export default class Register extends Component {
                     fetch();
 
                     this.setState({
-                      firstName: '',
-                      lastName: '',
-                      email: '',
-                      password: '',
-                      passwordAgain: '',
+                      firstName: "",
+                      lastName: "",
+                      email: "",
+                      password: "",
+                      passwordAgain: ""
                     });
                   }}
                 />
@@ -160,7 +153,7 @@ export default class Register extends Component {
               <Message attached="bottom" warning>
                 <Icon name="help" />
                 Already signed up?&nbsp;
-                <Link href="/login">Login</Link>
+                <Link to="/login">Login</Link>
                 &nbsp;instead.
               </Message>
             </div>
