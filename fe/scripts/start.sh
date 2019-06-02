@@ -1,9 +1,9 @@
 #!/bin/sh
 
-npm install && npm run build
+yarn install
 
 if [ "$NODE_ENV" == "production" ] ; then
-  npm run start
+  yarn build
 else
-  npm run dev
+  yarn start
 fi

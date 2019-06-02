@@ -1,11 +1,15 @@
 FROM node:10-alpine
 
-RUN mkdir -p /opt/app
-WORKDIR /opt/app
+WORKDIR /app
 
-COPY package*.json /opt/app/
-RUN npm install
+ADD yarn.lock ./
+ADD package.json ./
 
-COPY . /opt/app
+RUN yarn
+
+ADD . /app
+
+EXPOSE 3000
+EXPOSE 35729
 
 CMD ./scripts/start.sh

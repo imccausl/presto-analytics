@@ -16,18 +16,21 @@ services:
     volumes:
       - ./server:/opt/backend
 
-  app:
-    env_file: .env
-    build: ./client
-    image: pa-frontend:dev
-    expose:
-      - ${CLIENT_PORT}
-    ports:
-      - ${CLIENT_PORT}:${CLIENT_PORT}
-    volumes:
-      - ./client:/opt/app
-    links:
-      - backend
+  # FE not working with CRA. Run manually with yarn start
+  # front-end:
+  #   env_file: .env
+  #   build: ./fe
+  #   image: pa-frontend:dev
+  #   expose:
+  #     - ${CLIENT_PORT}
+  #     - "35729"
+  #   ports:
+  #     - ${CLIENT_PORT}:${CLIENT_PORT}
+  #     - "35729:35729"
+  #   volumes:
+  #     - ./fe:/app
+  #   links:
+  #     - backend
 
   postgres:
     env_file: .env
