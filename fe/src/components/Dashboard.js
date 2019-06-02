@@ -43,7 +43,7 @@ const Dashboard = props => {
               }
             />
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row style={{ marginTop: "20px" }}>
             <DataFilter cards={user.cards}>
               {({ data, error, loading }) => {
                 console.log(data);
@@ -101,28 +101,13 @@ const Dashboard = props => {
               </Dropdown>
             </Menu.Menu> */}
           </Grid.Row>
+          <Grid.Row style={{ marginTop: "20px" }}>
+            <Segment>
+              <YearOverview budget={budget} />
+            </Segment>
+          </Grid.Row>
         </Container>
       </Grid>
-
-      {/* <Grid
-        columns={1}
-        style={{
-          backgroundColor: '#f4f3ef',
-          paddingLeft: '130px',
-          paddingRight: '30px',
-          // boxShadow: '0 2px 2px hsla(38,16%,76%,.5)',
-        }}
-      >
-        <Grid.Row columns={1}>
-          <Grid.Column>
-
-
-            <Segment vertical>
-              <YearOverview budget={budget || {}} />
-            </Segment>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid> */}
     </>
   );
 };
