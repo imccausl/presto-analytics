@@ -21,7 +21,7 @@ const router = express.Router();
  */
 
 router.route('/monthly/:year/:month').get(requireSignin(controllers.monthly));
-// router.route('/:year').get();
+router.route('/range').get(requireSignin(controllers.range));
 
 router
   .route('/')

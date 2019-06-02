@@ -44,6 +44,7 @@ const API = {
 
     return `/v1/transaction/monthly/${searchYear}/${searchMonth}`;
   },
+  transactionRange: days => `/v1/transaction/range?days=${days}`,
   allTransactions: {
     method: 'GET',
     endpoint: '/v1/transaction',

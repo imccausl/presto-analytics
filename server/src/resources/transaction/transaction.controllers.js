@@ -47,7 +47,66 @@ const monthly = async (req, res, next) => {
 
     const fares = await Fares.count();
     const transfers = await Transfers.count();
-    const transactions = await Taps.findAll({ order: sequelize.literal('date DESC') });
+    const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
+    const totalAmount = await Fares.sum('amount');
+
+    const payload = {
+      transactions,
+      count: {
+        fares,
+        transfers
+      },
+      totalAmount
+    };
+
+    res.json(successResponse(payload));
+  } catch (err) {
+    console.error(err.stack);
+    next(err);
+  }
+};
+
+const range = async (req, res, next) => {
+  try {
+    const { days } = req.query;
+
+    const Transfers = Transaction.scope(
+      {
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['currentUser', req.userId]
+      }
+    );
+    const Taps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
+      }
+    );
+    const Fares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+      }
+    );
+
+    const fares = await Fares.count();
+    const transfers = await Transfers.count();
+    const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
     const totalAmount = await Fares.sum('amount');
 
     const payload = {
@@ -197,4 +256,4 @@ const ytd = async (req, res, next) => {
   }
 };
 
-module.exports = { postAll, getAll, deleteAll, monthly, ytdData, ytd };
+module.exports = { postAll, getAll, deleteAll, monthly, ytdData, ytd, range };
