@@ -108,6 +108,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }));
 
+  transactionModel.addScope('cardNumber', cardNumber => {
+    if (cardNumber === 'all') {
+      return {};
+    }
+
+    return {
+      where: {
+        cardNumber
+      }
+    };
+  });
+
   transactionModel.addScope('types', types => ({
     where: {
       type: {

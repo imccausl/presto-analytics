@@ -17,7 +17,7 @@ import { totalDailyTransactionBreakdown } from "../../lib/transactions";
 
 export default props => {
   const { data, month, year } = props;
-
+  console.log(props);
   const { transactions, totalAmount } = data;
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);

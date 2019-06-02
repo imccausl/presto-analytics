@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Dropdown } from 'semantic-ui-react';
+import React from "react";
+import PropTypes from "prop-types";
+import { Dropdown } from "semantic-ui-react";
 
 const propTypes = {};
 
@@ -8,11 +8,11 @@ function makeCardMenuData(cards) {
   const options = cards.map((card, index) => ({
     key: cards.length > 1 ? index + 2 : index + 1,
     text: card,
-    value: card,
+    value: card
   }));
 
   if (cards.length > 1) {
-    options.unshift({ key: 1, text: 'All Cards', value: cards });
+    options.unshift({ key: 1, text: "All Cards", value: "all" });
   }
 
   return options;
@@ -27,7 +27,7 @@ export default function CardMenu(props) {
       item
       inline
       options={options}
-      defaultValue={cards}
+      defaultValue="all"
       value={currentSelection}
       onChange={(e, { value }) => {
         handleChange(value);

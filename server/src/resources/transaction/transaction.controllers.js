@@ -9,7 +9,7 @@ const { sequelize, Sequelize, Transaction } = db;
 
 const monthly = async (req, res, next) => {
   try {
-    const { year, month } = req.params;
+    const { year, month, cardNumber } = req.params;
 
     const Transfers = Transaction.scope(
       {
@@ -17,6 +17,9 @@ const monthly = async (req, res, next) => {
       },
       {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
       },
       {
         method: ['currentUser', req.userId]
@@ -30,6 +33,9 @@ const monthly = async (req, res, next) => {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
       },
       {
+        method: ['cardNumber', cardNumber]
+      },
+      {
         method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
       }
     );
@@ -39,6 +45,9 @@ const monthly = async (req, res, next) => {
       },
       {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
       },
       {
         method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
@@ -69,10 +78,14 @@ const monthly = async (req, res, next) => {
 const range = async (req, res, next) => {
   try {
     const { days } = req.query;
+    const { cardNumber } = req.params;
 
     const Transfers = Transaction.scope(
       {
         method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['cardNumber', cardNumber]
       },
       {
         method: ['interval', parseInt(days, 10)]
@@ -86,6 +99,9 @@ const range = async (req, res, next) => {
         method: ['currentUser', req.userId]
       },
       {
+        method: ['cardNumber', cardNumber]
+      },
+      {
         method: ['interval', parseInt(days, 10)]
       },
       {
@@ -95,6 +111,9 @@ const range = async (req, res, next) => {
     const Fares = Transaction.scope(
       {
         method: ['currentUser', req.userId]
+      },
+      {
+        method: ['cardNumber', cardNumber]
       },
       {
         method: ['interval', parseInt(days, 10)]

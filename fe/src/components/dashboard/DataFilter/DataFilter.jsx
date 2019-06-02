@@ -20,12 +20,6 @@ const options = [
   { name: "all time", value: "all_time" }
 ];
 
-const optionsMap = {
-  [options[0].name]: `${API.root}${API.transactionRange(options[0].value)}`,
-  [options[1].name]: `${API.root}${API.transactionRange(options[1].value)}`,
-  [options[2].name]: `${API.root}${API.transactionRange(options[2].value)}`
-};
-
 const thisMonth = new Date().getMonth();
 const thisYear = new Date().getFullYear();
 
@@ -35,21 +29,42 @@ export default class DataFilter extends React.Component {
 
   state = {
     activeSelection: options[0].name,
-    selectedCard: this.cardsArray,
+    activeSelectionValue: options[0].value,
+    selectedCard: "all",
     modalOpen: false,
     selectedMonth: thisMonth,
     selectedYear: thisYear,
     url: `${API.root}${API.monthlyTransactions(2019, 4)}`
   };
 
-  componentWillMount() {
-    this.setState({ url: optionsMap["last 30 days"] });
+  optionsMap = {
+    [options[0].name]: options[0].value,
+    [options[1].name]: options[1].value,
+    [options[2].name]: options[2].value
+  };
+
+  componentDidMount() {
+    const { selectedCard } = this.state;
+
+    this.setState({
+      url: `${API.root}${API.transactionRange(selectedCard, options[0].value)}`
+    });
   }
 
   handleItemClick = event => {
-    const activeSelection = event.target.textContent.toLowerCase();
+    const { selectedCard } = this.state;
 
-    this.setState({ activeSelection, url: optionsMap[activeSelection] });
+    const activeSelection = event.target.textContent.toLowerCase();
+    const activeSelectionValue = this.optionsMap[activeSelection];
+    const url = `${API.root}${API.transactionRange(
+      this.state.selectedCard,
+      activeSelectionValue
+    )}`;
+    this.setState({
+      activeSelection,
+      activeSelectionValue,
+      url
+    });
   };
 
   handleCalChange = (event, { name, value }) => {
@@ -74,6 +89,7 @@ export default class DataFilter extends React.Component {
   render() {
     const {
       selectedCard,
+      activeSelectionValue,
       modalOpen,
       selectedYear,
       selectedMonth,
@@ -87,12 +103,28 @@ export default class DataFilter extends React.Component {
       <Fetch url={url} options={API.send("GET")}>
         {({ fetch, data, error, loading }) => (
           <>
-            <Menu size="large" pointing text>
+            <Menu size="large" pointing>
               <CardMenu
                 cards={this.cardsArray}
                 currentSelection={selectedCard}
                 handleChange={value => {
-                  this.setState({ selectedCard: value });
+                  let url = `${API.root}${API.transactionRange(
+                    value,
+                    activeSelectionValue
+                  )}`;
+
+                  if (activeSelection === "month") {
+                    url = `${API.root}${API.monthlyTransactions(
+                      value,
+                      selectedYear || thisYear,
+                      selectedMonth
+                    )}`;
+                  }
+
+                  this.setState({
+                    selectedCard: value,
+                    url
+                  });
                 }}
               />
               <this.FilterMenu />
@@ -145,6 +177,7 @@ export default class DataFilter extends React.Component {
                   onClick={() => {
                     this.setState({
                       url: `${API.root}${API.monthlyTransactions(
+                        selectedCard,
                         selectedYear || thisYear,
                         selectedMonth
                       )}`,

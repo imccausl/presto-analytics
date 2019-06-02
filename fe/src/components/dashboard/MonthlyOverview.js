@@ -26,6 +26,7 @@ function getFareTypeCount(data) {
 
 export default function MonthlyOverview(props) {
   const { year, month, data, error, loading } = props;
+  console.log("MonthlyOverview:", props);
 
   return (
     <>
