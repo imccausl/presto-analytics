@@ -1,8 +1,7 @@
-import moment from "moment";
 import React from "react";
 import Fetch from "react-fetch-component";
 import PropTypes from "prop-types";
-import { Menu, Modal, Button, Icon } from "semantic-ui-react";
+import { Menu, Modal, Button, Icon, Header } from "semantic-ui-react";
 import { YearInput, MonthInput } from "semantic-ui-calendar-react";
 
 import API from "../../../lib/api";

@@ -82,7 +82,7 @@ function getDataset(obj) {
   }
   console.log("HEYHEY:", totalCostPerTap);
   dataset.costPerTap = totalCostPerTap;
-  dataset.totalAmount = (Math.round(dataset.totalAmount) / 100).toFixed(2);
+  dataset.totalAmount = Math.round(dataset.totalAmount).toFixed(2);
   return dataset;
 }
 

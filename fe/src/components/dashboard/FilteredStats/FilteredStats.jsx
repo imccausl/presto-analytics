@@ -14,7 +14,7 @@ export default function FilteredStats(props) {
 
   console.log("filteredStats:", data, loading, error);
   return (
-    <Statistic.Group widths="three" color="orange">
+    <Statistic.Group widths="three" color="orange" size="large">
       {!loading && !error && (
         <>
           <Statistic>

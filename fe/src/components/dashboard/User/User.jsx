@@ -28,9 +28,9 @@ export default class User extends React.Component {
 
     return (
       <>
-        <Header as="h2" style={{ fontWeight: 200 }}>
+        {/* <Header as="h2" style={{ fontWeight: 200 }}>
           Hey, {firstName}
-        </Header>
+        </Header> */}
 
         <div
           style={{

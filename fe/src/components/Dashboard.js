@@ -1,5 +1,6 @@
+import moment from "moment";
 import React from "react";
-import { Grid, Container, Segment } from "semantic-ui-react";
+import { Grid, Container, Header } from "semantic-ui-react";
 
 import DataFilter from "./dashboard/DataFilter";
 import FilteredStats from "./dashboard/FilteredStats";
@@ -49,6 +50,21 @@ const Dashboard = props => {
                 console.log(data);
                 return (
                   <>
+                    {!loading && !error && (
+                      <Header as="h2">
+                        {`${moment(data.data.transactions[0].date).format(
+                          "MMMM DD YYYY"
+                        )} - ${moment(
+                          data.data.transactions[
+                            data.data.transactions.length - 1
+                          ].date
+                        ).format("MMMM DD YYYY")}`}
+                        <Header.Subheader>
+                          Some kind of text will go here
+                        </Header.Subheader>
+                      </Header>
+                    )}
+
                     <MonthlyOverview
                       data={data}
                       error={error}
@@ -102,9 +118,13 @@ const Dashboard = props => {
             </Menu.Menu> */}
           </Grid.Row>
           <Grid.Row style={{ marginTop: "20px" }}>
-            <Segment>
-              <YearOverview budget={budget} />
-            </Segment>
+            <Header as="h2">
+              Year Overview
+              <Header.Subheader>
+                Some kind of text will go here
+              </Header.Subheader>
+            </Header>
+            <YearOverview budget={budget} />
           </Grid.Row>
         </Container>
       </Grid>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Segment } from "semantic-ui-react";
 import {
   ResponsiveContainer,
   CartesianGrid,
@@ -11,33 +10,16 @@ import {
   Tooltip
 } from "recharts";
 
-import { FlexRow } from "../Page";
-
 import { totalDailyTransactionBreakdown } from "../../lib/transactions";
 
 export default props => {
-  const { data, month, year } = props;
-  console.log(props);
-  const { transactions, totalAmount } = data;
+  const { data } = props;
+  const { transactions } = data;
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);
 
   return (
     <div>
-      <FlexRow justify="space-between" align="center">
-        <h3
-          style={{
-            marginTop: "0",
-            marginBottom: "0",
-            marginLeft: "25px",
-            color: "#11BB81"
-          }}>
-          {`${month} ${year}`}
-        </h3>
-        <h3 style={{ marginTop: "0", marginRight: "30px", color: "#3BB4E9" }}>
-          {`$${(totalAmount / 100).toFixed(2)} Total`}
-        </h3>
-      </FlexRow>
       <ResponsiveContainer height={200}>
         <LineChart
           margin={{
@@ -53,24 +35,24 @@ export default props => {
             dataKey="trips"
             type="monotone"
             stroke="#3333cc"
-            strokeWidth={5}
+            strokeWidth={2}
             dot={{
-              stroke: "white",
-              strokeWidth: 3,
-              fill: "#3333cc",
-              r: 7
+              //   stroke: "white",
+              //   strokeWidth: 2,
+              //   fill: "#3333cc",
+              r: 0
             }}
           />
           <Line
             dataKey="amount"
             type="monotone"
             stroke="#3BB4E9"
-            strokeWidth={5}
+            strokeWidth={2}
             dot={{
-              stroke: "white",
-              strokeWidth: 3,
-              fill: "#3BB4E9",
-              r: 7
+              //   stroke: "white",
+              //   strokeWidth: 2,
+              //   fill: "#3BB4E9",
+              r: 0
             }}
           />
           <YAxis
