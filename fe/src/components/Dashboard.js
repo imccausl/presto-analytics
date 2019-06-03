@@ -53,13 +53,15 @@ const Dashboard = props => {
                   <>
                     {!loading && !error && (
                       <Header as="h2">
-                        {`${moment(data.data.transactions[0].date).format(
-                          "MMMM DD YYYY"
-                        )} - ${moment(
-                          data.data.transactions[
-                            data.data.transactions.length - 1
-                          ].date
-                        ).format("MMMM DD YYYY")}`}
+                        {data.data.transactions.length === 0
+                          ? "No Transactions For This Period"
+                          : `${moment(data.data.transactions[0].date).format(
+                              "MMMM DD YYYY"
+                            )} - ${moment(
+                              data.data.transactions[
+                                data.data.transactions.length - 1
+                              ].date
+                            ).format("MMMM DD YYYY")}`}
                         <Header.Subheader>
                           Some kind of text will go here
                         </Header.Subheader>

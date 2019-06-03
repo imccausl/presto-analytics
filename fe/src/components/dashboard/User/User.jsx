@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import { Header, Container, Grid, Menu, Icon } from "semantic-ui-react";
+import { Header, Menu, Icon } from "semantic-ui-react";
 
 import AccountSettings from "../../AccountSettings";
 import requestApi from "../../../lib/requestApi";
@@ -59,8 +59,8 @@ class User extends React.Component {
       <>
         <Menu icon secondary borderless>
           <Menu.Item header>
-            <Icon name="user circle outline" size="large" />{" "}
-            {`  ${firstName} ${lastName}`}
+            {/* <Icon name="user circle outline" size="large" />{" "}
+            {`  ${firstName} ${lastName}`} */}
           </Menu.Item>
 
           <Menu.Menu position="right">
@@ -78,6 +78,12 @@ class User extends React.Component {
           </Menu.Menu>
         </Menu>
 
+        <Header as="h2" dividing>
+          {`Hey, ${firstName}.`}
+          <Header.Subheader>
+            You've been a Presto user since {moment(since).format("MMMM YYYY")}
+          </Header.Subheader>
+        </Header>
         <div
           style={{
             display: "flex",
