@@ -1,5 +1,6 @@
 import React from "react";
 import Fetch from "react-fetch-component";
+import { Route, matchPath, Link, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Menu, Modal, Button, Icon, Header } from "semantic-ui-react";
 import { YearInput, MonthInput } from "semantic-ui-calendar-react";
@@ -99,97 +100,111 @@ export default class DataFilter extends React.Component {
     const { children } = this.props;
 
     return (
-      <Fetch url={url} options={API.send("GET")}>
-        {({ fetch, data, error, loading }) => (
-          <>
-            <Menu size="large" pointing>
-              <CardMenu
-                cards={this.cardsArray}
-                currentSelection={selectedCard}
-                handleChange={value => {
-                  let url = `${API.root}${API.transactionRange(
-                    value,
-                    activeSelectionValue
-                  )}`;
+      <Route
+        path={[
+          "/dashboard/range/:cardNumber/:range/",
+          "/dashboard/month/:cardNumber/:year/:month"
+        ]}>
+        {({ match, ...rest }) => {
+          console.log("dataFilter:", match);
+          return (
+            <Fetch url={url} options={API.send("GET")}>
+              {({ fetch, data, error, loading }) => (
+                <>
+                  <Menu size="large" pointing>
+                    <CardMenu
+                      cards={this.cardsArray}
+                      currentSelection={selectedCard}
+                      handleChange={value => {
+                        let url = `${API.root}${API.transactionRange(
+                          value,
+                          activeSelectionValue
+                        )}`;
 
-                  if (activeSelection === "month") {
-                    url = `${API.root}${API.monthlyTransactions(
-                      value,
-                      selectedYear || thisYear,
-                      selectedMonth
-                    )}`;
-                  }
+                        if (activeSelection === "month") {
+                          url = `${API.root}${API.monthlyTransactions(
+                            value,
+                            selectedYear || thisYear,
+                            selectedMonth
+                          )}`;
+                        }
 
-                  this.setState({
-                    selectedCard: value,
-                    url
-                  });
-                }}
-              />
-              <this.FilterMenu />
-              <Menu.Item
-                name="month"
-                active={activeSelection === "month"}
-                onClick={() => {
-                  this.setState({ activeSelection: "month", modalOpen: true });
-                }}>
-                <Icon name="calendar" />
-              </Menu.Item>
-            </Menu>
+                        this.setState({
+                          selectedCard: value,
+                          url
+                        });
+                      }}
+                    />
+                    <this.FilterMenu />
+                    <Menu.Item
+                      name="month"
+                      active={activeSelection === "month"}
+                      onClick={() => {
+                        this.setState({
+                          activeSelection: "month",
+                          modalOpen: true
+                        });
+                      }}>
+                      <Icon name="calendar" />
+                    </Menu.Item>
+                  </Menu>
 
-            {children({ data, error, loading })}
+                  {children({ data, error, loading })}
 
-            <Modal size="tiny" open={modalOpen} onClose={this.close}>
-              <Modal.Header>Choose Another Date</Modal.Header>
-              <Modal.Content>
-                <MonthInput
-                  inline
-                  closable
-                  dateFormat="M"
-                  name="selectedMonth"
-                  maxDate={selectedYear == thisYear ? thisMonth + 1 : 12}
-                  value={selectedMonth || thisMonth + 1}
-                  onChange={this.handleCalChange}
-                />
-                <YearInput
-                  inline
-                  name="selectedYear"
-                  closable
-                  dateFormat="YYYY"
-                  maxDate={thisYear}
-                  minDate={2018}
-                  value={selectedYear || thisYear}
-                  onChange={this.handleCalChange}
-                />
-              </Modal.Content>
-              <Modal.Actions>
-                <Button
-                  negative
-                  content="No"
-                  onclick={() => this.setState({ modalOpen: false })}>
-                  No
-                </Button>
-                <Button
-                  positive
-                  icon="checkmark"
-                  labelPosition="right"
-                  content="Yes"
-                  onClick={() => {
-                    this.setState({
-                      url: `${API.root}${API.monthlyTransactions(
-                        selectedCard,
-                        selectedYear || thisYear,
-                        selectedMonth
-                      )}`,
-                      modalOpen: false
-                    });
-                  }}
-                />
-              </Modal.Actions>
-            </Modal>
-          </>
-        )}
-      </Fetch>
+                  <Modal size="tiny" open={modalOpen} onClose={this.close}>
+                    <Modal.Header>Choose Another Date</Modal.Header>
+                    <Modal.Content>
+                      <MonthInput
+                        inline
+                        closable
+                        dateFormat="M"
+                        name="selectedMonth"
+                        maxDate={selectedYear == thisYear ? thisMonth + 1 : 12}
+                        value={selectedMonth || thisMonth + 1}
+                        onChange={this.handleCalChange}
+                      />
+                      <YearInput
+                        inline
+                        name="selectedYear"
+                        closable
+                        dateFormat="YYYY"
+                        maxDate={thisYear}
+                        minDate={2018}
+                        value={selectedYear || thisYear}
+                        onChange={this.handleCalChange}
+                      />
+                    </Modal.Content>
+                    <Modal.Actions>
+                      <Button
+                        negative
+                        content="No"
+                        onclick={() => this.setState({ modalOpen: false })}>
+                        No
+                      </Button>
+                      <Button
+                        positive
+                        icon="checkmark"
+                        labelPosition="right"
+                        content="Yes"
+                        onClick={() => {
+                          this.setState({
+                            url: `${API.root}${API.monthlyTransactions(
+                              selectedCard,
+                              selectedYear || thisYear,
+                              selectedMonth
+                            )}`,
+                            modalOpen: false
+                          });
+                        }}
+                      />
+                    </Modal.Actions>
+                  </Modal>
+                </>
+              )}
+            </Fetch>
+          );
+        }}
+      </Route>
     );
   }
 }
