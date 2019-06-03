@@ -32,6 +32,7 @@ const Dashboard = props => {
           <Grid.Row>
             <User
               firstName={user.firstName}
+              lastName={user.lastName}
               cards={user.cards}
               balance={balance}
               budget={budget}
@@ -80,42 +81,6 @@ const Dashboard = props => {
                 );
               }}
             </DataFilter>
-
-            {/* <Menu.Menu position="right">
-              <Dropdown>
-                <Dropdown.Menu
-                  trigger={trigger}
-                  pointing="top left"
-                  direction="left"
-                  icon={null}
-                  name="user"
-                  onClick={this.handleMenuSelect}
-                >
-                  <Dropdown.Item disabled>
-                    <span>
-                      Signed in as
-                      {' '}
-                      <strong>{`${user.firstName} ${user.lastName}`}</strong>
-                    </span>
-                  </Dropdown.Item>
-                  <AccountSettings
-                    open={accountSettingsOpen}
-                    user={data.data.user}
-                    budget={data.data.budget || {}}
-                  />
-                  <UpdatePresto open={this.state.updatePrestoOpen} />
-                  <Dropdown.Divider />
-                  <Dropdown.Item
-                    onClick={async () => {
-                      requestApi.logout();
-                      window.location.href = '/login';
-                    }}
-                  >
-                    Log out
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </Menu.Menu> */}
           </Grid.Row>
           <Grid.Row style={{ marginTop: "20px" }}>
             <Header as="h2">

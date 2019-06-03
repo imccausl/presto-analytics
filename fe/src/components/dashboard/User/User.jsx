@@ -1,23 +1,51 @@
 import React from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
-import { Header, Container, Grid } from "semantic-ui-react";
+import { withRouter } from "react-router-dom";
+import { Header, Container, Grid, Menu, Icon } from "semantic-ui-react";
 
-import DataFilter from "../DataFilter";
+import AccountSettings from "../../AccountSettings";
+import requestApi from "../../../lib/requestApi";
 import SmallStatistic from "../../styled/SmallStatistic";
+import UpdatePresto from "../../dashboard/UpdatePresto";
 
 const propTypes = {};
 const defaultProps = {};
 
-export default class User extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { activeSelection: "this month" };
-  }
+class User extends React.Component {
+  state = {
+    activeSelection: "this month",
+    accountModalOpen: false,
+    prestoModalOpen: false
+  };
+
+  handleItemClick = async (e, { name }) => {
+    if (name === "update") {
+      this.setState({ prestoModalOpen: true });
+    }
+
+    if (name === "logout") {
+      await requestApi.logout();
+      this.props.history.push("/login");
+    }
+
+    if (name === "settings") {
+      this.setState({ accountModalOpen: true });
+    }
+  };
+
+  handleAccountModalClose = () => {
+    this.setState({ accountModalOpen: false });
+  };
+
+  handlePrestoModalClose = () => {
+    this.setState({ prestoModalOpen: false });
+  };
 
   render() {
     const {
       firstName,
+      lastName,
       cards,
       balance,
       budget,
@@ -25,12 +53,30 @@ export default class User extends React.Component {
       amount,
       since
     } = this.props;
+    const { activeItem, accountModalOpen, prestoModalOpen } = this.state;
 
     return (
       <>
-        {/* <Header as="h2" style={{ fontWeight: 200 }}>
-          Hey, {firstName}
-        </Header> */}
+        <Menu icon secondary borderless>
+          <Menu.Item header>
+            <Icon name="user circle outline" size="large" />{" "}
+            {`  ${firstName} ${lastName}`}
+          </Menu.Item>
+
+          <Menu.Menu position="right">
+            <Menu.Item name="update" onClick={this.handleItemClick}>
+              <Icon name="refresh" size="large" />
+            </Menu.Item>
+
+            <Menu.Item name="settings" onClick={this.handleItemClick}>
+              <Icon name="setting" size="large" />
+            </Menu.Item>
+
+            <Menu.Item name="logout" onClick={this.handleItemClick}>
+              <Icon name="log out" size="large" />
+            </Menu.Item>
+          </Menu.Menu>
+        </Menu>
 
         <div
           style={{
@@ -64,6 +110,17 @@ export default class User extends React.Component {
             body={moment(lastActivity.updated_at).fromNow()}
           />
         </div>
+
+        <UpdatePresto
+          open={prestoModalOpen}
+          close={this.handlePrestoModalClose}
+        />
+        <AccountSettings
+          open={accountModalOpen}
+          user={this.props}
+          budget={budget || {}}
+          close={this.handleAccountModalClose}
+        />
       </>
     );
   }
@@ -71,3 +128,5 @@ export default class User extends React.Component {
 
 User.propTypes = propTypes;
 User.defaultProps = defaultProps;
+
+export default withRouter(User);

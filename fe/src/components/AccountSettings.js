@@ -1,30 +1,36 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
-  Button, Header, Icon, Modal, Form, Segment, Dropdown,
-} from 'semantic-ui-react';
+  Button,
+  Header,
+  Icon,
+  Modal,
+  Form,
+  Segment,
+  Dropdown
+} from "semantic-ui-react";
 
-import { timingSafeEqual } from 'crypto';
-import requestApi from '../lib/requestApi';
+import { timingSafeEqual } from "crypto";
+import requestApi from "../lib/requestApi";
 
 class AccountSettings extends Component {
   static propTypes = {
     budget: PropTypes.shape({
       monthlyPassCost: PropTypes.string,
-      fareCost: PropTypes.string,
+      fareCost: PropTypes.string
     }),
     user: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-    }).isRequired,
+      email: PropTypes.string.isRequired
+    }).isRequired
   };
 
   static defaultProps = {
     budget: PropTypes.shape({
-      monthlyPassCost: '146.25',
-      fareCost: '3.00',
-    }),
+      monthlyPassCost: "146.25",
+      fareCost: "3.00"
+    })
   };
 
   state = {
@@ -32,11 +38,10 @@ class AccountSettings extends Component {
     lastName: this.props.user.lastName,
     email: this.props.user.email,
     monthlyPassCost: this.props.budget.monthlyPassCost,
-    fareCost: this.props.budget.fareCost,
-    open: this.props.open,
+    fareCost: this.props.budget.fareCost
   };
 
-  handleFieldChange = (e) => {
+  handleFieldChange = e => {
     const { name, value } = e.target;
     console.log(name, value);
     this.setState({ [name]: value });
@@ -44,18 +49,16 @@ class AccountSettings extends Component {
 
   render() {
     const {
-      firstName, lastName, email, monthlyPassCost, fareCost, open,
+      firstName,
+      lastName,
+      email,
+      monthlyPassCost,
+      fareCost
     } = this.state;
+    const { open, close } = this.props;
 
     return (
       <>
-        <Dropdown.Item
-          onClick={() => {
-            this.setState({ open: true });
-          }}
-        >
-          Account Settings
-        </Dropdown.Item>
         <Modal open={open}>
           <Header icon="setting" content="Account Settings" />
           <Modal.Content>
@@ -159,27 +162,21 @@ class AccountSettings extends Component {
             <Button
               color="red"
               onClick={() => {
-                this.setState({ open: false });
-              }}
-            >
-              <Icon name="remove" />
-              {' '}
-Cancel
+                close();
+              }}>
+              <Icon name="remove" /> Cancel
             </Button>
             <Button
               color="green"
               onClick={async () => {
                 const response = await requestApi.updateBudget({
                   monthlyPassCost,
-                  fareCost,
+                  fareCost
                 });
                 console.log(response);
-                this.setState({ open: false });
-              }}
-            >
-              <Icon name="checkmark" />
-              {' '}
-Save
+                close();
+              }}>
+              <Icon name="checkmark" /> Save
             </Button>
           </Modal.Actions>
         </Modal>
