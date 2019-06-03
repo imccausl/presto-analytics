@@ -16,16 +16,18 @@ services:
     volumes:
       - ./server:/opt/backend
 
-  app:
+  front-end:
     env_file: .env
-    build: ./client
+    build: ./fe
     image: pa-frontend:dev
     expose:
       - ${CLIENT_PORT}
+      - "35729"
     ports:
       - ${CLIENT_PORT}:${CLIENT_PORT}
+      - "35729:35729"
     volumes:
-      - ./client:/opt/app
+      - ./fe:/app
     links:
       - backend
 

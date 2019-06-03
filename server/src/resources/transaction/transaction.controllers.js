@@ -9,7 +9,7 @@ const { sequelize, Sequelize, Transaction } = db;
 
 const monthly = async (req, res, next) => {
   try {
-    const { year, month } = req.params;
+    const { year, month, cardNumber } = req.params;
 
     const Transfers = Transaction.scope(
       {
@@ -17,6 +17,9 @@ const monthly = async (req, res, next) => {
       },
       {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
       },
       {
         method: ['currentUser', req.userId]
@@ -30,6 +33,9 @@ const monthly = async (req, res, next) => {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
       },
       {
+        method: ['cardNumber', cardNumber]
+      },
+      {
         method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
       }
     );
@@ -41,13 +47,85 @@ const monthly = async (req, res, next) => {
         method: ['yearAndMonth', parseInt(year, 10), parseInt(month, 10)]
       },
       {
+        method: ['cardNumber', cardNumber]
+      },
+      {
         method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
       }
     );
 
     const fares = await Fares.count();
     const transfers = await Transfers.count();
-    const transactions = await Taps.findAll({ order: sequelize.literal('date DESC') });
+    const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
+    const totalAmount = await Fares.sum('amount');
+
+    const payload = {
+      transactions,
+      count: {
+        fares,
+        transfers
+      },
+      totalAmount
+    };
+
+    res.json(successResponse(payload));
+  } catch (err) {
+    console.error(err.stack);
+    next(err);
+  }
+};
+
+const range = async (req, res, next) => {
+  try {
+    const { days } = req.query;
+    const { cardNumber } = req.params;
+
+    const Transfers = Transaction.scope(
+      {
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['currentUser', req.userId]
+      }
+    );
+    const Taps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
+      }
+    );
+    const Fares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10)]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+      }
+    );
+
+    const fares = await Fares.count();
+    const transfers = await Transfers.count();
+    const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
     const totalAmount = await Fares.sum('amount');
 
     const payload = {
@@ -197,4 +275,4 @@ const ytd = async (req, res, next) => {
   }
 };
 
-module.exports = { postAll, getAll, deleteAll, monthly, ytdData, ytd };
+module.exports = { postAll, getAll, deleteAll, monthly, ytdData, ytd, range };

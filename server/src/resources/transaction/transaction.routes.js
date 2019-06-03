@@ -20,7 +20,8 @@ const router = express.Router();
  * - get transactions by card/year
  */
 
-router.route('/monthly/:year/:month').get(requireSignin(controllers.monthly));
+router.route('/:cardNumber/monthly/:year/:month').get(requireSignin(controllers.monthly));
+router.route('/:cardNumber/range').get(requireSignin(controllers.range));
 
 router
   .route('/')

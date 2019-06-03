@@ -24,7 +24,7 @@ const { User } = db;
 
 const PORT = process.env.SERVER_PORT || 3333;
 const corsOptions = {
-  origin: 'http://localhost:3003',
+  origin: 'http://localhost:3000',
   credentials: true
 };
 
@@ -75,7 +75,7 @@ app.use((err, req, res, next) => {
   res.status(401).send({
     error: 'error',
     message: err.message,
-    body: err // for debugging
+    body: err.stacktrace // for debugging
   });
 });
 
