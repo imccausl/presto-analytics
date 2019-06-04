@@ -32,10 +32,10 @@ export default class DataFilter extends React.Component {
   state = {
     activeSelection: options[0].name,
     activeSelectionValue: options[0].value,
-    yearOrRange: options[0].value,
-    monthOrUnit: "days",
-    searchType: SEARCH_TYPE_RANGE,
-    cardNumber: "all",
+    yearOrRange: "",
+    monthOrUnit: "",
+    searchType: "",
+    cardNumber: "",
     modalOpen: false,
     selectedMonth: thisMonth,
     selectedYear: thisYear,
@@ -49,6 +49,14 @@ export default class DataFilter extends React.Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    /**
+     * This is kind of cool, actually.
+     * ---
+     * Takes care of all the state updating for the entire component by receiving props
+     * from the parent route component. So in order for any of the UI elements in this
+     * component to work correctly, all this is required is to history.push the correct route
+     */
+
     const { cardNumber, yearOrRange, monthOrUnit, searchType } = nextProps;
 
     // data validation:
@@ -60,6 +68,7 @@ export default class DataFilter extends React.Component {
       searchType
     );
 
+    // NEED SOME KIND OF CARD VALIDATION HERE
     // if (!this.cardsArray.includes(cardNumber) || cardNumber != "all") {
     //   console.log(cardNumber, "************* ERR", nextProps.cards);
     //   // TODO: error about invalid card number
@@ -125,21 +134,6 @@ export default class DataFilter extends React.Component {
         };
   }
 
-  componentDidUpdate(prevProps) {
-    const { cardNumber, yearOrRange, monthOrUnit, searchType } = prevProps;
-
-    if (
-      cardNumber !== prevProps.cardNumber &&
-      yearOrRange !== prevProps.yearOrRange &&
-      monthOrUnit !== prevProps.monthOrUnit &&
-      searchType !== prevProps.searchType
-    ) {
-      this.props.history.push(
-        `dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`
-      );
-    }
-  }
-
   handleItemClick = event => {
     const { cardNumber } = this.state;
     const { history } = this.props;
@@ -158,16 +152,7 @@ export default class DataFilter extends React.Component {
       searchType
     );
 
-    const url = `${API.root}${API.transactionRange(cardNumber, yearOrRange)}`;
     const route = `/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`;
-
-    this.setState({
-      activeSelection,
-      yearOrRange,
-      monthOrUnit,
-      searchType,
-      url
-    });
     history.push(route);
   };
 
@@ -207,7 +192,7 @@ export default class DataFilter extends React.Component {
     console.log("datafilter:", match);
     return (
       <Fetch url={url} options={API.send("GET")}>
-        {({ fetch, data, error, loading }) => (
+        {({ data, error, loading }) => (
           <>
             <Menu size="large" pointing>
               <CardMenu
@@ -215,23 +200,6 @@ export default class DataFilter extends React.Component {
                 currentSelection={cardNumber}
                 handleChange={value => {
                   const route = `/dashboard/${value}/${searchType}/${yearOrRange}/${monthOrUnit}`;
-                  let url = `${API.root}${API.transactionRange(
-                    value,
-                    yearOrRange
-                  )}`;
-
-                  if (searchType === SEARCH_TYPE_MONTH) {
-                    url = `${API.root}${API.monthlyTransactions(
-                      value,
-                      yearOrRange,
-                      monthOrUnit
-                    )}`;
-                  }
-
-                  this.setState({
-                    cardNumber: value,
-                    url
-                  });
                   history.push(route);
                 }}
               />
@@ -290,14 +258,6 @@ export default class DataFilter extends React.Component {
                     const route = `/dashboard/${cardNumber}/${activeSelection}/${selectedYear}/${selectedMonth}`;
 
                     this.setState({
-                      url: `${API.root}${API.monthlyTransactions(
-                        cardNumber,
-                        selectedYear || thisYear,
-                        selectedMonth
-                      )}`,
-                      searchType: activeSelection,
-                      monthOrUnit: selectedMonth,
-                      yearOrRange: selectedYear || thisYear,
                       modalOpen: false
                     });
 

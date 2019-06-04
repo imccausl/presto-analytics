@@ -1,7 +1,7 @@
 import moment from "moment";
 import React from "react";
 import { Grid, Container, Header } from "semantic-ui-react";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 
 import DataFilter, {
   SEARCH_TYPE_RANGE,
@@ -73,10 +73,17 @@ const Dashboard = props => {
                       ? Math.abs(parseInt(match.params.monthOrUnit, 10))
                       : "days";
                 } else {
+                  //defaults
                   cardNumber = "all";
                   searchType = SEARCH_TYPE_RANGE;
                   yearOrRange = 30;
                   monthOrUnit = "days";
+
+                  return (
+                    <Redirect
+                      to={`/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`}
+                    />
+                  );
                 }
 
                 return (
