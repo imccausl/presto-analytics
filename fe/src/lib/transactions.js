@@ -18,8 +18,6 @@ function totalDailyTransactionBreakdown(
     let currentDate = moment(start);
     const stopDate = moment(stop);
 
-    console.log("***", currentDate, stopDate);
-
     while (currentDate <= stopDate) {
       const formattedDate = currentDate.format("DD/MM/YYYY");
 
@@ -56,7 +54,6 @@ function totalDailyTransactionBreakdown(
       .utcOffset(0)
       .format("DD/MM/YYYY");
 
-    console.log("** dataset[date]:", date, dataset[date], dataset);
     const amount = parseFloat(item.amount);
     dataset[date].amount += amount;
     dataset[date].trips += 1;
