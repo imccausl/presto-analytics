@@ -17,9 +17,9 @@ const defaultProps = {};
 
 // TODO: move to default props
 const options = [
-  { name: "last 30 days", value: "30" },
-  { name: "last 60 days", value: "60" },
-  { name: "last year", value: "365" },
+  { name: "last 30 days", value: 30 },
+  { name: "last 60 days", value: 60 },
+  { name: "last year", value: 365 },
   { name: "all time", value: "all_time" }
 ];
 
@@ -34,8 +34,8 @@ export default class DataFilter extends React.Component {
     activeSelectionValue: options[0].value,
     yearOrRange: options[0].value,
     monthOrUnit: "days",
-    searchType: "range",
-    selectedCard: "all",
+    searchType: SEARCH_TYPE_RANGE,
+    cardNumber: "all",
     modalOpen: false,
     selectedMonth: thisMonth,
     selectedYear: thisYear,
@@ -125,18 +125,42 @@ export default class DataFilter extends React.Component {
         };
   }
 
+  componentDidUpdate(prevProps) {
+    const { cardNumber, yearOrRange, monthOrUnit, searchType } = prevProps;
+
+    if (
+      cardNumber !== prevProps.cardNumber &&
+      yearOrRange !== prevProps.yearOrRange &&
+      monthOrUnit !== prevProps.monthOrUnit &&
+      searchType !== prevProps.searchType
+    ) {
+      this.props.history.push(
+        `dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`
+      );
+    }
+  }
+
   handleItemClick = event => {
-    const { selectedCard } = this.state;
+    const { cardNumber } = this.state;
+    const { history } = this.props;
 
     const activeSelection = event.target.textContent.toLowerCase();
     const yearOrRange = this.optionsMap[activeSelection];
     const monthOrUnit = "days";
-    const searchType = "range";
+    const searchType = SEARCH_TYPE_RANGE;
 
-    const url = `${API.root}${API.transactionRange(
-      this.state.selectedCard,
-      yearOrRange
-    )}`;
+    console.log(
+      "handleItemClick:",
+      cardNumber,
+      activeSelection,
+      yearOrRange,
+      monthOrUnit,
+      searchType
+    );
+
+    const url = `${API.root}${API.transactionRange(cardNumber, yearOrRange)}`;
+    const route = `/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`;
+
     this.setState({
       activeSelection,
       yearOrRange,
@@ -144,6 +168,7 @@ export default class DataFilter extends React.Component {
       searchType,
       url
     });
+    history.push(route);
   };
 
   handleCalChange = (event, { name, value }) => {
@@ -151,13 +176,13 @@ export default class DataFilter extends React.Component {
   };
 
   FilterMenu = () => {
-    const { activeSelection } = this.state;
+    const { yearOrRange } = this.state;
 
     const fullMenu = options.map(option => (
       <Menu.Item
-        key={option.value}
+        key={option.name}
         name={option.name}
-        active={activeSelection === option.name}
+        active={yearOrRange === option.value}
         onClick={this.handleItemClick}
       />
     ));
@@ -167,8 +192,10 @@ export default class DataFilter extends React.Component {
 
   render() {
     const {
-      selectedCard,
-      activeSelectionValue,
+      cardNumber,
+      yearOrRange,
+      searchType,
+      monthOrUnit,
       modalOpen,
       selectedYear,
       selectedMonth,
@@ -177,7 +204,7 @@ export default class DataFilter extends React.Component {
     } = this.state;
 
     const { children, match, history } = this.props;
-    console.log("datafilter:", match, history);
+    console.log("datafilter:", match);
     return (
       <Fetch url={url} options={API.send("GET")}>
         {({ fetch, data, error, loading }) => (
@@ -185,34 +212,36 @@ export default class DataFilter extends React.Component {
             <Menu size="large" pointing>
               <CardMenu
                 cards={this.cardsArray}
-                currentSelection={selectedCard}
+                currentSelection={cardNumber}
                 handleChange={value => {
+                  const route = `/dashboard/${value}/${searchType}/${yearOrRange}/${monthOrUnit}`;
                   let url = `${API.root}${API.transactionRange(
                     value,
-                    activeSelectionValue
+                    yearOrRange
                   )}`;
 
-                  if (activeSelection === "month") {
+                  if (searchType === SEARCH_TYPE_MONTH) {
                     url = `${API.root}${API.monthlyTransactions(
                       value,
-                      selectedYear || thisYear,
-                      selectedMonth
+                      yearOrRange,
+                      monthOrUnit
                     )}`;
                   }
 
                   this.setState({
-                    selectedCard: value,
+                    cardNumber: value,
                     url
                   });
+                  history.push(route);
                 }}
               />
               <this.FilterMenu />
               <Menu.Item
                 name="month"
-                active={activeSelection === "month"}
+                active={searchType === SEARCH_TYPE_MONTH}
                 onClick={() => {
                   this.setState({
-                    activeSelection: "month",
+                    activeSelection: SEARCH_TYPE_MONTH,
                     modalOpen: true
                   });
                 }}>
@@ -258,14 +287,21 @@ export default class DataFilter extends React.Component {
                   labelPosition="right"
                   content="Yes"
                   onClick={() => {
+                    const route = `/dashboard/${cardNumber}/${activeSelection}/${selectedYear}/${selectedMonth}`;
+
                     this.setState({
                       url: `${API.root}${API.monthlyTransactions(
-                        selectedCard,
+                        cardNumber,
                         selectedYear || thisYear,
                         selectedMonth
                       )}`,
+                      searchType: activeSelection,
+                      monthOrUnit: selectedMonth,
+                      yearOrRange: selectedYear || thisYear,
                       modalOpen: false
                     });
+
+                    history.push(route);
                   }}
                 />
               </Modal.Actions>

@@ -53,10 +53,10 @@ const Dashboard = props => {
             <Route path="/dashboard/:cardNumber/:searchType/:yearOrRange/:monthOrUnit">
               {({ match, history }) => {
                 console.log(match, history);
-                let cardNumber = "all";
-                let searchType = SEARCH_TYPE_RANGE;
-                let yearOrRange = 30;
-                let monthOrUnit = "days";
+                let cardNumber;
+                let searchType;
+                let yearOrRange;
+                let monthOrUnit;
 
                 if (match) {
                   cardNumber = match.params.cardNumber;
@@ -72,6 +72,11 @@ const Dashboard = props => {
                     match.params.monthOrUnit !== "days"
                       ? Math.abs(parseInt(match.params.monthOrUnit, 10))
                       : "days";
+                } else {
+                  cardNumber = "all";
+                  searchType = SEARCH_TYPE_RANGE;
+                  yearOrRange = 30;
+                  monthOrUnit = "days";
                 }
 
                 return (
