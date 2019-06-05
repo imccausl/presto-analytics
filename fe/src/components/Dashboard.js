@@ -10,6 +10,7 @@ import DataFilter, {
 import FilteredStats from "./dashboard/FilteredStats";
 import MonthlyOverview from "./dashboard/MonthlyOverview";
 import SideBar from "./SideBar";
+import TapList from "./dashboard/TapList";
 import TopTapOrigins from "./dashboard/TopTapOrigins";
 import User from "./dashboard/User";
 import YearOverview from "./dashboard/YearOverview";
@@ -149,7 +150,11 @@ const Dashboard = props => {
                               />
                             </Grid.Column>
                             <Grid.Column>
-                              <div>More stuff here</div>
+                              <TapList
+                                data={data}
+                                error={error}
+                                loading={loading}
+                              />
                             </Grid.Column>
                           </Grid.Row>
                         </>
