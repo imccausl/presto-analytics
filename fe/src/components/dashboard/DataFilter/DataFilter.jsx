@@ -143,15 +143,6 @@ export default class DataFilter extends React.Component {
     const monthOrUnit = "days";
     const searchType = SEARCH_TYPE_RANGE;
 
-    console.log(
-      "handleItemClick:",
-      cardNumber,
-      activeSelection,
-      yearOrRange,
-      monthOrUnit,
-      searchType
-    );
-
     const route = `/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`;
     history.push(route);
   };
