@@ -34,7 +34,7 @@ export default props => {
         inverted
         vertical
         style={{
-          background: "rgb(238,79,46)",
+          background: "rgb(46,113,23)",
           color: "#333845",
           fontSize: "1rem",
 
