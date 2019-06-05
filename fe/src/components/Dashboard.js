@@ -10,6 +10,7 @@ import DataFilter, {
 import FilteredStats from "./dashboard/FilteredStats";
 import MonthlyOverview from "./dashboard/MonthlyOverview";
 import SideBar from "./SideBar";
+import TopTapOrigins from "./dashboard/TopTapOrigins";
 import User from "./dashboard/User";
 import YearOverview from "./dashboard/YearOverview";
 
@@ -116,17 +117,41 @@ const Dashboard = props => {
                             </Header>
                           )}
 
-                          <MonthlyOverview
-                            data={data}
-                            error={error}
-                            loading={loading}
-                            budget={budget || {}}
-                          />
-                          <FilteredStats
-                            data={data}
-                            error={error}
-                            loading={loading}
-                          />
+                          {loading && (
+                            <Header as="h2">
+                              Loading...
+                              <Header.Subheader>
+                                Some kind of text will go here
+                              </Header.Subheader>
+                            </Header>
+                          )}
+                          <Grid.Row>
+                            <MonthlyOverview
+                              data={data}
+                              error={error}
+                              loading={loading}
+                              budget={budget || {}}
+                            />
+                          </Grid.Row>
+                          <Grid.Row>
+                            <FilteredStats
+                              data={data}
+                              error={error}
+                              loading={loading}
+                            />
+                          </Grid.Row>
+                          <Grid.Row columns={6}>
+                            <Grid.Column>
+                              <TopTapOrigins
+                                data={data}
+                                error={error}
+                                loading={loading}
+                              />
+                            </Grid.Column>
+                            <Grid.Column>
+                              <div>More stuff here</div>
+                            </Grid.Column>
+                          </Grid.Row>
                         </>
                       );
                     }}
@@ -135,7 +160,9 @@ const Dashboard = props => {
               }}
             </Route>
           </Grid.Row>
-          <Grid.Row style={{ marginTop: "20px" }}>
+          {/*
+            * May move these to a different route
+            <Grid.Row style={{ marginTop: "20px" }}>
             <Header as="h2">
               Year Overview
               <Header.Subheader>
@@ -143,7 +170,7 @@ const Dashboard = props => {
               </Header.Subheader>
             </Header>
             <YearOverview budget={budget} />
-          </Grid.Row>
+          </Grid.Row> */}
         </Container>
       </Grid>
     </>
