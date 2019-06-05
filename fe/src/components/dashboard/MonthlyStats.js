@@ -1,4 +1,5 @@
 import React from "react";
+import { Segment, Header, Icon } from "semantic-ui-react";
 import {
   ResponsiveContainer,
   CartesianGrid,
@@ -17,6 +18,17 @@ export default props => {
   const { transactions } = data;
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);
+
+  if (!breakdown.dataset) {
+    return (
+      <Segment placeholder>
+        <Header icon>
+          <Icon name="calendar times outline" />
+          No transactions for this period.
+        </Header>
+      </Segment>
+    );
+  }
 
   return (
     <div>
