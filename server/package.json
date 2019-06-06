@@ -55,5 +55,9 @@
     "request": "^2.88.0",
     "sequelize": "^4.42.0",
     "tough-cookie": "^3.0.1"
+  },
+  "jest": {
+    "coverageDirectory": "../../coverage/",
+    "collectCoverage": true
   }
 }
