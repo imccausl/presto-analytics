@@ -55,11 +55,17 @@ function totalDailyTransactionBreakdown(
     const amount = parseFloat(item.amount);
 
     if (item.type === "Transfer") {
-      dataset[date].transferLocations.push(item.location);
+      dataset[date].transferLocations.push({
+        location: item.location,
+        time: item.date
+      });
     }
 
     if (item.type === "Fare Payment" || item.type === "Transit Pass Payment") {
-      dataset[date].fareLocations.push(item.location);
+      dataset[date].fareLocations.push({
+        location: item.location,
+        time: item.date
+      });
     }
 
     dataset[date].amount += amount;
