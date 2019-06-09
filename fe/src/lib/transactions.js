@@ -4,15 +4,6 @@ function totalDailyTransactionBreakdown(
   transactions,
   includeAmountInDomain = false
 ) {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ];
   function getDates(start, stop) {
     const dateObj = {};
     let currentDate = moment(start);
@@ -21,7 +12,14 @@ function totalDailyTransactionBreakdown(
     while (currentDate <= stopDate) {
       const formattedDate = currentDate.format("DD/MM/YYYY");
 
-      dateObj[formattedDate] = { amount: 0, trips: 0 };
+      dateObj[formattedDate] = {
+        amount: 0,
+        trips: 0,
+        transfers: 0,
+        fares: 0,
+        transferLocations: [],
+        fareLocations: []
+      };
       currentDate = currentDate.add(1, "days");
     }
 
@@ -33,7 +31,7 @@ function totalDailyTransactionBreakdown(
 
     return {
       date: currDate.format("DD"),
-      dayOfWeek: days[currDate.day()],
+      dayOfWeek: currDate.format("dddd"),
       amount: "0.00",
       trips: 0
     };
@@ -55,8 +53,22 @@ function totalDailyTransactionBreakdown(
       .format("DD/MM/YYYY");
 
     const amount = parseFloat(item.amount);
+
+    if (item.type === "Transfer") {
+      dataset[date].transferLocations.push(item.location);
+    }
+
+    if (item.type === "Fare Payment" || item.type === "Transit Pass Payment") {
+      dataset[date].fareLocations.push(item.location);
+    }
+
     dataset[date].amount += amount;
     dataset[date].trips += 1;
+    dataset[date].transfers += item.type === "Transfer" ? 1 : 0;
+    dataset[date].fares +=
+      item.type === "Fare Payment" || item.type === "Transit Pass Payment"
+        ? 1
+        : 0;
   });
 
   const breakdown = Object.keys(dataset).map(key => {
@@ -73,9 +85,19 @@ function totalDailyTransactionBreakdown(
 
     return {
       date: currDate.format("DD"),
-      dayOfWeek: days[currDate.day()],
+      dayOfWeek: currDate.format("dddd"),
+      month: currDate.format("MMMM"),
+      year: currDate.format("YYYY"),
       amount: (dataset[key].amount / 100).toFixed(2),
-      trips: dataset[key].trips
+      trips: dataset[key].trips,
+      transfers: {
+        count: dataset[key].transfers,
+        locations: dataset[key].transferLocations
+      },
+      fares: {
+        count: dataset[key].fares,
+        locations: dataset[key].fareLocations
+      }
     };
   });
 
