@@ -30,7 +30,10 @@ export default function MonthlyOverview(props) {
 
   return (
     <>
-      <Segment style={{ minHeight: "250px" }} loading={loading}>
+      <Segment
+        style={{ minHeight: "250px" }}
+        loading={loading}
+        style={{ boxShadow: "none", border: "none" }}>
         {!loading && !error && (
           <MonthlyStats
             month={getMonthNameFromNum(month)}

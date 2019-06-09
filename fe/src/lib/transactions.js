@@ -84,6 +84,7 @@ function totalDailyTransactionBreakdown(
     domain[1] = domain[1] < dataset[key].trips ? dataset[key].trips : domain[1];
 
     return {
+      label: `${currDate.format("MMM")} ${currDate.format("DD")}`,
       date: currDate.format("DD"),
       dayOfWeek: currDate.format("dddd"),
       month: currDate.format("MMMM"),

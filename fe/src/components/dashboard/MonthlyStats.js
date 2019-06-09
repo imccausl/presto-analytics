@@ -40,7 +40,7 @@ const TTLocationItem = styled.li``;
 
 const CustomizedAxisTick = props => {
   const { x, y, stroke, payload } = props;
-
+  console.log("CUSTOMIZEDAXISTICK:", payload);
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -128,7 +128,7 @@ export default props => {
 
   return (
     <div>
-      <ResponsiveContainer height={200}>
+      <ResponsiveContainer height={300}>
         <LineChart
           margin={{
             top: 20,
@@ -179,10 +179,14 @@ export default props => {
             stroke="#C4C4C4"
           />
           <XAxis
-            dataKey="date"
+            dataKey="label"
             //tickMargin={15}
             tickLine={false}
             axisLine={false}
+            tickSize={0}
+            minTickGap={0}
+            height={60}
+            interval="preserveStartEnd"
             tick={<CustomizedAxisTick />}
             stroke="#C4C4C4"
           />
