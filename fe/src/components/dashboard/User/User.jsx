@@ -78,12 +78,6 @@ class User extends React.Component {
           </Menu.Menu>
         </Menu>
 
-        <Header as="h2" dividing>
-          {`Hey, ${firstName}.`}
-          <Header.Subheader>
-            You've been a Presto user since {moment(since).format("MMMM YYYY")}
-          </Header.Subheader>
-        </Header>
         <div
           style={{
             display: "flex",
