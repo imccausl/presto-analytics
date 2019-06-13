@@ -14,7 +14,7 @@ export default function FilteredStats(props) {
 
   console.log("filteredStats:", data, loading, error);
   return (
-    <Statistic.Group widths="three" color="orange" size="large">
+    <Statistic.Group widths="four" color="orange" size="small">
       {!loading && !error && (
         <>
           <Statistic>
@@ -22,6 +22,13 @@ export default function FilteredStats(props) {
               {`$${(data.data.totalAmount / 100).toFixed(2)}`}
             </Statistic.Value>
             <Statistic.Label>Spent</Statistic.Label>
+          </Statistic>
+
+          <Statistic>
+            <Statistic.Value>
+              {data.data.count.transfers + data.data.count.fares}
+            </Statistic.Value>
+            <Statistic.Label>Taps</Statistic.Label>
           </Statistic>
 
           <Statistic>

@@ -33,6 +33,7 @@ const TTContainer = styled.div`
     padding: 0;
     position: absolute;
     width: 100%;
+    border-radius: 0 0 0.25rem 0.25rem;
 
     h2 {
       font-size: 1.1rem;
@@ -116,7 +117,7 @@ const TTLocationItem = styled.li`
 
 const CustomizedAxisTick = props => {
   const { x, y, stroke, payload } = props;
-  console.log("CUSTOMIZEDAXISTICK:", payload);
+
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -137,8 +138,6 @@ const CustomTooltip = ({ payload, label, active }) => {
     const XAxis = payload[0];
     const YAxis = payload[1];
 
-    console.log(XAxis);
-    console.log(YAxis);
     return (
       <TTContainer>
         <header>
@@ -223,7 +222,7 @@ export default props => {
   const { transactions } = data;
 
   const breakdown = totalDailyTransactionBreakdown(transactions, true);
-  console.log("breakdown from transactions helper:", breakdown);
+
   if (!breakdown.dataset) {
     return (
       <Segment placeholder>
@@ -246,11 +245,7 @@ export default props => {
             bottom: 0
           }}
           data={breakdown.dataset}>
-          <CartesianGrid
-            stroke="#EBEBEB"
-            vertical={false}
-            strokeDasharray="5"
-          />
+          <CartesianGrid vertical={false} stroke="#EBEBEB" />
 
           <Line
             dataKey="trips"
@@ -280,8 +275,7 @@ export default props => {
             allowDecimals={false}
             type="number"
             domain={breakdown.domain}
-            padding={{ left: 30, right: 30 }}
-            tickMargin={20}
+            padding={{ left: 50 }}
             dataKey="amount"
             tickLine={false}
             axisLine={false}
@@ -295,12 +289,12 @@ export default props => {
             tickSize={0}
             minTickGap={0}
             height={60}
-            interval="preserveStartEnd"
+            interval={breakdown.dataset.length > 100 ? 10 : 1}
             tick={<CustomizedAxisTick />}
             stroke="#C4C4C4"
           />
           <Tooltip content={<CustomTooltip />} />
-          {/* <Legend /> */}
+          <Legend iconType="circle" />
         </LineChart>
       </ResponsiveContainer>
     </div>

@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import Fetch from "react-fetch-component";
 import PropTypes from "prop-types";
@@ -19,8 +20,8 @@ const defaultProps = {};
 const options = [
   { name: "last 30 days", value: 30 },
   { name: "last 60 days", value: 60 },
-  { name: "last year", value: 365 },
-  { name: "all time", value: "all_time" }
+  { name: "last year", value: 365 }
+  //{ name: "all time", value: "all_time" }
 ];
 
 const thisMonth = new Date().getMonth();
@@ -139,6 +140,7 @@ export default class DataFilter extends React.Component {
     const { history } = this.props;
 
     const activeSelection = event.target.textContent.toLowerCase();
+    console.log("itemclick:", activeSelection);
     const yearOrRange = this.optionsMap[activeSelection];
     const monthOrUnit = "days";
     const searchType = SEARCH_TYPE_RANGE;
@@ -183,82 +185,103 @@ export default class DataFilter extends React.Component {
     console.log("datafilter:", match);
     return (
       <Fetch url={url} options={API.send("GET")}>
-        {({ data, error, loading }) => (
-          <>
-            <Menu size="large" pointing>
-              <CardMenu
-                cards={this.cardsArray}
-                currentSelection={cardNumber}
-                handleChange={value => {
-                  const route = `/dashboard/${value}/${searchType}/${yearOrRange}/${monthOrUnit}`;
-                  history.push(route);
-                }}
-              />
-              <this.FilterMenu />
-              <Menu.Item
-                name="month"
-                active={searchType === SEARCH_TYPE_MONTH}
-                onClick={() => {
-                  this.setState({
-                    activeSelection: SEARCH_TYPE_MONTH,
-                    modalOpen: true
-                  });
-                }}>
-                <Icon name="calendar" />
-              </Menu.Item>
-            </Menu>
+        {({ data, error, loading }) => {
+          console.log({ data, error, loading });
+          return (
+            <>
+              <Menu size="large" pointing secondary>
+                {!loading && !error && (
+                  <Menu.Item header>
+                    {data.data.transactions.length === 0
+                      ? "No Transactions For This Period"
+                      : `${moment(data.data.transactions[0].date).format(
+                          "MMMM DD YYYY"
+                        )} - ${moment(
+                          data.data.transactions[
+                            data.data.transactions.length - 1
+                          ].date
+                        ).format("MMMM DD YYYY")}`}
+                  </Menu.Item>
+                )}
 
-            {children({ data, error, loading })}
+                {loading && <Menu.Item header>Loading...</Menu.Item>}
 
-            <Modal size="tiny" open={modalOpen} onClose={this.close}>
-              <Modal.Header>Choose Another Date</Modal.Header>
-              <Modal.Content>
-                <MonthInput
-                  inline
-                  closable
-                  dateFormat="M"
-                  name="selectedMonth"
-                  maxDate={selectedYear == thisYear ? thisMonth + 1 : 12}
-                  value={selectedMonth || thisMonth + 1}
-                  onChange={this.handleCalChange}
-                />
-                <YearInput
-                  inline
-                  name="selectedYear"
-                  closable
-                  dateFormat="YYYY"
-                  maxDate={thisYear}
-                  minDate={2018}
-                  value={selectedYear || thisYear}
-                  onChange={this.handleCalChange}
-                />
-              </Modal.Content>
-              <Modal.Actions>
-                <Button
-                  negative
-                  content="No"
-                  onclick={() => this.setState({ modalOpen: false })}>
-                  No
-                </Button>
-                <Button
-                  positive
-                  icon="checkmark"
-                  labelPosition="right"
-                  content="Yes"
-                  onClick={() => {
-                    const route = `/dashboard/${cardNumber}/${activeSelection}/${selectedYear}/${selectedMonth}`;
+                <Menu.Menu position="right">
+                  <CardMenu
+                    cards={this.cardsArray}
+                    currentSelection={cardNumber}
+                    handleChange={value => {
+                      const route = `/dashboard/${value}/${searchType}/${yearOrRange}/${monthOrUnit}`;
+                      history.push(route);
+                    }}
+                  />
+                  <this.FilterMenu />
+                  <Menu.Item
+                    name="month"
+                    active={searchType === SEARCH_TYPE_MONTH}
+                    onClick={() => {
+                      this.setState({
+                        activeSelection: SEARCH_TYPE_MONTH,
+                        modalOpen: true
+                      });
+                    }}>
+                    <Icon name="calendar" />
+                  </Menu.Item>
+                </Menu.Menu>
+              </Menu>
 
-                    this.setState({
-                      modalOpen: false
-                    });
+              {children({ data, error, loading })}
 
-                    history.push(route);
-                  }}
-                />
-              </Modal.Actions>
-            </Modal>
-          </>
-        )}
+              <Modal size="tiny" open={modalOpen} onClose={this.close}>
+                <Modal.Header>Choose Another Date</Modal.Header>
+                <Modal.Content>
+                  <MonthInput
+                    inline
+                    closable
+                    dateFormat="M"
+                    name="selectedMonth"
+                    maxDate={selectedYear == thisYear ? thisMonth + 1 : 12}
+                    value={selectedMonth || thisMonth + 1}
+                    onChange={this.handleCalChange}
+                  />
+                  <YearInput
+                    inline
+                    name="selectedYear"
+                    closable
+                    dateFormat="YYYY"
+                    maxDate={thisYear}
+                    minDate={2018}
+                    value={selectedYear || thisYear}
+                    onChange={this.handleCalChange}
+                  />
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button
+                    negative
+                    content="No"
+                    onclick={() => this.setState({ modalOpen: false })}>
+                    No
+                  </Button>
+                  <Button
+                    positive
+                    icon="checkmark"
+                    labelPosition="right"
+                    content="Yes"
+                    onClick={() => {
+                      const route = `/dashboard/${cardNumber}/${activeSelection}/${selectedYear}/${selectedMonth}`;
+
+                      this.setState({
+                        modalOpen: false
+                      });
+
+                      history.push(route);
+                    }}
+                  />
+                </Modal.Actions>
+              </Modal>
+            </>
+          );
+        }}
       </Fetch>
     );
   }

@@ -8,6 +8,14 @@ const propTypes = {};
 
 const defaultProps = {};
 
+function notMutatedSort(array) {
+  const newArray = array.slice(0);
+
+  return newArray.sort((a, b) =>
+    Date.parse(a.date) > Date.parse(b.date) ? -1 : 1
+  );
+}
+
 export default function TapList(props) {
   const { data, loading, error } = props;
   let tapRows = [];
@@ -15,7 +23,8 @@ export default function TapList(props) {
   if (loading) return <div>Loading...</div>;
 
   if (!loading && !error && data.data) {
-    tapRows = data.data.transactions.map((item, index) => (
+    const sortedTapRows = notMutatedSort(data.data.transactions);
+    tapRows = sortedTapRows.map((item, index) => (
       <Table.Row positive={item.type === "Transfer"} key={item.id}>
         <Table.Cell>{index + 1}</Table.Cell>
         <Table.Cell>

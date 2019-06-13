@@ -4,6 +4,7 @@ import { Segment, Message } from "semantic-ui-react";
 import MonthlyStats from "./MonthlyStats";
 
 import { getMonthNameFromNum } from "../../lib/date";
+import { NONAME } from "dns";
 
 const panes = [
   { menuItem: "This Month" },
@@ -31,9 +32,13 @@ export default function MonthlyOverview(props) {
   return (
     <>
       <Segment
-        style={{ minHeight: "250px" }}
-        loading={loading}
-        style={{ boxShadow: "none", border: "none" }}>
+        style={{
+          minHeight: "250px",
+          padding: 0,
+          boxShadow: "none",
+          border: "none"
+        }}
+        loading={loading}>
         {!loading && !error && (
           <MonthlyStats
             month={getMonthNameFromNum(month)}
