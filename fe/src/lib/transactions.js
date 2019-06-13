@@ -111,4 +111,20 @@ function totalDailyTransactionBreakdown(
   return { dataset: breakdown, domain };
 }
 
-export { totalDailyTransactionBreakdown };
+function groupByDate(transactions) {
+  const dataset = {};
+
+  transactions.forEach(transaction => {
+    const date = moment(transaction.date).format("MM-DD-YYYY");
+
+    if (dataset[date]) {
+      dataset[date].push(transaction);
+    } else {
+      dataset[date] = [transaction];
+    }
+  });
+
+  return dataset;
+}
+
+export { totalDailyTransactionBreakdown, groupByDate };
