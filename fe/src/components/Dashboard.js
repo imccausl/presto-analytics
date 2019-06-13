@@ -9,6 +9,7 @@ import DataFilter, {
 } from "./dashboard/DataFilter";
 import FilteredStats from "./dashboard/FilteredStats";
 import MonthlyOverview from "./dashboard/MonthlyOverview";
+import RecentActivity from "./dashboard/RecentActivity";
 import SideBar from "./SideBar";
 import TapList from "./dashboard/TapList";
 import TopTapOrigins from "./dashboard/TopTapOrigins";
@@ -30,12 +31,9 @@ const Dashboard = props => {
 
   return (
     <>
-      <div style={{ position: "relative" }}>
-        <SideBar />
-      </div>
-      <Grid padded>
-        <Container>
-          <Grid.Row>
+      <Grid columns="equal">
+        <Grid.Row>
+          <Grid.Column>
             <User
               firstName={user.firstName}
               lastName={user.lastName}
@@ -50,8 +48,10 @@ const Dashboard = props => {
                   : lastActivity[0]
               }
             />
-          </Grid.Row>
-          <Grid.Row style={{ marginTop: "20px" }}>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row style={{ marginTop: "20px" }}>
+          <Grid.Column>
             <Route path="/dashboard/:cardNumber/:searchType/:yearOrRange/:monthOrUnit">
               {({ match, history }) => {
                 console.log(match, history);
@@ -86,7 +86,7 @@ const Dashboard = props => {
                       to={`/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`}
                     />
                   );
-                }
+                } 
 
                 return (
                   <DataFilter
@@ -100,48 +100,34 @@ const Dashboard = props => {
                     {({ data, error, loading }) => {
                       console.log(data);
                       return (
-                        <>
-                          {!loading && !error && (
-                            <Header as="h2">
-                              {data.data.transactions.length === 0
-                                ? "No Transactions For This Period"
-                                : `${moment(
-                                    data.data.transactions[0].date
-                                  ).format("MMMM DD YYYY")} - ${moment(
-                                    data.data.transactions[
-                                      data.data.transactions.length - 1
-                                    ].date
-                                  ).format("MMMM DD YYYY")}`}
-                              <Header.Subheader>
-                                Some kind of text will go here
-                              </Header.Subheader>
-                            </Header>
-                          )}
-
-                          {loading && (
-                            <Header as="h2">
-                              Loading...
-                              <Header.Subheader>
-                                Some kind of text will go here
-                              </Header.Subheader>
-                            </Header>
-                          )}
+                        <Grid columns="equal">
                           <Grid.Row>
-                            <MonthlyOverview
-                              data={data}
-                              error={error}
-                              loading={loading}
-                              budget={budget || {}}
-                            />
+                            <Grid.Column>
+                              <MonthlyOverview
+                                data={data}
+                                error={error}
+                                loading={loading}
+                                budget={budget || {}}
+                              />
+                            </Grid.Column>
                           </Grid.Row>
                           <Grid.Row>
-                            <FilteredStats
-                              data={data}
-                              error={error}
-                              loading={loading}
-                            />
+                            <Grid.Column>
+                              <FilteredStats
+                                data={data}
+                                error={error}
+                                loading={loading}
+                              />
+                            </Grid.Column>
                           </Grid.Row>
-                          <Grid.Row columns={6}>
+                          <Grid.Row>
+                            <Grid.Column>
+                              <RecentActivity
+                                data={data}
+                                error={error}
+                                loading={loading}
+                              />
+                            </Grid.Column>
                             <Grid.Column>
                               <TopTapOrigins
                                 data={data}
@@ -149,23 +135,17 @@ const Dashboard = props => {
                                 loading={loading}
                               />
                             </Grid.Column>
-                            <Grid.Column>
-                              <TapList
-                                data={data}
-                                error={error}
-                                loading={loading}
-                              />
-                            </Grid.Column>
                           </Grid.Row>
-                        </>
+                        </Grid>
                       );
                     }}
                   </DataFilter>
                 );
               }}
             </Route>
-          </Grid.Row>
-          {/*
+          </Grid.Column>
+        </Grid.Row>
+        {/*
             * May move these to a different route
             <Grid.Row style={{ marginTop: "20px" }}>
             <Header as="h2">
@@ -176,7 +156,6 @@ const Dashboard = props => {
             </Header>
             <YearOverview budget={budget} />
           </Grid.Row> */}
-        </Container>
       </Grid>
     </>
   );
