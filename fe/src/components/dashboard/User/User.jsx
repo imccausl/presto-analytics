@@ -56,7 +56,7 @@ class User extends React.Component {
     const { activeItem, accountModalOpen, prestoModalOpen } = this.state;
 
     return (
-      <>
+      <div style={{ background: "white" }}>
         <Menu icon secondary borderless>
           <Menu.Item header>
             {/* <Icon name="user circle outline" size="large" />{" "}
@@ -121,7 +121,7 @@ class User extends React.Component {
           budget={budget || {}}
           close={this.handleAccountModalClose}
         />
-      </>
+      </div>
     );
   }
 }
