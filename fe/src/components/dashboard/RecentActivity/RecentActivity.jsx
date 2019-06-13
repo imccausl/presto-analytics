@@ -11,14 +11,14 @@ const defaultProps = {};
 const Timeline = styled.li`
   position: relative;
 
-  span {
+  span.dot {
     &::after {
       content: "";
       background: #fff;
       width: 13px;
       height: 13px;
       border-radius: 50%;
-      border: 3px solid red;
+      border: 3px solid ${props => props.color || "blue"};
       position: absolute;
       top: 0;
       left: -5px;
@@ -26,23 +26,27 @@ const Timeline = styled.li`
   }
 
   &:last-of-type {
-    div::before {
+    section::before {
       border-left: none;
     }
   }
 `;
 
-const TimelineLine = styled.div`
+const TimelineLine = styled.section`
   &::before {
     content: "";
     width: 1px;
     height: 100%;
     position: absolute;
-    border-left: 3px solid red;
+    border-left: 3px solid ${props => props.color || "blue"};
   }
 `;
 
 const TimelineItem = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+
+  position: relative;
   margin-left: 10px;
   padding: 0 0 10px 10px;
 `;
@@ -71,6 +75,47 @@ const TimelineHeader = styled.div`
   margin-left: 120px;
 `;
 
+const TimelineLocation = styled.div`
+  border-top: 1px solid lightgrey;
+  margin-top: 8px;
+  padding-top: 5px;
+  font-weight: bold;
+`;
+
+const TimelineInfoContainer = styled.div`
+  /* position: absolute;
+  top: 0;
+  left: 100px; */
+`;
+
+const TimelineInfo = styled.div`
+  position: relative;
+  border: 1px solid lightgrey;
+  width: 335px;
+  border-radius: 0.25rem;
+  padding: 10px;
+  margin-left: 15px;
+
+  &:hover {
+    box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
+  }
+
+  &::before {
+    position: absolute;
+    content: "";
+
+    background: #fff;
+    top: 5px;
+    left: -1px;
+    width: 10px;
+    height: 10px;
+    border-left: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+
+    transform: translateX(-50%) rotate(45deg);
+  }
+`;
+
 export default function RecentActivity(props) {
   const { data, loading, error } = props;
   let dataset = [];
@@ -86,13 +131,18 @@ export default function RecentActivity(props) {
       .map(key => (
         <>
           <TimelineHeader>
-            <Label>{moment(key).fromNow()}</Label>
+            <Label>
+              {moment(key)
+                .utcOffset(0)
+                .format("D MMM YYYY")}
+            </Label>
           </TimelineHeader>
           <TimelineContainer>
             {dataset[key].map(item => (
-              <Timeline>
-                <TimelineLine>
-                  <span />
+              <Timeline color={item.type === "Transfer" ? "orange" : "blue"}>
+                <TimelineLine
+                  color={item.type === "Transfer" ? "orange" : "blue"}>
+                  <span className="dot" />
                   <TimelineTime
                     AM={
                       moment(item.date)
@@ -101,19 +151,43 @@ export default function RecentActivity(props) {
                         ? true
                         : false
                     }
-                    color={item.type === "Transfer" ? "orange" : "red"}>
+                    color={item.type === "Transfer" ? "orange" : "blue"}>
                     {moment(item.date)
                       .utcOffset(0)
                       .format("hh:mm A")}
                   </TimelineTime>
                   <TimelineItem>
-                    <Label color={item.type === "Transfer" ? "orange" : "red"}>
-                      {item.type}
-                    </Label>
-                    {` ${item.location}`}
-                  </TimelineItem>
-                  <TimelineItem>
-                    <Label color="green">{item.cardNumber}</Label>
+                    <div>
+                      <Label
+                        color={item.type === "Transfer" ? "orange" : "blue"}>
+                        {item.type === "Transfer"
+                          ? "Transfer".toUpperCase()
+                          : "Fare Paid".toUpperCase()}
+                      </Label>
+                    </div>
+                    <TimelineInfoContainer>
+                      <TimelineInfo>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexFlow: "row nowrap",
+                            alignItems: "center",
+                            justifyContent: "space-between"
+                          }}>
+                          <Label color="green">{item.cardNumber}</Label>
+                          <div>
+                            {item.type === "Transfer"
+                              ? ""
+                              : `$${(
+                                  Math.round(item.amount * 100) / 10000
+                                ).toFixed(2)}`}
+                          </div>
+                        </div>
+                        <TimelineLocation>{`${
+                          item.location
+                        }`}</TimelineLocation>
+                      </TimelineInfo>
+                    </TimelineInfoContainer>
                   </TimelineItem>
                 </TimelineLine>
               </Timeline>
