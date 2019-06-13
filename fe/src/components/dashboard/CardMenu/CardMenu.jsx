@@ -25,7 +25,6 @@ export default function CardMenu(props) {
   return (
     <Dropdown
       item
-      inline
       options={options}
       defaultValue="all"
       value={currentSelection}
