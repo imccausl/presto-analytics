@@ -26,7 +26,6 @@ export default function CardMenu(props) {
     <Dropdown
       item
       options={options}
-      defaultValue="all"
       value={currentSelection}
       onChange={(e, { value }) => {
         handleChange(value);

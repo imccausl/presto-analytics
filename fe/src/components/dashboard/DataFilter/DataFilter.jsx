@@ -94,7 +94,7 @@ export default class DataFilter extends React.Component {
       if (
         parseInt(yearOrRange, 10) > thisYear ||
         (parseInt(yearOrRange, 10) === thisYear &&
-          parseInt(monthOrUnit, 10) > thisMonth)
+          parseInt(monthOrUnit, 10) > thisMonth + 1)
       ) {
         // TODO: return error message about date being in the future
         return null;
@@ -113,6 +113,14 @@ export default class DataFilter extends React.Component {
         return null;
       }
     }
+
+    console.log(
+      "PASSED VALIDATION:",
+      cardNumber,
+      yearOrRange,
+      monthOrUnit,
+      searchType
+    );
 
     return cardNumber === prevState.cardNumber &&
       yearOrRange === prevState.yearOrRange &&
