@@ -128,13 +128,6 @@ class Dashboard extends React.Component {
                               </Grid.Row>
                               <Grid.Row>
                                 <Grid.Column>
-                                  <RecentActivity
-                                    data={data}
-                                    error={error}
-                                    loading={loading}
-                                  />
-                                </Grid.Column>
-                                <Grid.Column>
                                   <TopTapOrigins
                                     data={data}
                                     error={error}
