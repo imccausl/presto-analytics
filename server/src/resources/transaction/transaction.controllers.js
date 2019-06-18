@@ -185,7 +185,7 @@ const monthly = async (req, res, next) => {
         transfers
       },
       totalAmount,
-      lastMonth: {
+      prevInterval: {
         transactions: lastMonthTransactions,
         count: {
           fares: lastMonthFares,
