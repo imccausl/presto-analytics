@@ -24,6 +24,7 @@ const TTContainer = styled.div`
   min-width: 400px;
   padding: 30px 50px 40px 50px;
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
+  z-index: 1000;
 
   header {
     background: rgba(40, 42, 48, 0.8);
@@ -293,7 +294,10 @@ export default props => {
             tick={<CustomizedAxisTick />}
             stroke="#C4C4C4"
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip
+            wrapperStyle={{ zIndex: "1000" }}
+            content={<CustomTooltip />}
+          />
           <Legend iconType="circle" />
         </LineChart>
       </ResponsiveContainer>
