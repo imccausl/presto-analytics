@@ -100,13 +100,26 @@ module.exports = (sequelize, DataTypes) => {
     }
   }));
 
-  transactionModel.addScope('interval', interval => ({
-    where: {
-      date: {
-        [Sequelize.Op.gte]: sequelize.literal(`NOW() - INTERVAL '${interval} days'`)
-      }
+  transactionModel.addScope('interval', (interval, startDate) => {
+    let date = {
+      [Sequelize.Op.gte]: sequelize.literal(`NOW() - INTERVAL '${interval} days'`)
+    };
+
+    if (startDate) {
+      date = {
+        [Sequelize.Op.lte]: sequelize.literal(`NOW() - INTERVAL '${interval} days'`),
+        [Sequelize.Op.gte]: sequelize.literal(
+          `TO_DATE('${startDate}', 'DD-MM-YYYY') - INTERVAL '${interval} days'`
+        )
+      };
     }
-  }));
+
+    return {
+      where: {
+        date
+      }
+    };
+  });
 
   transactionModel.addScope('cardNumber', cardNumber => {
     if (cardNumber === 'all') {

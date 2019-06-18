@@ -7,10 +7,27 @@ const { transform } = require('./helpers/transforms');
 
 const { sequelize, Sequelize, Transaction } = db;
 
+function calculateLastMonth(month, year) {
+  let parsedYear = parseInt(year, 10);
+  let parsedMonth = parseInt(month, 10);
+
+  if (parsedMonth === 1) {
+    parsedYear = year - 1;
+    parsedMonth = 12;
+
+    return { year: parsedYear, month: parsedMonth };
+  }
+
+  return { year: parsedYear, month: parsedMonth - 1 };
+}
+
 const monthly = async (req, res, next) => {
   try {
     const { year, month, cardNumber } = req.params;
 
+    const lastMonth = calculateLastMonth(month, year);
+
+    // 1. get current data
     const Transfers = Transaction.scope(
       {
         method: ['types', [types.TRANSFER]]
@@ -59,13 +76,131 @@ const monthly = async (req, res, next) => {
     const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
     const totalAmount = await Fares.sum('amount');
 
+    // 2. get last month for comparison
+    const LastMonthTransfers = Transaction.scope(
+      {
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['yearAndMonth', lastMonth.year, lastMonth.month]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['currentUser', req.userId]
+      }
+    );
+    const LastMonthTaps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['yearAndMonth', lastMonth.year, lastMonth.month]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
+      }
+    );
+    const LastMonthFares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['yearAndMonth', lastMonth.year, lastMonth.month]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+      }
+    );
+
+    const lastMonthFares = await LastMonthFares.count();
+    const lastMonthTransfers = await LastMonthTransfers.count();
+    const lastMonthTransactions = await LastMonthTaps.findAll({
+      order: sequelize.literal('date ASC')
+    });
+    const lastMonthTotalAmount = await LastMonthFares.sum('amount');
+
+    // 3. get last year for comparison
+    const LastYearTransfers = Transaction.scope(
+      {
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['yearAndMonth', parseInt(year, 10) - 1, parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['currentUser', req.userId]
+      }
+    );
+    const LastYearTaps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['yearAndMonth', parseInt(year, 10) - 1, parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
+      }
+    );
+    const LastYearFares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['yearAndMonth', parseInt(year, 10) - 1, parseInt(month, 10)]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+      }
+    );
+
+    const lastYearFares = await LastYearFares.count();
+    const lastYearTransfers = await LastYearTransfers.count();
+    const lastYearTransactions = await LastYearTaps.findAll({
+      order: sequelize.literal('date ASC')
+    });
+    const lastYearTotalAmount = await LastYearFares.sum('amount');
+
     const payload = {
       transactions,
       count: {
         fares,
         transfers
       },
-      totalAmount
+      totalAmount,
+      lastMonth: {
+        transactions: lastMonthTransactions,
+        count: {
+          fares: lastMonthFares,
+          transfers: lastMonthTransfers
+        },
+        totalAmount: lastMonthTotalAmount
+      },
+      lastYear: {
+        transactions: lastYearTransactions,
+        count: {
+          fares: lastYearFares,
+          transfers: lastYearTransfers
+        },
+        totalAmount: lastYearTotalAmount
+      }
     };
 
     res.json(successResponse(payload));
@@ -79,6 +214,10 @@ const range = async (req, res, next) => {
   try {
     const { days } = req.query;
     const { cardNumber } = req.params;
+    const startOfPreviousInterval = moment()
+      .subtract(parseInt(days, 10), 'days')
+      .format('DD-MM-YYYY');
+    console.log('prevInterval:', days, startOfPreviousInterval);
 
     const Transfers = Transaction.scope(
       {
@@ -128,13 +267,72 @@ const range = async (req, res, next) => {
     const transactions = await Taps.findAll({ order: sequelize.literal('date ASC') });
     const totalAmount = await Fares.sum('amount');
 
+    // get amounts from previous interval for comparison
+    const PrevIntervalTransfers = Transaction.scope(
+      {
+        method: ['types', [types.TRANSFER]]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10), startOfPreviousInterval]
+      },
+      {
+        method: ['currentUser', req.userId]
+      }
+    );
+    const PrevIntervalTaps = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10), startOfPreviousInterval]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSFER]]
+      }
+    );
+    const PrevIntervalFares = Transaction.scope(
+      {
+        method: ['currentUser', req.userId]
+      },
+      {
+        method: ['cardNumber', cardNumber]
+      },
+      {
+        method: ['interval', parseInt(days, 10), startOfPreviousInterval]
+      },
+      {
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+      }
+    );
+
+    const prevIntervalFares = await PrevIntervalFares.count();
+    const prevIntervalTransfers = await PrevIntervalTransfers.count();
+    const prevIntervalTransactions = await PrevIntervalTaps.findAll({
+      order: sequelize.literal('date ASC')
+    });
+    const prevIntervalTotalAmount = await PrevIntervalFares.sum('amount');
+
     const payload = {
       transactions,
       count: {
         fares,
         transfers
       },
-      totalAmount
+      totalAmount,
+      prevInterval: {
+        transactions: prevIntervalTransactions,
+        count: {
+          fares: prevIntervalFares,
+          transfers: prevIntervalTransfers
+        },
+        totalAmount: prevIntervalTotalAmount
+      }
     };
 
     res.json(successResponse(payload));
