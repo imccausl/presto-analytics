@@ -3,7 +3,15 @@ import PropTypes from "prop-types";
 import { Card, Icon, Grid } from "semantic-ui-react";
 
 export default props => {
-  const { label, value, extra, iconName, iconColor, isCustomIcon } = props;
+  const {
+    label,
+    value,
+    extra,
+    extraIcon,
+    iconName,
+    iconColor,
+    isCustomIcon
+  } = props;
 
   return (
     <Card
@@ -11,9 +19,10 @@ export default props => {
         flex: "1",
         minWidth: "230px",
         maxWidth: "250px",
-        border: "none",
+        //border: "none",
         borderRadius: "6px",
-        boxShadow: "0 2px 2px hsla(38,16%,76%,.5)"
+        zIndex: "0"
+        //boxShadow: "0 2px 2px hsla(38,16%,76%,.5)"
       }}>
       <Card.Content style={{ paddingLeft: "20px", paddingRight: "20px" }}>
         <Card.Description>
@@ -51,8 +60,13 @@ export default props => {
       </Card.Content>
       <Card.Content
         extra
-        style={{ margin: "0 15px", paddingLeft: "0", fontWeight: "200" }}>
-        {extra}
+        style={{
+          margin: "0 15px",
+          paddingLeft: "0",
+          fontWeight: "200",
+          fontSize: "0.9rem"
+        }}>
+        <i className={extraIcon} /> {extra}
       </Card.Content>
     </Card>
   );

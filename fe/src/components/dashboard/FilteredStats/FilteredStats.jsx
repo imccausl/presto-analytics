@@ -1,9 +1,9 @@
 import moment from "moment";
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, Statistic } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 
-//import Statistic from "../../styled/Statistic";
+import Statistic from "../../styled/Statistic";
 
 const propTypes = {};
 
@@ -12,37 +12,112 @@ const defaultProps = {};
 export default function FilteredStats(props) {
   const { data, loading, error } = props;
 
-  console.log("filteredStats:", data, loading, error);
+  let totalAmount = 0;
+  let prevTotalAmount = 0;
+  let totalTaps = 0;
+  let prevTotalTaps = 0;
+  let totalFares = 0;
+  let prevTotalFares = 0;
+  let totalTransfers = 0;
+  let prevTotalTransfers = 0;
+  let prevLastDate = Date.now();
+  let prevFirstDate = Date.now();
+
+  if (!loading && !error) {
+    totalAmount = data.data.totalAmount;
+    prevTotalAmount = data.data.prevInterval.totalAmount;
+
+    totalTaps = data.data.count.transfers + data.data.count.fares;
+    prevTotalTaps =
+      data.data.prevInterval.count.transfers +
+      data.data.prevInterval.count.fares;
+
+    totalFares = data.data.count.fares;
+    prevTotalFares = data.data.prevInterval.count.fares;
+
+    totalTransfers = data.data.count.transfers;
+    prevTotalTransfers = data.data.prevInterval.count.transfers;
+
+    prevLastDate = data.data.prevInterval.transactions.length
+      ? moment(
+          data.data.prevInterval.transactions[
+            data.data.prevInterval.transactions.length - 1
+          ].date
+        )
+          .utcOffset(0)
+          .format("DD MMM")
+      : null;
+    prevFirstDate = data.data.prevInterval.transactions.length
+      ? moment(data.data.prevInterval.transactions[0].date)
+          .utcOffset(0)
+          .format("MM/DD/YYYY")
+      : null;
+
+    console.log(data.data.prevInterval.transactions.length - 1);
+  }
+
   return (
-    <Statistic.Group widths="four" color="orange" size="small">
+    <Card.Group centered>
       {!loading && !error && (
         <>
-          <Statistic>
-            <Statistic.Value>
-              {`$${(data.data.totalAmount / 100).toFixed(2)}`}
-            </Statistic.Value>
-            <Statistic.Label>Spent</Statistic.Label>
-          </Statistic>
+          <Statistic
+            label="Spent"
+            value={`$${(totalAmount / 100).toFixed(2)}`}
+            extra={`$${Math.abs((totalAmount - prevTotalAmount) / 100).toFixed(
+              2
+            )} ${prevLastDate ? "from period ending " + prevLastDate : ""}`}
+            extraIcon={
+              totalAmount - prevTotalAmount > 0
+                ? "ti-arrow-up"
+                : "ti-arrow-down"
+            }
+            iconName="ti-credit-card"
+            isCustomIcon
+          />
 
-          <Statistic>
-            <Statistic.Value>
-              {data.data.count.transfers + data.data.count.fares}
-            </Statistic.Value>
-            <Statistic.Label>Taps</Statistic.Label>
-          </Statistic>
+          <Statistic
+            label="Taps"
+            value={totalTaps}
+            extra={`${Math.abs(totalTaps - prevTotalTaps)} ${
+              prevLastDate ? "from period ending " + prevLastDate : ""
+            }`}
+            extraIcon={
+              totalTaps - prevTotalTaps > 0 ? "ti-arrow-up" : "ti-arrow-down"
+            }
+            iconName="ti-hand-drag"
+            isCustomIcon
+          />
 
-          <Statistic>
-            <Statistic.Value>{data.data.count.fares}</Statistic.Value>
-            <Statistic.Label>Fares</Statistic.Label>
-          </Statistic>
+          <Statistic
+            label="Fares"
+            value={totalFares}
+            extra={`${Math.abs(totalFares - prevTotalFares)} ${
+              prevLastDate ? "from period ending " + prevLastDate : ""
+            }`}
+            extraIcon={
+              totalFares - prevTotalFares > 0 ? "ti-arrow-up" : "ti-arrow-down"
+            }
+            iconName="ti-ticket"
+            isCustomIcon
+          />
 
-          <Statistic>
-            <Statistic.Value>{data.data.count.transfers}</Statistic.Value>
-            <Statistic.Label>Transfers</Statistic.Label>
-          </Statistic>
+          <Statistic
+            label="Transfers"
+            value={totalTransfers}
+            extra={`${Math.abs(totalTransfers - prevTotalTransfers)} ${
+              prevLastDate ? "from period ending " + prevLastDate : ""
+            }`}
+            extraIcon={
+              totalTransfers - prevTotalTransfers > 0
+                ? "ti-arrow-up"
+                : "ti-arrow-down"
+            }
+            iconName="ti-vector"
+            isCustomIcon
+          />
         </>
       )}
-    </Statistic.Group>
+    </Card.Group>
   );
 }
 
