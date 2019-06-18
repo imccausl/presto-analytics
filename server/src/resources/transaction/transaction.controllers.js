@@ -307,7 +307,7 @@ const range = async (req, res, next) => {
         method: ['interval', parseInt(days, 10), startOfPreviousInterval]
       },
       {
-        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS]]
+        method: ['types', [types.TRANSIT_FARE, types.TRANSIT_PASS, types.TRANSIT_PASS_LOAD]]
       }
     );
 
