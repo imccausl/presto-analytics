@@ -28,7 +28,12 @@ export default props => {
         <Card.Description>
           <Grid columns={1} verticalAlign="middle">
             <Grid.Row verticalAlign="center" columns={2}>
-              <Grid.Column style={{ alignItems: "flex-end" }}>
+              <Grid.Column
+                style={{
+                  textAlign: "left",
+                  paddingLeft: "1rem",
+                  paddingRight: "0"
+                }}>
                 {isCustomIcon ? (
                   <i
                     style={{
@@ -42,7 +47,13 @@ export default props => {
                   <Icon className={iconName} size="huge" color={iconColor} />
                 )}
               </Grid.Column>
-              <Grid.Column style={{ textAlign: "right", lineHeight: "1.2" }}>
+              <Grid.Column
+                style={{
+                  textAlign: "right",
+                  lineHeight: "1.2",
+                  paddingRight: "1rem",
+                  paddingLeft: "0"
+                }}>
                 <Grid.Row>
                   <div style={{ fontSize: "1rem", fontWeight: "300" }}>
                     {label}
@@ -64,7 +75,7 @@ export default props => {
           margin: "0 15px",
           paddingLeft: "0",
           fontWeight: "200",
-          fontSize: "0.9rem"
+          fontSize: "0.8rem"
         }}>
         <i className={extraIcon} /> {extra}
       </Card.Content>

@@ -45,7 +45,7 @@ export default function FilteredStats(props) {
           ].date
         )
           .utcOffset(0)
-          .format("DD MMM")
+          .format("DD MMM YY")
       : null;
     prevFirstDate = data.data.prevInterval.transactions.length
       ? moment(data.data.prevInterval.transactions[0].date)
