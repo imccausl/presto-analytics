@@ -23,6 +23,12 @@ export default function FilteredStats(props) {
   let prevLastDate = Date.now();
   let prevFirstDate = Date.now();
 
+  let lastYearTotalAmount = 0;
+  let lastYearTotalTaps = 0;
+  let lastYearTotalFares = 0;
+  let lastYearTotalTransfers = 0;
+  let hasLastYear = false;
+
   if (!loading && !error) {
     totalAmount = data.data.totalAmount;
     prevTotalAmount = data.data.prevInterval.totalAmount;
@@ -56,6 +62,14 @@ export default function FilteredStats(props) {
     console.log(data.data.prevInterval.transactions.length - 1);
   }
 
+  if (!loading && !error && data.data.lastYear) {
+    hasLastYear = true;
+    lastYearTotalAmount = data.data.lastYear.totalAmount;
+    lastYearTotalFares = data.data.lastYear.count.fares;
+    lastYearTotalTransfers = data.data.lastYear.count.transfers;
+    lastYearTotalTaps = lastYearTotalFares + lastYearTotalTransfers;
+  }
+
   return (
     <Card.Group centered>
       {!loading && !error && (
@@ -73,6 +87,20 @@ export default function FilteredStats(props) {
             }
             iconName="ti-credit-card"
             isCustomIcon
+            extraFooter={
+              hasLastYear
+                ? `$${Math.abs(
+                    (totalAmount - lastYearTotalAmount) / 100
+                  ).toFixed(2)} from last year`
+                : null
+            }
+            extraFooterIcon={
+              hasLastYear
+                ? totalAmount - lastYearTotalAmount > 0
+                  ? "ti-arrow-up"
+                  : "ti-arrow-down"
+                : null
+            }
           />
 
           <Statistic
@@ -86,6 +114,18 @@ export default function FilteredStats(props) {
             }
             iconName="ti-hand-drag"
             isCustomIcon
+            extraFooter={
+              hasLastYear
+                ? `${Math.abs(totalTaps - lastYearTotalTaps)} from last year`
+                : null
+            }
+            extraFooterIcon={
+              hasLastYear
+                ? totalTaps - lastYearTotalTaps > 0
+                  ? "ti-arrow-up"
+                  : "ti-arrow-down"
+                : null
+            }
           />
 
           <Statistic
@@ -99,6 +139,18 @@ export default function FilteredStats(props) {
             }
             iconName="ti-ticket"
             isCustomIcon
+            extraFooter={
+              hasLastYear
+                ? `${Math.abs(totalFares - lastYearTotalFares)} from last year`
+                : null
+            }
+            extraFooterIcon={
+              hasLastYear
+                ? totalFares - lastYearTotalFares > 0
+                  ? "ti-arrow-up"
+                  : "ti-arrow-down"
+                : null
+            }
           />
 
           <Statistic
@@ -114,6 +166,20 @@ export default function FilteredStats(props) {
             }
             iconName="ti-vector"
             isCustomIcon
+            extraFooter={
+              hasLastYear
+                ? `${Math.abs(
+                    totalTransfers - lastYearTotalTransfers
+                  )} from last year`
+                : null
+            }
+            extraFooterIcon={
+              hasLastYear
+                ? totalTransfers - lastYearTotalTransfers > 0
+                  ? "ti-arrow-up"
+                  : "ti-arrow-down"
+                : null
+            }
           />
         </>
       )}

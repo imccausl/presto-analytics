@@ -10,7 +10,9 @@ export default props => {
     extraIcon,
     iconName,
     iconColor,
-    isCustomIcon
+    isCustomIcon,
+    extraFooter,
+    extraFooterIcon
   } = props;
 
   return (
@@ -77,7 +79,12 @@ export default props => {
           fontWeight: "200",
           fontSize: "0.8rem"
         }}>
-        <i className={extraIcon} /> {extra}
+        {extraIcon && <i className={extraIcon} />} {extra}
+        {extraFooter && (
+          <div>
+            {extraFooterIcon && <i className={extraFooterIcon} />} {extraFooter}
+          </div>
+        )}
       </Card.Content>
     </Card>
   );
