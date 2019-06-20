@@ -134,6 +134,7 @@ class Dashboard extends React.Component {
                                     loading={loading}
                                   />
                                 </Grid.Column>
+                                <Grid.Column />
                               </Grid.Row>
                             </Grid>
                           );

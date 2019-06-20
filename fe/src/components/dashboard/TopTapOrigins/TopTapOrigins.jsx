@@ -2,16 +2,15 @@ import moment from "moment";
 import React from "react";
 import {
   ResponsiveContainer,
-  LabelList,
   PieChart,
   Pie,
-  Sector,
+  Tooltip,
   Cell,
   Legend
 } from "recharts";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { Header, Segment } from "semantic-ui-react";
+import { Header, Divider } from "semantic-ui-react";
 
 const propTypes = {};
 const defaultProps = {};
@@ -141,49 +140,9 @@ function orderLocationByMostTaps(dataset) {
   return truncatedResults;
 }
 
-const CustomLegend = props => {
-  const { payload } = props;
-
-  return (
-    <>
-      {payload.map((item, index) => (
-        <>
-          <div
-            style={{
-              display: "flex",
-              flexFlow: "row nowrap",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              maxHeight: "15px",
-              marginBottom: "5px"
-            }}>
-            <div
-              style={{
-                background: item.color,
-                maxWidth: "13px",
-                maxWidth: "13px",
-                minWidth: "13px",
-                minHeight: "13px",
-                borderRadius: "100%",
-                marginRight: "10px"
-              }}
-            />
-            <div
-              style={{ height: "100%", fontSize: "1rem" }}
-              key={`tap-origin-legend-${index}`}>
-              {item.payload.location}
-            </div>
-          </div>
-        </>
-      ))}
-    </>
-  );
-};
-
 export default class TopTapOrigins extends React.Component {
   render() {
     const { data, error, loading } = this.props;
-
     let dataset = [];
     let range = "";
 
@@ -201,6 +160,7 @@ export default class TopTapOrigins extends React.Component {
             )} - ${moment(
               data.data.transactions[data.data.transactions.length - 1].date
             ).format("MMMM DD YYYY")}`;
+      console.log(dataset);
     }
 
     const TopStops = dataset.map(item => (
@@ -224,22 +184,34 @@ export default class TopTapOrigins extends React.Component {
     ));
 
     return (
-      <Segment compact>
-        {/* <Header as="h2">
-          Most Active Locations
-          <Header.Subheader>{range}</Header.Subheader>
-        </Header> */}
-        <ResponsiveContainer width={400} height={400}>
+      <>
+        <Divider horizontal>
+          <Header as="h3">
+            Most Active Locations
+            <Header.Subheader>{range}</Header.Subheader>
+          </Header>
+        </Divider>
+        <ResponsiveContainer width="100%" height={400}>
           <PieChart>
-            <Pie data={dataset} innerRadius={60} fill="#8884d8" dataKey="count">
+            <Pie data={dataset} fill="#8884d8" dataKey="count">
               {dataset.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index]} />
               ))}
             </Pie>
-            <Legend content={CustomLegend} />
+            <Legend
+              iconType="circle"
+              verticalAlign="bottom"
+              payload={dataset.map((item, index) => ({
+                value: item.location,
+                type: "circle",
+                id: item.id,
+                color: COLORS[index]
+              }))}
+            />
+            <Tooltip />
           </PieChart>
         </ResponsiveContainer>
-      </Segment>
+      </>
     );
   }
 }
