@@ -3,7 +3,6 @@ import React from 'react';
 import {
   ResponsiveContainer, PieChart, Pie, Tooltip, Cell, Legend,
 } from 'recharts';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Header, Divider } from 'semantic-ui-react';
 
@@ -21,67 +20,6 @@ const COLORS = [
   '#BFD641',
   '#6F9FD8',
 ];
-
-const ListRank = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: orange;
-  color: white;
-  min-width: 50px;
-  min-height: 50px;
-  max-width: 50px;
-  max-height: 50px;
-
-  border-radius: 100%;
-
-  font-weight: 800;
-  font-size: 1.3rem;
-`;
-
-const ListItem = styled.li`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
-
-  &:nth-child(even) {
-    background: #f3f1f1;
-  }
-`;
-
-const ListHeader = styled.div`
-  display: block;
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: black;
-`;
-
-const ListContent = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  flex-flow: row wrap;
-  align-items: center;
-  margin-left: 15px;
-  font-size: 0.9rem;
-  color: #9a9898;
-  width: 100%;
-`;
-
-const FlexGrowBox = styled.div`
-  color: black;
-  flex-grow: 1;
-  text-align: right;
-  font-size: 2.5rem;
-`;
-
-const List = styled.ul`
-  padding: 0;
-  border-radius: 0.25rem;
-  border: 1px solid lightgrey;
-`;
 
 function orderLocationByMostTaps(dataset) {
   const result = {};
@@ -145,36 +83,6 @@ const TopTapOrigins = props => {
     console.log(dataset);
   }
 
-  const TopStops = dataset.map(item => (
-    <ListItem key={Date.parse(item.lastVisited)}>
-      <ListRank>
-        {Math.round((item.count / data.data.transactions.length) * 100)}
-%
-      </ListRank>
-      <ListContent>
-        <div>
-          <ListHeader>{item.location}</ListHeader>
-          {item.count}
-          {' '}
-Tap
-          {item.count === 1 ? '' : 's'}
-          {item.fares}
-          {' '}
-Fare
-          {item.fares === 1 ? '' : 's'}
-          {item.transfers}
-          {' '}
-Transfer
-          {item.fares === 1 ? '' : 's'}
-        </div>
-        <FlexGrowBox>
-          {'$'}
-          {(Math.round(item.amount * 100) / 10000).toFixed(2)}
-        </FlexGrowBox>
-      </ListContent>
-    </ListItem>
-  ));
-
   return (
     <>
       <Divider horizontal>
@@ -187,7 +95,7 @@ Transfer
         <PieChart>
           <Pie data={dataset} fill="#8884d8" dataKey="count">
             {dataset.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index]} />
+              <Cell key={`cell-${entry.id}`} fill={COLORS[index]} />
             ))}
           </Pie>
           <Legend
