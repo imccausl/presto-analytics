@@ -25,7 +25,6 @@ export default class Login extends Component {
     return (
       <UserContext.Consumer>
         {ctx => {
-          console.log(ctx);
           return (
             <Fetch
               manual
@@ -102,7 +101,7 @@ export default class Login extends Component {
                       <Message attached="bottom" warning>
                         <Icon name="help" />
                         Don't have an account?
-                        <Link href="/register"> Register</Link>
+                        <Link to="/register"> Register</Link>
                         &nbsp;instead.
                       </Message>
                     </div>

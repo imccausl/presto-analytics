@@ -56,7 +56,7 @@ class User extends React.Component {
     const { activeItem, accountModalOpen, prestoModalOpen } = this.state;
 
     return (
-      <>
+      <div style={{ background: "white" }}>
         <Menu icon secondary borderless>
           <Menu.Item header>
             {/* <Icon name="user circle outline" size="large" />{" "}
@@ -78,12 +78,6 @@ class User extends React.Component {
           </Menu.Menu>
         </Menu>
 
-        <Header as="h2" dividing>
-          {`Hey, ${firstName}.`}
-          <Header.Subheader>
-            You've been a Presto user since {moment(since).format("MMMM YYYY")}
-          </Header.Subheader>
-        </Header>
         <div
           style={{
             display: "flex",
@@ -127,7 +121,7 @@ class User extends React.Component {
           budget={budget || {}}
           close={this.handleAccountModalClose}
         />
-      </>
+      </div>
     );
   }
 }

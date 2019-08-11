@@ -3,7 +3,17 @@ import PropTypes from "prop-types";
 import { Card, Icon, Grid } from "semantic-ui-react";
 
 export default props => {
-  const { label, value, extra, iconName, iconColor, isCustomIcon } = props;
+  const {
+    label,
+    value,
+    extra,
+    extraIcon,
+    iconName,
+    iconColor,
+    isCustomIcon,
+    extraFooter,
+    extraFooterIcon
+  } = props;
 
   return (
     <Card
@@ -11,15 +21,21 @@ export default props => {
         flex: "1",
         minWidth: "230px",
         maxWidth: "250px",
-        border: "none",
+        //border: "none",
         borderRadius: "6px",
-        boxShadow: "0 2px 2px hsla(38,16%,76%,.5)"
+        zIndex: "0"
+        //boxShadow: "0 2px 2px hsla(38,16%,76%,.5)"
       }}>
       <Card.Content style={{ paddingLeft: "20px", paddingRight: "20px" }}>
         <Card.Description>
           <Grid columns={1} verticalAlign="middle">
             <Grid.Row verticalAlign="center" columns={2}>
-              <Grid.Column style={{ alignItems: "flex-end" }}>
+              <Grid.Column
+                style={{
+                  textAlign: "left",
+                  paddingLeft: "1rem",
+                  paddingRight: "0"
+                }}>
                 {isCustomIcon ? (
                   <i
                     style={{
@@ -33,7 +49,13 @@ export default props => {
                   <Icon className={iconName} size="huge" color={iconColor} />
                 )}
               </Grid.Column>
-              <Grid.Column style={{ textAlign: "right", lineHeight: "1.2" }}>
+              <Grid.Column
+                style={{
+                  textAlign: "right",
+                  lineHeight: "1.2",
+                  paddingRight: "1rem",
+                  paddingLeft: "0"
+                }}>
                 <Grid.Row>
                   <div style={{ fontSize: "1rem", fontWeight: "300" }}>
                     {label}
@@ -51,8 +73,18 @@ export default props => {
       </Card.Content>
       <Card.Content
         extra
-        style={{ margin: "0 15px", paddingLeft: "0", fontWeight: "200" }}>
-        {extra}
+        style={{
+          margin: "0 15px",
+          paddingLeft: "0",
+          fontWeight: "200",
+          fontSize: "0.8rem"
+        }}>
+        {extraIcon && <i className={extraIcon} />} {extra}
+        {extraFooter && (
+          <div>
+            {extraFooterIcon && <i className={extraFooterIcon} />} {extraFooter}
+          </div>
+        )}
       </Card.Content>
     </Card>
   );
