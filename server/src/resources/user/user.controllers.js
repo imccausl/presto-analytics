@@ -105,6 +105,9 @@ const deleteAccount = async (req, res, next) => {
       }
     });
 
+    // remove auth token (cookie)
+    res.clearCookie('auth');
+
     res.json({
       status: 'success',
       message: `Deleted user with ID: ${req.userId}`,
