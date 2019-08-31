@@ -1,5 +1,6 @@
+
 const API = {
-  root: "http://localhost:3333/api",
+  root: "/api",
   send: (body, method = "POST") => {
     let reqMethod = method;
 

@@ -23,9 +23,9 @@ const { connect, db } = require('./utils/db');
 
 const { User } = db;
 
-const PORT = process.env.SERVER_PORT || 3333;
+const PORT = process.env.SERVER_PORT || 443;
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'https://presto-analytics.herokuapp.com',
   credentials: true
 };
 
