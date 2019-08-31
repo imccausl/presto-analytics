@@ -25,7 +25,6 @@ const { User } = db;
 
 const PORT = process.env.PORT || 8080;
 const corsOptions = {
-  origin: 'https://presto-analytics.herokuapp.com',
   credentials: true
 };
 
