@@ -1,22 +1,21 @@
-
 const API = {
-  root: "/api",
-  send: (body, method = "POST") => {
+  root: '/api',
+  send: (body, method = 'POST') => {
     let reqMethod = method;
 
-    if (typeof body === "string") {
+    if (typeof body === 'string') {
       reqMethod = body;
     }
 
     const sendData = {
       method: reqMethod,
-      credentials: "include",
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json"
-      }
+        'Content-Type': 'application/json',
+      },
     };
 
-    if (reqMethod.toLowerCase() !== "get") {
+    if (reqMethod.toLowerCase() !== 'get') {
       sendData.body = JSON.stringify(body);
     }
 
@@ -24,15 +23,15 @@ const API = {
   },
 
   currentUser: {
-    method: "GET",
-    endpoint: "/v1/user/me"
+    method: 'GET',
+    endpoint: '/v1/user/me',
   },
-  login: "/login",
+  login: '/login',
   logout: {
-    endpoint: "/logout",
-    method: "GET"
+    endpoint: '/logout',
+    method: 'GET',
   },
-  register: "/signup",
+  register: '/signup',
 
   monthlyTransactions: (cardNumber, year, month) => {
     let searchMonth = month;
@@ -45,27 +44,26 @@ const API = {
 
     return `/v1/transaction/${cardNumber}/monthly/${searchYear}/${searchMonth}`;
   },
-  transactionRange: (cardNumber, days) =>
-    `/v1/transaction/${cardNumber}/range?days=${days}`,
+  transactionRange: (cardNumber, days) => `/v1/transaction/${cardNumber}/range?days=${days}`,
   allTransactions: {
-    method: "GET",
-    endpoint: "/v1/transaction"
+    method: 'GET',
+    endpoint: '/v1/transaction',
   },
   yearToDate: {
-    method: "GET",
-    endpoint: "/v1/transaction/ytd"
+    method: 'GET',
+    endpoint: '/v1/transaction/ytd',
   },
   yearToDateData: {
-    method: "GET",
-    endpoint: "/v1/transaction/ytd/data"
+    method: 'GET',
+    endpoint: '/v1/transaction/ytd/data',
   },
   updateBudget: {
-    method: "POST",
-    endpoint: "/v1/budget/save"
+    method: 'POST',
+    endpoint: '/v1/budget/save',
   },
-  prestoUsage: "/v1/presto/usage",
-  prestoLogin: { endpoint: "/v1/presto/login", method: "POST" },
-  prestoCheckLogin: { endpoint: "/v1/presto/check-login", method: "GET" }
+  prestoUsage: '/v1/presto/usage',
+  prestoLogin: { endpoint: '/login', method: 'POST' },
+  prestoCheckLogin: { endpoint: '/v1/presto/check-login', method: 'GET' },
 };
 
 export default API;
