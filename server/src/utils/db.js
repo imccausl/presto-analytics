@@ -8,7 +8,13 @@ const config = require('../config/db.config');
 
 const { POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD } = process.env;
 const basename = path.basename(module.filename);
-const sequelize = new Sequelize(POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, config);
+
+let sequelize = new Sequelize(POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, config);
+
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL, config);
+}
+
 const db = { sequelize, Sequelize };
 
 const onlyModels = file =>

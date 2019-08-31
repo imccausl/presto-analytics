@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const { Server } = require('http');
 const bodyParser = require('body-parser');
 
@@ -59,6 +60,8 @@ app.use('/api/v1', async (req, res, next) => {
     next();
   }
 });
+
+app.use(express.static(path.join(__dirname, '../build')));
 
 // routes
 app.use('/api/login', authControllers.login);
