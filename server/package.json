@@ -4,6 +4,7 @@
   "description": "Scrape data from presto account to report some usage statistics",
   "main": "src/app.js",
   "scripts": {
+    "start": "node src/app.js",
     "dev": "nodemon -e js -x node --inspect=0.0.0.0:9229 src/app.js",
     "test": "jest --testPathIgnorePatterns /data/ --watch",
     "test:coverage": "jest --testPathIgnorePatterns /data/ --coverage",
