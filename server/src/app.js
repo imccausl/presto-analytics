@@ -81,8 +81,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.get('/', (req, res) => {
-  res.send('PrestoAnalytics server running...');
+app.get('*', (req, res) => {
+  res.sendFile(path.join(`${__dirname}/../build/index.html`));
 });
 
 http.listen(PORT, () => {
