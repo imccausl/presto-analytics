@@ -117,13 +117,13 @@ function parseCardActivity(responseBody, cardNumber) {
     transactions.push({
       cardNumber,
       date: items[0],
-      agency: items[1],
-      location: items[2],
-      type: items[3],
-      serviceClass: items[4],
-      discount: items[5].replace(/[($)]/g, ''),
-      amount: items[6].replace(/[($)]/g, ''),
-      balance: items[7].replace(/[($)]/g, '')
+      agency: items[2],
+      location: items[3],
+      type: items[4],
+      serviceClass: items[5],
+      discount: items[6].replace(/[($)]/g, ''),
+      amount: items[7].replace(/[($)]/g, ''),
+      balance: items[8].replace(/[($)]/g, '')
     });
   });
 
