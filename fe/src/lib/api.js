@@ -62,7 +62,7 @@ const API = {
     endpoint: '/v1/budget/save',
   },
   prestoUsage: '/v1/presto/usage',
-  prestoLogin: { endpoint: '/login', method: 'POST' },
+  prestoLogin: { endpoint: '/v1/presto/login', method: 'POST' },
   prestoCheckLogin: { endpoint: '/v1/presto/check-login', method: 'GET' },
 };
 
