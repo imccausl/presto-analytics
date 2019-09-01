@@ -81,6 +81,12 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.get('/.well-known/acme-challenge/FE4AwNnnenUn7maps7uY2r6qydcIL_t39hlmxveJweM', (req, res) => {
+  res.send(
+    'FE4AwNnnenUn7maps7uY2r6qydcIL_t39hlmxveJweM.fOxbxRJUW0F3mnqJgn9giF3GKqefRais-0WyxanLuOs'
+  );
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(`${__dirname}/../build/index.html`));
 });
