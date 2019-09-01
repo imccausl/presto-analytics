@@ -8,10 +8,10 @@ services:
     depends_on:
       - postgres
     expose:
-      - ${SERVER_PORT}
+      - ${PORT}
       - "9229"
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+      - ${PORT}:${PORT}
       - "9229:9229"
     volumes:
       - ./server:/opt/backend
