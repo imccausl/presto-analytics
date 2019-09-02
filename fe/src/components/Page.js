@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import { Message, Container } from 'semantic-ui-react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
