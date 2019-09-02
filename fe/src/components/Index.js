@@ -26,7 +26,7 @@ const Index = props => (
   <Container>
     <div style={{ position: 'relative', maxHeight: '60px' }}>
       <HeaderBar>
-        <FlexRow justify="space-around" align="space-between" padding="0 0 0 10px">
+        <FlexRow justify="space-around" align="center" padding="0 0 0 10px">
           <Header style={{ width: '100%', marginBottom: '0' }} as="h1">
             Presto Analytics
           </Header>
