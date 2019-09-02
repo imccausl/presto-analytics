@@ -1,5 +1,7 @@
+require('dotenv').config({ path: '../../../.env' });
+
 const API = {
-  root: '/api',
+  root: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3333' : ''}/api`,
   send: (body, method = 'POST') => {
     let reqMethod = method;
 
