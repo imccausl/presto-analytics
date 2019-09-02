@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Header, Button, Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -22,6 +23,10 @@ const Container = styled.div`
   background: #ffffff;
 `;
 
+const LinkDiv = styled.div`
+  padding: 0 10px;
+`;
+
 const Index = props => (
   <Container>
     <div style={{ position: 'relative', maxHeight: '60px' }}>
@@ -31,14 +36,13 @@ const Index = props => (
             Presto Analytics
           </Header>
           <FlexRow justify="flex-end" padding="0 10px 0 0">
-            <Button icon labelPosition="left">
-              Log In
-              <Icon name="sign in" />
-            </Button>
-            <Button icon labelPosition="left">
-              Sign Up
-              <Icon name="at" />
-            </Button>
+            <LinkDiv>
+              <Link to="/login">Log In</Link>
+            </LinkDiv>
+            {' | '}
+            <LinkDiv>
+              <Link to="/register">Sign Up</Link>
+            </LinkDiv>
           </FlexRow>
         </FlexRow>
       </HeaderBar>
