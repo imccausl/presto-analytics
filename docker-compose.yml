@@ -16,20 +16,20 @@ services:
     volumes:
       - ./server:/opt/backend
 
-  front-end:
-    env_file: .env
-    build: ./fe
-    image: pa-frontend:dev
-    expose:
-      - ${CLIENT_PORT}
-      - "35729"
-    ports:
-      - ${CLIENT_PORT}:${CLIENT_PORT}
-      - "35729:35729"
-    volumes:
-      - ./fe:/app
-    links:
-      - backend
+  # front-end:
+  #   env_file: .env
+  #   build: ./fe
+  #   image: pa-frontend:dev
+  #   expose:
+  #     - ${CLIENT_PORT}
+  #     - "35729"
+  #   ports:
+  #     - ${CLIENT_PORT}:${CLIENT_PORT}
+  #     - "35729:35729"
+  #   volumes:
+  #     - ./fe:/app
+  #   links:
+  #     - backend
 
   postgres:
     env_file: .env

@@ -28,6 +28,10 @@ const corsOptions = {
   credentials: true
 };
 
+if (process.env.NODE_ENV === 'development') {
+  corsOptions.origin = 'http://localhost:3000';
+}
+
 // setup db connection
 connect();
 
