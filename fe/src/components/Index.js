@@ -1,9 +1,9 @@
-import React from "react";
-import { Header, Button, Icon } from "semantic-ui-react";
-import styled from "styled-components";
+import React from 'react';
+import { Header, Button, Icon } from 'semantic-ui-react';
+import styled from 'styled-components';
 
-import HeaderBar from "./styled/HeaderBar";
-import { FlexRow } from "./Page";
+import HeaderBar from './styled/HeaderBar';
+import { FlexRow } from './Page';
 
 const Flex = styled.div`
   display: flex;
@@ -19,23 +19,23 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   padding-top: 10px;
-  background: #74c35a;
+  background: #ffffff;
 `;
 
 const Index = props => (
   <Container>
-    <div style={{ position: "relative", maxHeight: "60px" }}>
+    <div style={{ position: 'relative', maxHeight: '60px' }}>
       <HeaderBar>
-        <FlexRow justify="space-around" align="center" padding="0 0 0 10px">
-          <Header style={{ width: "100%", marginBottom: "0" }} as="h1">
+        <FlexRow justify="space-around" align="space-between" padding="0 0 0 10px">
+          <Header style={{ width: '100%', marginBottom: '0' }} as="h1">
             Presto Analytics
           </Header>
           <FlexRow justify="flex-end" padding="0 10px 0 0">
-            <Button inverted icon labelPosition="left">
+            <Button icon labelPosition="left">
               Log In
               <Icon name="sign in" />
             </Button>
-            <Button inverted icon labelPosition="left">
+            <Button icon labelPosition="left">
               Sign Up
               <Icon name="at" />
             </Button>

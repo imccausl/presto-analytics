@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Redirect } from "react-router-dom";
-import { Message, Container } from "semantic-ui-react";
-import styled from "styled-components";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Redirect } from 'react-router-dom';
+import { Message, Container } from 'semantic-ui-react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
-import Index from "./Index";
-import AuthUser from "./AuthUser";
-import Login from "./Login";
+import Index from './Index';
+import AuthUser from './AuthUser';
+import Login from './Login';
 
-import requestApi from "../lib/requestApi";
+import requestApi from '../lib/requestApi';
 
 const UserContext = React.createContext();
 
@@ -35,19 +35,19 @@ const FlexRow = styled.div`
   display: flex;
   position: relative;
   flex-wrap: nowrap;
-  width: ${props => props.width || "100%"};
+  width: ${props => props.width || '100%'};
   flex-direction: row;
-  align-items: ${props => props.align || "stretch"};
-  justify-content: ${props => props.justify || "stretch"};
-  padding: ${props => props.padding || "0"};
+  align-items: ${props => props.align || 'stretch'};
+  justify-content: ${props => props.justify || 'stretch'};
+  padding: ${props => props.padding || '0'};
 `;
 
 export default class Page extends Component {
   state = {
-    menuValue: "",
+    menuValue: '',
     updatePrestoOpen: false,
     accountSettingsOpen: false,
-    redirect: false
+    redirect: false,
   };
 
   render() {
@@ -59,34 +59,32 @@ export default class Page extends Component {
         {({ data, error, loading }) => {
           if (!loading && error && loginRequired) {
             return (
-              <Container>
-                <Index>
-                  {error && <Message error>{error.message}</Message>}
-                  <UserContext.Provider
-                    value={{
-                      data,
-                      error
-                    }}>
-                    <Login />
-                  </UserContext.Provider>
-                </Index>
-              </Container>
+              <Index>
+                {error && <Message error>{error.message}</Message>}
+                <UserContext.Provider
+                  value={{
+                    data,
+                    error,
+                  }}
+                >
+                  <Login />
+                </UserContext.Provider>
+              </Index>
             );
           }
 
           if (!loading && error && !loginRequired) {
             return (
-              <Container>
-                <Index>
-                  <UserContext.Provider
-                    value={{
-                      data,
-                      error
-                    }}>
-                    {children}
-                  </UserContext.Provider>
-                </Index>
-              </Container>
+              <Index>
+                <UserContext.Provider
+                  value={{
+                    data,
+                    error,
+                  }}
+                >
+                  {children}
+                </UserContext.Provider>
+              </Index>
             );
           }
 
@@ -94,14 +92,15 @@ export default class Page extends Component {
           //     return <Redirect to="/login" />;
           //   }
 
-          if (!loading && data && data.status === "success") {
+          if (!loading && data && data.status === 'success') {
             // rgb(244, 243, 239)
             return (
               <>
                 <UserContext.Provider
                   value={{
-                    data: data.data
-                  }}>
+                    data: data.data,
+                  }}
+                >
                   {children}
                 </UserContext.Provider>
               </>
@@ -113,4 +112,6 @@ export default class Page extends Component {
   }
 }
 
-export { UserContext, FlexRow, Content, Container };
+export {
+  UserContext, FlexRow, Content, Container,
+};
