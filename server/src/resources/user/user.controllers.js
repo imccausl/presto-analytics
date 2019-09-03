@@ -115,4 +115,36 @@ const deleteOwnAccount = async (req, res, next) => {
   }
 };
 
-module.exports = { me, deleteOwnAccount };
+const changeDetails = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { firstName, lastName, email } = req.body;
+
+    if (userId !== req.userId.toString()) {
+      throw new Error('You do not have permission to do this.');
+    }
+
+    const user = await User.findOne({
+      where: {
+        id: req.userId
+      },
+      attributes: ['id', 'firstName', 'lastName', 'email']
+    });
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+
+    user.save();
+
+    res.send({
+      status: 'success',
+      message: `Details changed for user with ID: ${req.userId}`,
+      data: { firstName, lastName, email }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { me, deleteOwnAccount, changeDetails };
