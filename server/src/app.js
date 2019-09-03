@@ -60,7 +60,7 @@ app.use('/api/v1', async (req, res, next) => {
       next();
     }
   } catch (err) {
-    next();
+    next(err);
   }
 });
 
@@ -75,7 +75,7 @@ app.use('/api/v1/presto', async (req, res, next) => {
 
     next();
   } catch (err) {
-    next();
+    next(err);
   }
 });
 

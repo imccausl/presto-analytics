@@ -147,6 +147,12 @@ export default class PrestoSignin extends Component {
                           progressMessage:
                             "You've entered an incorrect Presto username or password.",
                         });
+                      } else if (response.error && response.message !== 'INVALID_LOGIN') {
+                        this.setState({
+                          inProgress: false,
+                          isError: true,
+                          progressMessage: response.error,
+                        });
                       }
                     }}
                   >
