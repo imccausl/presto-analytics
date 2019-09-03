@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import {
   Menu, Icon, Rail, Segment,
 } from 'semantic-ui-react';
@@ -25,7 +25,7 @@ const handleClick = e => {
 };
 
 // background: 'rgb(38,39,43)', color: 'rgb(209,211,212)'
-export default class SideBar extends Component {
+class SideBar extends Component {
   state = {
     activeSelection: 'this month',
     accountModalOpen: false,
@@ -114,3 +114,5 @@ export default class SideBar extends Component {
     );
   }
 }
+
+export default withRouter(SideBar);
