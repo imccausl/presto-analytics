@@ -1,15 +1,17 @@
-import moment from "moment";
-import React from "react";
-import Fetch from "react-fetch-component";
-import PropTypes from "prop-types";
-import { Menu, Modal, Button, Icon, Header } from "semantic-ui-react";
-import { YearInput, MonthInput } from "semantic-ui-calendar-react";
+import moment from 'moment';
+import React from 'react';
+import Fetch from 'react-fetch-component';
+import PropTypes from 'prop-types';
+import {
+  Menu, Modal, Button, Icon, Header,
+} from 'semantic-ui-react';
+import { YearInput, MonthInput } from 'semantic-ui-calendar-react';
 
-import API from "../../../lib/api";
-import CardMenu from "../CardMenu";
+import API from '../../../lib/api';
+import CardMenu from '../CardMenu';
 
-const SEARCH_TYPE_RANGE = "range";
-const SEARCH_TYPE_MONTH = "month";
+const SEARCH_TYPE_RANGE = 'range';
+const SEARCH_TYPE_MONTH = 'month';
 const RANGE_LIMIT = 500;
 
 const propTypes = {};
@@ -18,35 +20,34 @@ const defaultProps = {};
 
 // TODO: move to default props
 const options = [
-  { name: "last 30 days", value: 30 },
-  { name: "last 60 days", value: 60 },
-  { name: "last year", value: 365 }
-  //{ name: "all time", value: "all_time" }
+  { name: 'last 30 days', value: 30 },
+  { name: 'last 60 days', value: 60 },
+  { name: 'last year', value: 365 },
+  // { name: "all time", value: "all_time" }
 ];
 
 const thisMonth = new Date().getMonth();
 const thisYear = new Date().getFullYear();
 export default class DataFilter extends React.Component {
-  cardsArray =
-    this.props.cards && this.props.cards.map(card => card.cardNumber);
+  cardsArray = this.props.cards && this.props.cards.map(card => card.cardNumber);
 
   state = {
     activeSelection: options[0].name,
     activeSelectionValue: options[0].value,
-    yearOrRange: "",
-    monthOrUnit: "",
-    searchType: "",
-    cardNumber: "",
+    yearOrRange: '',
+    monthOrUnit: '',
+    searchType: '',
+    cardNumber: '',
     modalOpen: false,
     selectedMonth: thisMonth,
     selectedYear: thisYear,
-    url: ""
+    url: '',
   };
 
   optionsMap = {
     [options[0].name]: options[0].value,
     [options[1].name]: options[1].value,
-    [options[2].name]: options[2].value
+    [options[2].name]: options[2].value,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -58,16 +59,12 @@ export default class DataFilter extends React.Component {
      * component to work correctly, all this is required is to history.push the correct route
      */
 
-    const { cardNumber, yearOrRange, monthOrUnit, searchType } = nextProps;
+    const {
+      cardNumber, yearOrRange, monthOrUnit, searchType,
+    } = nextProps;
 
     // data validation:
-    console.log(
-      "getderivedstatefromprops:",
-      cardNumber,
-      yearOrRange,
-      monthOrUnit,
-      searchType
-    );
+    console.log('getderivedstatefromprops:', cardNumber, yearOrRange, monthOrUnit, searchType);
 
     // NEED SOME KIND OF CARD VALIDATION HERE
     // if (!this.cardsArray.includes(cardNumber) || cardNumber != "all") {
@@ -76,15 +73,14 @@ export default class DataFilter extends React.Component {
     //   return null;
     // }
 
-    if (searchType === "err") {
+    if (searchType === 'err') {
       // TODO: return error about invalid searchType
       return null;
     }
 
     if (
-      (searchType === SEARCH_TYPE_RANGE &&
-        parseInt(yearOrRange, 10) > RANGE_LIMIT) ||
-      (searchType === SEARCH_TYPE_RANGE && parseInt(yearOrRange, 10) < 5)
+      (searchType === SEARCH_TYPE_RANGE && parseInt(yearOrRange, 10) > RANGE_LIMIT)
+      || (searchType === SEARCH_TYPE_RANGE && parseInt(yearOrRange, 10) < 5)
     ) {
       // TODO: return error about range too high
       return null;
@@ -92,17 +88,16 @@ export default class DataFilter extends React.Component {
 
     if (searchType === SEARCH_TYPE_MONTH) {
       if (
-        parseInt(yearOrRange, 10) > thisYear ||
-        (parseInt(yearOrRange, 10) === thisYear &&
-          parseInt(monthOrUnit, 10) > thisMonth + 1)
+        parseInt(yearOrRange, 10) > thisYear
+        || (parseInt(yearOrRange, 10) === thisYear && parseInt(monthOrUnit, 10) > thisMonth + 1)
       ) {
         // TODO: return error message about date being in the future
         return null;
       }
 
       if (
-        parseInt(yearOrRange, 10) < 2010 ||
-        (parseInt(yearOrRange, 10) < 2010 && parseInt(monthOrUnit, 10) < 5)
+        parseInt(yearOrRange, 10) < 2010
+        || (parseInt(yearOrRange, 10) < 2010 && parseInt(monthOrUnit, 10) < 5)
       ) {
         // TODO: return error message about date out of range: Presto phase 2 started May 5th, 2010.
         return null;
@@ -114,33 +109,23 @@ export default class DataFilter extends React.Component {
       }
     }
 
-    console.log(
-      "PASSED VALIDATION:",
-      cardNumber,
-      yearOrRange,
-      monthOrUnit,
-      searchType
-    );
+    console.log('PASSED VALIDATION:', cardNumber, yearOrRange, monthOrUnit, searchType);
 
-    return cardNumber === prevState.cardNumber &&
-      yearOrRange === prevState.yearOrRange &&
-      monthOrUnit === prevState.monthOrUnit &&
-      searchType === prevState.searchType
+    return cardNumber === prevState.cardNumber
+      && yearOrRange === prevState.yearOrRange
+      && monthOrUnit === prevState.monthOrUnit
+      && searchType === prevState.searchType
       ? null
       : {
-          cardNumber,
-          yearOrRange,
-          monthOrUnit,
-          searchType,
-          url:
+        cardNumber,
+        yearOrRange,
+        monthOrUnit,
+        searchType,
+        url:
             searchType === SEARCH_TYPE_MONTH
-              ? `${API.root}${API.monthlyTransactions(
-                  cardNumber,
-                  yearOrRange,
-                  monthOrUnit
-                )}`
-              : `${API.root}${API.transactionRange(cardNumber, yearOrRange)}`
-        };
+              ? `${API.root}${API.monthlyTransactions(cardNumber, yearOrRange, monthOrUnit)}`
+              : `${API.root}${API.transactionRange(cardNumber, yearOrRange)}`,
+      };
   }
 
   handleItemClick = event => {
@@ -148,9 +133,9 @@ export default class DataFilter extends React.Component {
     const { history } = this.props;
 
     const activeSelection = event.target.textContent.toLowerCase();
-    console.log("itemclick:", activeSelection);
+    console.log('itemclick:', activeSelection);
     const yearOrRange = this.optionsMap[activeSelection];
-    const monthOrUnit = "days";
+    const monthOrUnit = 'days';
     const searchType = SEARCH_TYPE_RANGE;
 
     const route = `/dashboard/${cardNumber}/${searchType}/${yearOrRange}/${monthOrUnit}`;
@@ -186,13 +171,13 @@ export default class DataFilter extends React.Component {
       selectedYear,
       selectedMonth,
       url,
-      activeSelection
+      activeSelection,
     } = this.state;
 
     const { children, match, history } = this.props;
-    console.log("datafilter:", match);
+    console.log('datafilter:', match);
     return (
-      <Fetch url={url} options={API.send("GET")}>
+      <Fetch url={url} options={API.send('GET')}>
         {({ data, error, loading }) => {
           console.log({ data, error, loading });
           return (
@@ -201,14 +186,12 @@ export default class DataFilter extends React.Component {
                 {!loading && !error && (
                   <Menu.Item header>
                     {data.data.transactions.length === 0
-                      ? "No Transactions For This Period"
+                      ? 'No Transactions For This Period'
                       : `${moment(data.data.transactions[0].date).format(
-                          "MMMM DD YYYY"
-                        )} - ${moment(
-                          data.data.transactions[
-                            data.data.transactions.length - 1
-                          ].date
-                        ).format("MMMM DD YYYY")}`}
+                        'MMMM DD YYYY',
+                      )} - ${moment(
+                        data.data.transactions[data.data.transactions.length - 1].date,
+                      ).format('MMMM DD YYYY')}`}
                   </Menu.Item>
                 )}
 
@@ -230,9 +213,10 @@ export default class DataFilter extends React.Component {
                     onClick={() => {
                       this.setState({
                         activeSelection: SEARCH_TYPE_MONTH,
-                        modalOpen: true
+                        modalOpen: true,
                       });
-                    }}>
+                    }}
+                  >
                     <Icon name="calendar" />
                   </Menu.Item>
                 </Menu.Menu>
@@ -266,20 +250,19 @@ export default class DataFilter extends React.Component {
                 <Modal.Actions>
                   <Button
                     negative
-                    content="No"
-                    onclick={() => this.setState({ modalOpen: false })}>
-                    No
-                  </Button>
+                    content="Cancel"
+                    onClick={() => this.setState({ modalOpen: false })}
+                  />
                   <Button
                     positive
                     icon="checkmark"
                     labelPosition="right"
-                    content="Yes"
+                    content="OK"
                     onClick={() => {
                       const route = `/dashboard/${cardNumber}/${activeSelection}/${selectedYear}/${selectedMonth}`;
 
                       this.setState({
-                        modalOpen: false
+                        modalOpen: false,
                       });
 
                       history.push(route);
