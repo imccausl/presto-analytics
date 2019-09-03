@@ -43,7 +43,7 @@ class SideBar extends Component {
     }
 
     if (name === 'settings') {
-      this.setState({ accountModalOpen: true });
+      this.props.history.push('/settings');
     }
   };
 
@@ -56,8 +56,8 @@ class SideBar extends Component {
   };
 
   render() {
-    const { top, budget } = this.props;
-    const { prestoModalOpen, accountModalOpen } = this.state;
+    const { top, budget, user } = this.props;
+    const { prestoModalOpen } = this.state;
 
     // fontVariant: 'all-small-caps',
     return (
@@ -104,12 +104,6 @@ class SideBar extends Component {
         </Menu>
 
         <UpdatePresto open={prestoModalOpen} close={this.handlePrestoModalClose} />
-        <AccountSettings
-          open={accountModalOpen}
-          user={this.props}
-          budget={budget || {}}
-          close={this.handleAccountModalClose}
-        />
       </>
     );
   }
