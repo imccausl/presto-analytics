@@ -13,7 +13,12 @@ const User = props => {
 
   return (
     <div
-      style={{ background: 'white', paddingBottom: '10px', borderBottom: '1px solid lightgrey' }}
+      style={{
+        background: 'white',
+        marginLeft: '67px',
+        padding: '10px',
+        borderBottom: '1px solid lightgrey',
+      }}
     >
       <div
         style={{

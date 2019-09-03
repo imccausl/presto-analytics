@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import {
   Message, Container, Grid, Sticky, Ref,
 } from 'semantic-ui-react';
@@ -53,6 +53,8 @@ export default class Page extends Component {
     redirect: false,
   };
 
+  contextRef = createRef();
+
   render() {
     const { children, loginRequired } = this.props;
     const { menuValue, accountSettingsOpen } = this.state;
@@ -105,30 +107,30 @@ export default class Page extends Component {
             return (
               <>
                 <SideBar />
-                <div style={{ marginLeft: '80px', marginRight: '10px' }}>
-                  <Ref innerRef={this.contextRef}>
-                    <Grid columns="equal">
-                      <Grid.Row>
-                        <Grid.Column>
-                          <Sticky context={this.contextRef}>
-                            <User
-                              firstName={user.firstName}
-                              lastName={user.lastName}
-                              cards={user.cards}
-                              balance={balance}
-                              budget={budget}
-                              amount={since ? amount : 'N/A'}
-                              since={since || 'Never'}
-                              lastActivity={
-                                lastActivity.length === 0
-                                  ? { amount: 'Never', location: 'N/A', date: 'Never' }
-                                  : lastActivity[0]
-                              }
-                            />
-                          </Sticky>
-                        </Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row style={{ marginTop: '20px' }}>
+                <Ref innerRef={this.contextRef}>
+                  <Grid style={{ paddingTop: 0 }}>
+                    <Grid.Row>
+                      <Grid.Column>
+                        <Sticky context={this.contextRef}>
+                          <User
+                            firstName={user.firstName}
+                            lastName={user.lastName}
+                            cards={user.cards}
+                            balance={balance}
+                            budget={budget}
+                            amount={since ? amount : 'N/A'}
+                            since={since || 'Never'}
+                            lastActivity={
+                              lastActivity.length === 0
+                                ? { amount: 'Never', location: 'N/A', date: 'Never' }
+                                : lastActivity[0]
+                            }
+                          />
+                        </Sticky>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <Grid.Column style={{ marginLeft: '80px', marginRight: '10px' }}>
                         <UserContext.Provider
                           value={{
                             data: data.data,
@@ -136,8 +138,9 @@ export default class Page extends Component {
                         >
                           {children}
                         </UserContext.Provider>
-                      </Grid.Row>
-                      {/*
+                      </Grid.Column>
+                    </Grid.Row>
+                    {/*
                  * May move these to a different route
                  <Grid.Row style={{ marginTop: "20px" }}>
                  <Header as="h2">
@@ -148,9 +151,8 @@ export default class Page extends Component {
                  </Header>
                  <YearOverview budget={budget} />
                 </Grid.Row> */}
-                    </Grid>
-                  </Ref>
-                </div>
+                  </Grid>
+                </Ref>
               </>
             );
           }

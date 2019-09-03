@@ -42,6 +42,10 @@ class SideBar extends Component {
       this.props.history.push('/login');
     }
 
+    if (name === 'dashboard') {
+      this.props.history.push('/dashboard');
+    }
+
     if (name === 'settings') {
       this.props.history.push('/settings');
     }
@@ -88,6 +92,10 @@ class SideBar extends Component {
             </Menu.Item>
 
             <Menu.Menu position="right">
+              <Menu.Item name="dashboard" onClick={this.handleItemClick}>
+                <Icon name="dashboard" size="large" />
+              </Menu.Item>
+
               <Menu.Item name="update" onClick={this.handleItemClick}>
                 <Icon name="refresh" size="large" />
               </Menu.Item>
