@@ -14,7 +14,6 @@ export default class PrestoSignin extends Component {
     inProgress: false,
     progressMessage: 'Fetching Data from Presto...',
     isError: false,
-    errorMessage: '',
     cards: [],
   };
 
@@ -26,13 +25,7 @@ export default class PrestoSignin extends Component {
 
   render() {
     const {
-      username,
-      password,
-      cards,
-      inProgress,
-      progressMessage,
-      isError,
-      errorMessage,
+      username, password, cards, inProgress, progressMessage, isError,
     } = this.state;
     const { incrementSteps, update, closeModal } = this.props;
 
@@ -65,7 +58,7 @@ export default class PrestoSignin extends Component {
                 <Message attached icon>
                   <Icon name="circle notched" loading />
                   <Message.Content>
-                    <Message.Header>One Moment...</Message.Header>
+                    <Message.Header>One Moment</Message.Header>
                     {progressMessage}
                   </Message.Content>
                 </Message>
