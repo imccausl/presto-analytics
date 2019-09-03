@@ -8,7 +8,7 @@ const defaultProps = {};
 
 const User = props => {
   const {
-    firstName, lastName, cards, balance, budget, lastActivity, amount, since,
+    firstName, lastName, cards, balance, lastActivity, amount, since,
   } = props;
 
   return (
