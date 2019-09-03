@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Header, Icon, Card, Form, Segment, Dropdown,
+  Button, Header, Icon, Popup, Form, Segment, Grid,
 } from 'semantic-ui-react';
 
-import { timingSafeEqual } from 'crypto';
 import requestApi from '../lib/requestApi';
 
 class AccountSettings extends Component {
@@ -39,25 +38,32 @@ class AccountSettings extends Component {
 
   handleFieldChange = e => {
     const { name, value } = e.target;
-    console.log(name, value);
     this.setState({ [name]: value });
   };
 
+  handleDeleteAccount = async () => {
+    await requestApi.deleteAccount();
+  };
+
   render() {
-    console.log('PROPS:', this.props);
     const {
       firstName, lastName, email, monthlyPassCost, fareCost,
     } = this.state;
     const { open, close } = this.props;
 
     return (
-      <>
-        <Header icon="setting" content="Account Settings" />
+      <div>
+        <Header as="h2">
+          Account Settings
+          <Header.Subheader>Manage your account settings</Header.Subheader>
+        </Header>
+
         <Header as="h3" attached="top">
           <Icon name="user" />
           Personal Information
         </Header>
-        <Segment attached piled>
+
+        <Segment attached>
           <Form>
             <Form.Group widths="equal">
               <Form.Field>
@@ -112,7 +118,7 @@ class AccountSettings extends Component {
           <Icon name="bus" />
           Transit Costs
         </Header>
-        <Segment attached piled>
+        <Segment attached>
           <Form>
             <Form.Group widths="equal">
               <Form.Field>
@@ -144,7 +150,31 @@ class AccountSettings extends Component {
             </Form.Group>
           </Form>
         </Segment>
-        <Button
+
+        <Header as="h3" attached="top" color="red">
+          <Icon name="delete" />
+          Delete Account
+        </Header>
+
+        <Segment attached color="red" textAlign="center">
+          <Popup
+            trigger={<Button color="red" icon="cancel" content="Delete My Account" />}
+            on="click"
+            position="top right"
+          >
+            <Grid centered>
+              <Grid.Column textAlign="center">
+                <p>This action cannot be undone</p>
+                <Button
+                  color="green"
+                  content="Confirm Delete"
+                  onClick={() => this.handleDeleteAccount()}
+                />
+              </Grid.Column>
+            </Grid>
+          </Popup>
+        </Segment>
+        {/* <Button
           color="red"
           onClick={() => {
             close();
@@ -160,14 +190,13 @@ class AccountSettings extends Component {
               monthlyPassCost,
               fareCost,
             });
-            console.log(response);
             close();
           }}
         >
           <Icon name="checkmark" />
           Save
-        </Button>
-      </>
+        </Button> */}
+      </div>
     );
   }
 }

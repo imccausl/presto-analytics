@@ -6,4 +6,10 @@ async function logout(requestHandler) {
   return request;
 }
 
-export { logout };
+async function deleteAccount(requestHandler) {
+  const request = await requestHandler(API.deleteAccount.endpoint, API.deleteAccount.method);
+
+  return request;
+}
+
+export { logout, deleteAccount };
