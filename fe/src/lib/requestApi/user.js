@@ -7,7 +7,9 @@ async function logout(requestHandler) {
 }
 
 async function deleteAccount(requestHandler) {
-  const request = await requestHandler(API.deleteAccount.endpoint, API.deleteAccount.method);
+  const request = await requestHandler(API.deleteAccount.endpoint, API.deleteAccount.method, {
+    body: { verify: 'yes' },
+  });
 
   return request;
 }

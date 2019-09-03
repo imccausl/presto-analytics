@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+
 import PropTypes from 'prop-types';
 import {
   Button, Header, Icon, Popup, Form, Segment, Grid,
@@ -42,7 +44,10 @@ class AccountSettings extends Component {
   };
 
   handleDeleteAccount = async () => {
-    await requestApi.deleteAccount();
+    const response = await requestApi.deleteAccount();
+    if (response.status === 'success') {
+      this.props.history.push('/login');
+    }
   };
 
   render() {
@@ -201,4 +206,4 @@ class AccountSettings extends Component {
   }
 }
 
-export default AccountSettings;
+export default withRouter(AccountSettings);

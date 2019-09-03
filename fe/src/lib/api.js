@@ -28,6 +28,10 @@ const API = {
     method: 'GET',
     endpoint: '/v1/user/me',
   },
+  deleteAccount: {
+    method: 'DELETE',
+    endpoint: '/v1/user/me/delete',
+  },
   login: '/login',
   logout: {
     endpoint: '/logout',
