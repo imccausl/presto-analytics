@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import { Message, Container } from 'semantic-ui-react';
+import {
+  Message, Container, Grid, Sticky, Ref,
+} from 'semantic-ui-react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import Index from './Index';
 import AuthUser from './AuthUser';
 import Login from './Login';
+import SideBar from './SideBar';
+import User from './dashboard/User';
 
 import requestApi from '../lib/requestApi';
 
@@ -87,21 +91,66 @@ export default class Page extends Component {
             );
           }
 
-          //   if (!loading && data && data.status === "success" && !loginRequired) {
-          //     return <Redirect to="/login" />;
-          //   }
-
           if (!loading && data && data.status === 'success') {
-            // rgb(244, 243, 239)
+            const {
+              data: {
+                user,
+                budget,
+                balance,
+                lastActivity,
+                spent: { amount, since },
+              },
+            } = data;
+            console.log(data);
             return (
               <>
-                <UserContext.Provider
-                  value={{
-                    data: data.data,
-                  }}
-                >
-                  {children}
-                </UserContext.Provider>
+                <SideBar />
+                <div style={{ marginLeft: '80px', marginRight: '10px' }}>
+                  <Ref innerRef={this.contextRef}>
+                    <Grid columns="equal">
+                      <Grid.Row>
+                        <Grid.Column>
+                          <Sticky context={this.contextRef}>
+                            <User
+                              firstName={user.firstName}
+                              lastName={user.lastName}
+                              cards={user.cards}
+                              balance={balance}
+                              budget={budget}
+                              amount={since ? amount : 'N/A'}
+                              since={since || 'Never'}
+                              lastActivity={
+                                lastActivity.length === 0
+                                  ? { amount: 'Never', location: 'N/A', date: 'Never' }
+                                  : lastActivity[0]
+                              }
+                            />
+                          </Sticky>
+                        </Grid.Column>
+                      </Grid.Row>
+                      <Grid.Row style={{ marginTop: '20px' }}>
+                        <UserContext.Provider
+                          value={{
+                            data: data.data,
+                          }}
+                        >
+                          {children}
+                        </UserContext.Provider>
+                      </Grid.Row>
+                      {/*
+                 * May move these to a different route
+                 <Grid.Row style={{ marginTop: "20px" }}>
+                 <Header as="h2">
+                 Year Overview
+                 <Header.Subheader>
+                 Some kind of text will go here
+                 </Header.Subheader>
+                 </Header>
+                 <YearOverview budget={budget} />
+                </Grid.Row> */}
+                    </Grid>
+                  </Ref>
+                </div>
               </>
             );
           }
