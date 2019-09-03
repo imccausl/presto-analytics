@@ -88,13 +88,11 @@ const me = async (req, res, next) => {
   next();
 };
 
-const deleteAccount = async (req, res, next) => {
-  const { userId } = req.params;
-  console.log(`UserID: ${userId}, loggedInUser: ${req.userId}`);
-  console.log(`WTF: ${userId != req.userId}`);
+const deleteOwnAccount = async (req, res, next) => {
+  const { verify } = req.body;
   // for now, only let users delete their own accounts
-  if (userId != req.userId) {
-    throw new Error("You don't have the correct permissions to perform this action");
+  if (verify !== 'yes') {
+    throw new Error('This action was not verified and could not be completed.');
   }
 
   // delete user
@@ -118,4 +116,4 @@ const deleteAccount = async (req, res, next) => {
   }
 };
 
-module.exports = { me, deleteAccount };
+module.exports = { me, deleteOwnAccount };

@@ -6,6 +6,6 @@ const requireSignin = require('../../utils/protect');
 const router = express.Router();
 
 router.route('/me').get(requireSignin(controllers.me));
-router.route('/:userId').delete(requireSignin(controllers.deleteAccount));
+router.route('/me/delete').delete(requireSignin(controllers.deleteOwnAccount));
 
 module.exports = router;
