@@ -114,7 +114,7 @@ const usage = async (req, res, next) => {
         to = moment().format('MM/DD/YYYY');
       }
 
-      console.log('/usage cookies:', user.cookies);
+      console.log('/usage cookies:', req.prestoCookie);
       const usage = await presto.getActivityByDateRange(cardNumber, from, to);
 
       if (usage.status === 'error') {
