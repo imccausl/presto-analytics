@@ -84,8 +84,6 @@ const me = async (req, res, next) => {
       }
     }
   });
-
-  next();
 };
 
 const deleteOwnAccount = async (req, res, next) => {
