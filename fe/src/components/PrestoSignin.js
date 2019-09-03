@@ -13,6 +13,8 @@ export default class PrestoSignin extends Component {
     password: '',
     inProgress: false,
     progressMessage: 'Fetching Data from Presto...',
+    isError: false,
+    errorMessage: '',
     cards: [],
   };
 
@@ -24,7 +26,13 @@ export default class PrestoSignin extends Component {
 
   render() {
     const {
-      username, password, cards, inProgress, progressMessage,
+      username,
+      password,
+      cards,
+      inProgress,
+      progressMessage,
+      isError,
+      errorMessage,
     } = this.state;
     const { incrementSteps, update, closeModal } = this.props;
 
@@ -57,7 +65,20 @@ export default class PrestoSignin extends Component {
                 <Message attached icon>
                   <Icon name="circle notched" loading />
                   <Message.Content>
-                    <Message.Header>One moment</Message.Header>
+                    <Message.Header>One Moment...</Message.Header>
+                    {progressMessage}
+                  </Message.Content>
+                </Message>
+              );
+            }
+
+            if (isError) {
+              return (
+                <Message attached icon negative>
+                  <Icon name="delete" />
+
+                  <Message.Content>
+                    <Message.Header>An Error Occurred</Message.Header>
                     {progressMessage}
                   </Message.Content>
                 </Message>
@@ -111,29 +132,28 @@ export default class PrestoSignin extends Component {
                         inProgress: true,
                         progressMessage: 'Logging into PRESTO...',
                       });
-                      const isLoggedIn = await requestApi.prestoIsLoggedIn();
-                      console.log(isLoggedIn);
-                      if (
-                        isLoggedIn.status === 'error'
-                        && isLoggedIn.message === 'Not logged in to Presto'
-                      ) {
-                        this.setState({
-                          inProgress: true,
-                          progressMessage: 'Getting account data...',
-                        });
-                        const response = await requestApi.prestoLogin(username, password);
-                        console.log(response);
-                        if (response.cards) {
-                          this.setState({
-                            cards: response.cards,
-                            inProgress: true,
-                            progressMessage: 'Fetching PRESTO usage data...',
-                          });
 
-                          fetch();
-                        }
-                      } else if (isLoggedIn.status === 'success') {
-                        // fetch();
+                      this.setState({
+                        inProgress: true,
+                        progressMessage: 'Getting account data...',
+                      });
+                      const response = await requestApi.prestoLogin(username, password);
+                      console.log(response);
+                      if (response.cards) {
+                        this.setState({
+                          cards: response.cards,
+                          inProgress: true,
+                          progressMessage: 'Fetching PRESTO usage data...',
+                        });
+
+                        fetch();
+                      } else if (response.error && response.message === 'INVALID_LOGIN') {
+                        this.setState({
+                          inProgress: false,
+                          isError: true,
+                          progressMessage:
+                            "You've entered an incorrect Presto username or password.",
+                        });
                       }
                     }}
                   >
