@@ -1,7 +1,8 @@
+require('dotenv').config({ path: '../../../.env' });
+
 const moment = require('moment');
-
+const jwt = require('jsonwebtoken');
 const Presto = require('../../../lib/presto');
-
 const { db } = require('../../utils/db');
 
 const { User, Transaction } = db;
@@ -44,7 +45,13 @@ const login = async (req, res, next) => {
 
     console.log(prestoLoginResp);
 
-    thisUser.cookies = presto.getCookies();
+    const token = jwt.sign({ prestoCookie: presto.getCookies() }, process.env.APP_SECRET);
+    res.cookie('prestoAuth', token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 356
+    });
+
+    // thisUser.cookies = presto.getCookies();
     thisUser.cards = prestoLoginResp.cards;
     thisUser.save();
 
@@ -80,10 +87,10 @@ const usage = async (req, res, next) => {
       where: {
         id: req.userId
       },
-      attributes: ['cookies', 'id']
+      attributes: ['id']
     });
 
-    const presto = new Presto(user.cookies);
+    const presto = new Presto(req.prestoCookie);
 
     for (let i = 0; i < cards.length; i++) {
       const cardNumber = cards[i];
@@ -145,6 +152,7 @@ const usage = async (req, res, next) => {
       //   }
     }
 
+    res.clearCookie('prestoAuth');
     res.json({ status: 'success', data: transactions });
   } catch (error) {
     console.log(error);

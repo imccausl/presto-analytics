@@ -48,6 +48,7 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res) => {
   res.clearCookie('auth');
+  res.clearCookie('prestoAuth');
   res.json({ status: 'success', message: 'Logout completed' });
 };
 

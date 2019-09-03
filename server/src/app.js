@@ -64,6 +64,21 @@ app.use('/api/v1', async (req, res, next) => {
   }
 });
 
+app.use('/api/v1/presto', async (req, res, next) => {
+  try {
+    const { prestoAuth } = req.cookies;
+    const { prestoCookie } = jwt.verify(prestoAuth, process.env.APP_SECRET);
+
+    if (prestoCookie) {
+      req.prestoCookie = prestoCookie;
+    }
+
+    next();
+  } catch (err) {
+    next();
+  }
+});
+
 app.use(express.static(path.join(__dirname, '../build')));
 
 // routes

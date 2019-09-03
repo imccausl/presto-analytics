@@ -103,8 +103,9 @@ const deleteOwnAccount = async (req, res, next) => {
       }
     });
 
-    // remove auth token (cookie)
+    // remove auth token (cookie) and prestoAuth stuff
     res.clearCookie('auth');
+    res.clearCookie('prestoAuth');
 
     res.json({
       status: 'success',
