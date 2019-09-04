@@ -32,6 +32,10 @@ const API = {
     method: 'DELETE',
     endpoint: '/v1/user/me/delete',
   },
+  updateAccountDetails: {
+    method: 'POST',
+    endpoint: userId => `/v1/user/details/${userId}`,
+  },
   login: '/login',
   logout: {
     endpoint: '/logout',
@@ -65,7 +69,7 @@ const API = {
   },
   updateBudget: {
     method: 'POST',
-    endpoint: '/v1/budget/save',
+    endpoint: '/v1/budget',
   },
   prestoUsage: '/v1/presto/usage',
   prestoLogin: { endpoint: '/v1/presto/login', method: 'POST' },

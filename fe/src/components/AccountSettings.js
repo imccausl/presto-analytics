@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import {
-  Button, Header, Icon, Popup, Form, Segment, Grid,
+  Button, Header, Icon, Popup, Form, Segment, Grid, Message,
 } from 'semantic-ui-react';
 
 import requestApi from '../lib/requestApi';
@@ -36,6 +36,7 @@ class AccountSettings extends Component {
       ? this.props.props.data.budget.monthlyPassCost
       : 0,
     fareCost: this.props.props.data.budget ? this.props.props.data.budget.fareCost : 0,
+    updateMessage: '',
   };
 
   handleFieldChange = e => {
@@ -50,11 +51,43 @@ class AccountSettings extends Component {
     }
   };
 
+  handleUpdateUserDetails = async userId => {
+    const { firstName, lastName, email } = this.state;
+
+    const userDetails = {
+      firstName,
+      lastName,
+      email,
+    };
+
+    const response = await requestApi.updateUserDetails(userId, userDetails);
+
+    if (response.status === 'success') {
+      this.setState({ updateMessage: 'Account details successfully updated.' });
+    }
+  };
+
+  handleUpdateBudgetDetails = async () => {
+    const { monthlyPassCost, fareCost } = this.state;
+
+    const budgetDetails = {
+      monthlyPassCost,
+      fareCost,
+    };
+
+    const response = await requestApi.updateBudget(budgetDetails);
+
+    if (response.status === 'success') {
+      this.setState({ updateMessage: 'Budget details successfully updated.' });
+    }
+  };
+
   render() {
     const {
-      firstName, lastName, email, monthlyPassCost, fareCost,
+      firstName, lastName, email, monthlyPassCost, fareCost, updateMessage,
     } = this.state;
-    const { open, close } = this.props;
+
+    const { id } = this.props.props.data.user;
 
     return (
       <div>
@@ -62,6 +95,10 @@ class AccountSettings extends Component {
           Account Settings
           <Header.Subheader>Manage your account settings</Header.Subheader>
         </Header>
+
+        {updateMessage && (
+          <Message positive header="Account Details Updated" content={updateMessage} />
+        )}
 
         <Header as="h3" attached="top">
           <Icon name="user" />
@@ -116,6 +153,9 @@ class AccountSettings extends Component {
                 </label>
               </Form.Field>
             </Form.Group>
+            <Button positive onClick={() => this.handleUpdateUserDetails(id)}>
+              Save
+            </Button>
           </Form>
         </Segment>
 
@@ -153,6 +193,9 @@ class AccountSettings extends Component {
                 </label>
               </Form.Field>
             </Form.Group>
+            <Button positive onClick={() => this.handleUpdateBudgetDetails()}>
+              Save
+            </Button>
           </Form>
         </Segment>
 
@@ -179,28 +222,6 @@ class AccountSettings extends Component {
             </Grid>
           </Popup>
         </Segment>
-        {/* <Button
-          color="red"
-          onClick={() => {
-            close();
-          }}
-        >
-          <Icon name="remove" />
-          Cancel
-        </Button>
-        <Button
-          color="green"
-          onClick={async () => {
-            const response = await requestApi.updateBudget({
-              monthlyPassCost,
-              fareCost,
-            });
-            close();
-          }}
-        >
-          <Icon name="checkmark" />
-          Save
-        </Button> */}
       </div>
     );
   }

@@ -4,8 +4,7 @@ const { Budget } = db;
 
 const save = async (req, res, next) => {
   try {
-    const { body } = req;
-    const { monthlyPassCost, fareCost } = body;
+    const { monthlyPassCost, fareCost } = req.body;
 
     if (!req.userId) {
       throw new Error('You must be logged into to do that');
@@ -16,8 +15,6 @@ const save = async (req, res, next) => {
         userId: req.userId
       }
     });
-
-    console.log(budget);
 
     if (!budget) {
       const createdBudget = await Budget.create({

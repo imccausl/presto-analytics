@@ -14,4 +14,18 @@ async function deleteAccount(requestHandler) {
   return request;
 }
 
-export { logout, deleteAccount };
+async function updateUserDetails(requestHandler, userId, details = {}) {
+  const request = await requestHandler(
+    API.updateAccountDetails.endpoint(userId),
+    API.updateAccountDetails.method,
+    {
+      body: {
+        ...details,
+      },
+    },
+  );
+
+  return request;
+}
+
+export { logout, deleteAccount, updateUserDetails };
