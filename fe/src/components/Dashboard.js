@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { Grid, Header } from 'semantic-ui-react';
+import { Grid, Header, Divider } from 'semantic-ui-react';
 import { Route, Redirect } from 'react-router-dom';
 
 import DataFilter, { SEARCH_TYPE_RANGE, SEARCH_TYPE_MONTH } from './dashboard/DataFilter';
@@ -92,6 +92,17 @@ const Dashboard = props => {
                         <TopTapOrigins data={data} error={error} loading={loading} />
                       </Grid.Column>
                       <Grid.Column />
+                    </Grid.Row>
+                    <Divider horizontal>
+                      <Header as="h3">
+                        Year Overview
+                        <Header.Subheader>Year To Month Overview</Header.Subheader>
+                      </Header>
+                    </Divider>
+                    <Grid.Row>
+                      <Grid.Column>
+                        <YearOverview />
+                      </Grid.Column>
                     </Grid.Row>
                   </Grid>
                 );
