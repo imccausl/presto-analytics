@@ -3,33 +3,20 @@ version: "3"
 services:
   backend:
     env_file: .env
-    build: ./server
+    build: ./
     image: pa-backend:dev
     depends_on:
       - postgres
     expose:
       - ${PORT}
       - "9229"
+      - "35729"
     ports:
       - ${PORT}:${PORT}
       - "9229:9229"
+      - "35729:35729"
     volumes:
-      - ./server:/opt/backend
-
-  # front-end:
-  #   env_file: .env
-  #   build: ./fe
-  #   image: pa-frontend:dev
-  #   expose:
-  #     - ${CLIENT_PORT}
-  #     - "35729"
-  #   ports:
-  #     - ${CLIENT_PORT}:${CLIENT_PORT}
-  #     - "35729:35729"
-  #   volumes:
-  #     - ./fe:/app
-  #   links:
-  #     - backend
+      - ./:/opt/
 
   postgres:
     env_file: .env
