@@ -1,9 +1,10 @@
 #!/bin/sh
 
-npm install
+cd server && npm install && cd ..
+cd fe && npm install && cd ..
 
 if [ "$NODE_ENV" == "production" ] ; then
-  npm run start
+  cd server && npm run start
 else
-  npm run dev
+  cd server && npm run dev
 fi

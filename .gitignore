@@ -1,6 +1,5 @@
 client/node_modules
 server/node_modules
-.vscode/
 .env
 server/src/test.js
 client/.next
@@ -8,3 +7,4 @@ client/package-lock.json
 server/package-lock.json
 server/coverage
 client/coverage
+server/src/resources/transaction/helpers/data.json
