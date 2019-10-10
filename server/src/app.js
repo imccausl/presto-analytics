@@ -104,7 +104,7 @@ app.get('/.well-known/acme-challenge/FE4AwNnnenUn7maps7uY2r6qydcIL_t39hlmxveJweM
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}/../build/index.html`));
+  res.sendFile(path.join(`${__dirname}/../../fe/build/index.html`));
 });
 
 http.listen(PORT, () => {
