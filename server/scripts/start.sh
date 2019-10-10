@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cd opt
 cd server && npm install && cd ..
 cd fe && npm install cd ..
 
