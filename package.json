@@ -20,7 +20,7 @@
     "object-keys": "^1.1.1"
   },
   "scripts": {
-    "start": "node server/app.js"
+    "start": "cd server && npm start"
   },
   "repository": {
     "type": "git",
