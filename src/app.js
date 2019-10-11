@@ -107,7 +107,7 @@ app.get(
 );
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(`${__dirname}/fe/build/index.html`));
+  res.sendFile(path.join(`${__dirname}/../fe/build/index.html`));
 });
 
 http.listen(PORT, () => {
