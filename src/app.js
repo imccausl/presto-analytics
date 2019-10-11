@@ -76,7 +76,7 @@ app.use("/api/v1/presto", async (req, res, next) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, "../build")));
+app.use(express.static(path.join(__dirname, "../fe/build")));
 
 // routes
 app.use("/api/login", authControllers.login);
