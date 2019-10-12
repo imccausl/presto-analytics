@@ -1,8 +1,8 @@
-client/node_modules
+api/node_modules
 node_modules
 .env
 src/test.js
-client/.next
+api/.next
 coverage
-client/coverage
+api/coverage
 src/resources/transaction/helpers/data.json
