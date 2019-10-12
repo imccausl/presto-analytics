@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd server && npm install
+cd api && npm install
 
 if [ "$NODE_ENV" == "production" ] ; then
  npm run start
