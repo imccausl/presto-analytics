@@ -6,4 +6,4 @@ EXPOSE 9229
 WORKDIR /opt
 COPY ./ /opt
 
-CMD ./server/scripts/start.sh
+CMD ./api/scripts/start.sh
