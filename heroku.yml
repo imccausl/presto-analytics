@@ -7,5 +7,3 @@ build:
     web: Dockerfile
   config:
     NODE_ENV: production
-release:
-  image: web
