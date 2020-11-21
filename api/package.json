@@ -47,7 +47,7 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "glob": "^7.1.4",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jsdom": "^13.1.0",
     "jsonwebtoken": "^8.4.0",
     "moment": "^2.23.0",
