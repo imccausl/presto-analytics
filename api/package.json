@@ -50,7 +50,7 @@
     "jquery": "^3.5.0",
     "jsdom": "^13.1.0",
     "jsonwebtoken": "^8.4.0",
-    "moment": "^2.23.0",
+    "moment": "^2.29.2",
     "pg": "^7.7.1",
     "pg-hstore": "^2.3.2",
     "request": "^2.88.0",
