@@ -7,7 +7,7 @@
     "cpy-cli": "^2.0.0",
     "craco-less": "^1.9.0",
     "dotenv": "^8.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
